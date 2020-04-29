@@ -12,7 +12,7 @@ paths:
       tags:
         - vasps
       parameters:
-        - name: id
+        - name: vaspId
           in: path
           description: ID of the VASP
           required: true
@@ -204,7 +204,7 @@ components:
         signature:
           type: string
           format: binary
-Error:
+    Error:
       type: object
       required:
         - code
