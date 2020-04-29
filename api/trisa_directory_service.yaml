@@ -71,7 +71,7 @@ paths:
                 $ref: '#/components/schemas/Error'
 components:
   schemas:
-    VaspEntity:
+    Vasp:
       type: object
       title: VASP Entity Basic Information
       description: Entity Business Information for VASPs Directory
