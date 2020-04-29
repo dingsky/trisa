@@ -3,7 +3,7 @@ info:
   version: 0.0.1
   title: TRISA Directory Service
 servers:
-  - url: 'http://localhost:3000'
+  - url: 'https://localhost:3000'
 paths:
   /vasp/{vaspId}:
     get:
@@ -73,6 +73,17 @@ components:
   schemas:
     Vasp:
       type: object
+      title: VASP Information
+      required:
+        - vaspEntity
+        - vaspTrisaCertification
+      properties:
+        vaspEntity:
+          $ref: '#/components/schemas/VaspEntity'
+        vaspTrisaCertification:
+          $ref: '#/components/schemas/VaspTrisaCertification'
+    VaspEntity:
+      type: object
       title: VASP Entity Basic Information
       description: Entity Business Information for VASPs Directory
       required:
@@ -90,12 +101,109 @@ components:
         vaspIncorporationDate:
           description: Date of entity incorporation
           type: string
+          format: date
         vaspIncorporationNumber:
           description: Entity incorporation number
           type: string
         vaspLeiNumber:
           description: Entity LEI number (if available)
           type: string
+    VaspTrisaCertification:
+      type: object
+      title: VASP TRISA Certification Information
+      description: Relevant details of the VASP TRISA Certification
+      required:
+        - subjectName
+        - issuerName
+        - serialNumber
+        - version
+        - signatureAlgorithm
+        - notValidBefore
+        - notValidAfter
+        - publicKeyInfo
+      properties:
+        subjectName:
+          $ref: '#/components/schemas/Name'
+        issuerName:
+          $ref: '#/components/schemas/Name'
+        serialNumber:
+          type: string
+          format: binary
+        version:
+          type: string
+        signatureAlgorithm:
+          type: string
+        parameters:
+          type: array
+          items:
+            type: string
+        notValidBefore:
+          type: string
+          format: date
+        notValidAfter:
+          type: string
+          format: date
+        publicKeyInfo:
+          $ref: '#/components/schemas/PublicKeyInfo'
+    Name:
+      type: object
+      required:
+        - commonName
+        - countryRegion
+      properties:
+        commonName:
+          type: string
+        countryRegion:
+          type: string
+        organization:
+          type: string
+        organizationalUnit:
+          type: string
+        locality:
+          type: string
+        stateProvince:
+          type: string
+        serialNumber:
+          type: string
+        incCountryRegion:
+          description: Country or Region of Incorporation
+          type: string
+        incStateProvince:
+          description: State or Province of Incorporation
+          type: string
+        businessCategory:
+          type: string
+    PublicKeyInfo:
+      type: object
+      required:
+        - algorithm
+        - publicKey
+        - exponent
+        - keySize
+        - keyUsage
+        - signature
+      properties:
+        algorithm:
+          type: string
+        parameters:
+          type: array
+          items:
+            type: string
+        publicKey:
+          type: string
+          format: binary
+        exponent:
+          type: integer
+          format: int64
+        keySize:
+          type: integer
+        keyUsage:
+          type: array
+          items:
+            type: string
+        signature:
+          type: string
+          format: binary
     Error:
       type: object
       required:
