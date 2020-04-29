@@ -82,6 +82,12 @@ components:
           $ref: '#/components/schemas/VaspEntity'
         vaspTrisaCertification:
           $ref: '#/components/schemas/VaspTrisaCertification'
+        firstListed:
+          type: string
+          format: date-time
+        lastUpdated:
+          type: string
+          format: date-time
     VaspEntity:
       type: object
       title: VASP Entity Basic Information
@@ -121,6 +127,7 @@ components:
         - notValidBefore
         - notValidAfter
         - publicKeyInfo
+        - revoked
       properties:
         subjectName:
           $ref: '#/components/schemas/Name'
@@ -145,6 +152,9 @@ components:
           format: date
         publicKeyInfo:
           $ref: '#/components/schemas/PublicKeyInfo'
+        revoked:
+          description: true if the TRISA Certification has been revoked for any reason
+          type: boolean
     Name:
       type: object
       required:
