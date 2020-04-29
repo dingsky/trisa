@@ -204,7 +204,7 @@ components:
         signature:
           type: string
           format: binary
-    Error:
+Error:
       type: object
       required:
         - code
