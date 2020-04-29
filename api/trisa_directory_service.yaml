@@ -73,16 +73,28 @@ components:
   schemas:
     Vasp:
       type: object
+      title: VASP Entity Basic Information
+      description: Entity Business Information for VASPs Directory
       required:
-        - id
-        - name
+        - vaspFullLegalName
+        - vaspFullLegalAddress
+        - vaspIncorporationDate
+        - vaspIncorporationNumber 
       properties:
-        id:
-          type: integer
-          format: int64
-        name:
+        vaspFullLegalName:
+          description: The full legal name as registered business
           type: string
-        tag:
+        vaspFullLegalAddress:
+          description: The full legal address as registered business
+          type: string
+        vaspIncorporationDate:
+          description: Date of entity incorporation
+          type: string
+        vaspIncorporationNumber:
+          description: Entity incorporation number
+          type: string
+        vaspLeiNumber:
+          description: Entity LEI number (if available)
           type: string
     Error:
       type: object
