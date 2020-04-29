@@ -21,6 +21,11 @@ paths:
       responses:
         '200':
           description: 'Details regarding the VASP by ID'
+          headers:
+            x-next:
+              description: A link to the next page of responses
+              schema:
+                type: string
           content:
             application/json:
               schema:
@@ -46,7 +51,7 @@ paths:
             type: string
       responses:
         '200':
-          description: 'Details regarding the VASP by ID'
+          description: 'A list of VASP matching the search'
           headers:
             x-next:
               description: A JSON Array of VASP details
