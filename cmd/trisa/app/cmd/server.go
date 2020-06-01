@@ -106,12 +106,17 @@ func runServerCmd(cmd *cobra.Command, args []string) {
 
 		r.HandleFunc("/send", func(w http.ResponseWriter, r *http.Request) {
 
+			firstName := r.URL.Query().Get("firstname")
+			lastName := r.URL.Query().Get("lastname")
+			ssn := r.URL.Query().Get("ssn")
+			driverLicense := r.URL.Query().Get("driverlicense")
+			state := r.URL.Query().Get("state")
 			identity, _ := ptypes.MarshalAny(&us.Identity{
-				FirstName:     "John",
-				LastName:      "Doe",
-				Ssn:           "001-0434-4983",
-				DriverLicense: "FA-387463",
-				State:         "CA",
+				FirstName:     firstName,
+				LastName:      lastName,
+				Ssn:           ssn,
+				DriverLicense: driverLicense,
+				State:         state,
 			})
 
 			data, _ := ptypes.MarshalAny(&bitcoin.Data{
