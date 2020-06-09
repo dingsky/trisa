@@ -25,9 +25,27 @@ import (
 	bitcoin "github.com/trisacrypto/trisa/proto/trisa/data/bitcoin/v1alpha1"
 	us "github.com/trisacrypto/trisa/proto/trisa/identity/us/v1alpha1"
 	pb "github.com/trisacrypto/trisa/proto/trisa/protocol/v1alpha1"
+	querykyc "github.com/trisacrypto/trisa/proto/trisa/querykyc/v1alpha1"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials"
 )
+
+type queryKycReq struct {
+	DestUrl   string    `json:"dest_url,omitempty"`
+	Currency  string    `json:"currency,omitempty"`
+	Net       string    `json:"net,omitempty"`
+	Address   string    `json:"address,omitempty"`
+	Amount    float64   `json:"amount,omitempty"`
+	SenderKyc senderKyc `json:"sender_kyc,omitempty"`
+}
+
+type senderKyc struct {
+	Name          string `json:"name,omitempty"`
+	WalletAddress string `json:"wallet_address,omitempty"`
+	Id            string `json:"id,omitempty"`
+	Date          string `json:"date,omitempty"`
+	IdentifyInfo  string `json:"identify_info,omitempty"`
+}
 
 func NewServerCmd() *cobra.Command {
 	cmd := &cobra.Command{
@@ -103,6 +121,56 @@ func runServerCmd(cmd *cobra.Command, args []string) {
 			))
 			w.Write(out)
 		})
+
+		r.HandleFunc("/query_kyc", func(w http.ResponseWriter, r *http.Request) {
+
+			// 读请求报文
+			reqMsg, err := ioutil.ReadAll(r.Body)
+			if err != nil {
+				fmt.Printf("read request error:%s\n", err)
+				return
+			}
+			fmt.Printf("req msg:%s\n", reqMsg)
+
+			// 解包
+			req := new(queryKycReq)
+			err = json.Unmarshal(reqMsg, req)
+			if err != nil {
+				fmt.Printf("json Unmarshal error:%s", err)
+				return
+			}
+
+			identity, _ := ptypes.MarshalAny(&querykyc.Data{
+				Currency: req.Currency,
+				Net:      req.Net,
+				Address:  req.Address,
+			})
+
+			data, _ := ptypes.MarshalAny(&querykyc.Data{
+				Currency:      req.Currency,
+				Net:           req.Net,
+				Address:       req.Address,
+				Amount:        req.Amount,
+				Name:          req.SenderKyc.Name,
+				WalletAddress: req.SenderKyc.WalletAddress,
+				Id:            req.SenderKyc.Id,
+				Date:          req.SenderKyc.Date,
+				IdentifyInfo:  req.SenderKyc.IdentifyInfo,
+			})
+
+			tData := &pb.TransactionData{
+				Identity: identity,
+				Data:     data,
+			}
+
+			if err := pServer.SendRequest(r.Context(), req.DestUrl, uuid.New().String(), tData); err != nil {
+				fmt.Fprintf(w, "error: %v", err)
+				return
+			}
+
+			fmt.Fprint(w, ".")
+
+		}
 
 		r.HandleFunc("/send", func(w http.ResponseWriter, r *http.Request) {
 

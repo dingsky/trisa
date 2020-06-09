@@ -11,7 +11,7 @@ require (
 	github.com/spf13/cobra v0.0.5
 	github.com/stretchr/testify v1.2.2
 	golang.org/x/sys v0.0.0-20190825160603-fb81701db80f // indirect
-	google.golang.org/grpc v1.28.0
+	google.golang.org/grpc v1.29.1
 	google.golang.org/protobuf v1.23.0
 	gopkg.in/yaml.v2 v2.2.2
 )

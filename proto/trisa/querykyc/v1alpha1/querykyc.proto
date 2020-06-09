@@ -1,0 +1,17 @@
+syntax = "proto3";
+
+package trisa.querykyc.v1alpha1;
+
+option go_package = "github.com/trisacrypto/trisa/proto/trisa/querykyc/v1alpha1";
+
+message Data {
+    string  currency = 1;
+    string  net = 2;
+    string  address = 3;
+    double  amount = 4;
+    string  name = 5;
+    string  wallet_address = 6;
+    string  id = 7;
+    string  date = 8;
+    string identify_info = 9;
+}
