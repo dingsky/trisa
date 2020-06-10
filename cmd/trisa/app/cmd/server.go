@@ -163,11 +163,12 @@ func runServerCmd(cmd *cobra.Command, args []string) {
 				Data:     data,
 			}
 
-			if err := pServer.SendRequest(r.Context(), req.DestUrl, uuid.New().String(), tData); err != nil {
+			resp, err := pServer.SendRequest(r.Context(), req.DestUrl, uuid.New().String(), tData)
+			if err != nil {
 				fmt.Fprintf(w, "error: %v", err)
 				return
 			}
-
+			fmt.Printf("last resp:%v", resp)
 			fmt.Fprint(w, ".")
 
 		})

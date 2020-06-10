@@ -67,19 +67,19 @@ func (s *Server) getClient(target string) (pb.TrisaPeer2Peer_TransactionStreamCl
 	return stream, nil
 }
 
-func (s *Server) SendRequest(ctx context.Context, target, id string, td *pb.TransactionData) error {
+func (s *Server) SendRequest(ctx context.Context, target, id string, td *pb.TransactionData) (*pb.Transaction, error) {
 
 	ctx = handler.WithClientSide(ctx)
 
 	t, err := protocol.EncodeTransactionData(ctx, id, td)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
 	stream, err := s.getClient(target)
 
 	if err != nil {
-		return err
+		return nil, err
 	}
 
 	if err := stream.Send(t); err != nil {
@@ -105,19 +105,19 @@ func (s *Server) SendRequest(ctx context.Context, target, id string, td *pb.Tran
 
 	resp, err := stream.Recv()
 	if err == io.EOF {
-		return fmt.Errorf("premature stream exit")
+		return nil, fmt.Errorf("premature stream exit")
 	}
 	if err != nil {
-		return fmt.Errorf("receive stream error: %v", err)
+		return nil, fmt.Errorf("receive stream error: %v", err)
 	}
 	fmt.Printf("resp msg:%v", resp)
 
-	_, err = s.handle(ctx, resp)
+	respPack, err := s.handle(ctx, resp)
 	if err != nil && err.Error() != "EOL" {
-		return fmt.Errorf("response stream error: %v", err)
+		return nil, fmt.Errorf("response stream error: %v", err)
 	}
 
-	return nil
+	return respPack, nil
 }
 
 func (s *Server) TransactionStream(srv pb.TrisaPeer2Peer_TransactionStreamServer) error {
