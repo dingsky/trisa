@@ -87,9 +87,9 @@ func (d *Demo) HandleRequest(ctx context.Context, id string, req *pb.Transaction
 
 		// Generate demo response
 		identityResp := &querykyc.Data{
-			Currency:      kycInfo.Currency,
+			Currency:      curr,
 			Address:       kycInfo.Address,
-			Amount:        kycInfo.Amount,
+			Amount:        amount,
 			Name:          kycInfo.Name,
 			WalletAddress: kycInfo.WalletAddress,
 			Id:            kycInfo.Id,
