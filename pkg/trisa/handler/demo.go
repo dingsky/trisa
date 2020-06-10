@@ -68,7 +68,7 @@ func (d *Demo) HandleRequest(ctx context.Context, id string, req *pb.Transaction
 	switch networkType {
 	case "trisa.querykyc.v1alpha1.Data":
 		data := networkData.String()
-		fmt.Printf("data:%v", data)
+		fmt.Printf("data:%v\n", data)
 		curr := GetKeyVal(data, "currency")
 		fmt.Printf("currency:%s\n", curr)
 	default:
