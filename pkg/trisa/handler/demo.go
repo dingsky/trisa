@@ -3,6 +3,7 @@ package handler
 import (
 	"context"
 	"fmt"
+	"strconv"
 	"strings"
 
 	"github.com/trisacrypto/trisa/dao/sqllite"
@@ -84,12 +85,13 @@ func (d *Demo) HandleRequest(ctx context.Context, id string, req *pb.Transaction
 			return nil, fmt.Errorf("kyc not found")
 		}
 		fmt.Printf("currency:%s address:%s amount:%s name:%s wallteAddress:%s id:%s date:%s ident:%s\n", curr, address, amount, name, walletAddress, id, date, identifyInfo)
+		amoutFloat, _ := strconv.ParseFloat(amount, 64)
 
 		// Generate demo response
 		identityResp := &querykyc.Data{
 			Currency:      curr,
 			Address:       kycInfo.Address,
-			Amount:        amount,
+			Amount:        amoutFloat,
 			Name:          kycInfo.Name,
 			WalletAddress: kycInfo.WalletAddress,
 			Id:            kycInfo.Id,
