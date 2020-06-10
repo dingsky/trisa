@@ -73,17 +73,17 @@ func (s *Server) SendRequest(ctx context.Context, target, id string, td *pb.Tran
 
 	t, err := protocol.EncodeTransactionData(ctx, id, td)
 	if err != nil {
-		return nil, err
+		return "", err
 	}
 
 	stream, err := s.getClient(target)
 
 	if err != nil {
-		return nil, err
+		return "", err
 	}
 
 	if err := stream.Send(t); err != nil {
-		return nil, err
+		return "", err
 	}
 
 	// Extract identity
@@ -105,10 +105,10 @@ func (s *Server) SendRequest(ctx context.Context, target, id string, td *pb.Tran
 
 	resp, err := stream.Recv()
 	if err == io.EOF {
-		return nil, fmt.Errorf("premature stream exit")
+		return "", fmt.Errorf("premature stream exit")
 	}
 	if err != nil {
-		return nil, fmt.Errorf("receive stream error: %v", err)
+		return "", fmt.Errorf("receive stream error: %v", err)
 	}
 	fmt.Printf("resp msg:%v\n", resp)
 

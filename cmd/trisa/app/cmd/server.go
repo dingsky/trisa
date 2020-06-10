@@ -168,7 +168,7 @@ func runServerCmd(cmd *cobra.Command, args []string) {
 				fmt.Fprintf(w, "error: %v", err)
 				return
 			}
-			fmt.Printf("last resp:%v", resp)
+			fmt.Printf("last resp:%s", resp)
 			fmt.Fprint(w, ".")
 
 		})
