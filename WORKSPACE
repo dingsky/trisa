@@ -483,7 +483,7 @@ go_repository(
 )
 
 go_repository(
-    name = "com_github_gorm_model",
+    name = "com_github_jinzhu_gorm",
     importpath = "github.com/jinzhu/gorm",
     sum = "h1:3KDoUjMEfH58nweXdD5Dng222YiwOVUNFShENhehJyQ=",
     version = "v1.9.4",
