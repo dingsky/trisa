@@ -483,8 +483,24 @@ go_repository(
 )
 
 go_repository(
-    name = "com_github_jinzhu_gorm",
+    name = "com_github_gorm_model",
     importpath = "github.com/jinzhu/gorm",
     sum = "h1:3KDoUjMEfH58nweXdD5Dng222YiwOVUNFShENhehJyQ=",
     version = "v1.9.4",
 )
+
+go_repository(
+    name = "com_github_jinzhu_inflection",
+    importpath = "github.com/jinzhu/inflection",
+    sum = "h1:K317FqzuhWc8YvSVlFMCCUb36O/S9MCKRDI7QkRKD/E=",
+    version = "v1.0.0",
+)
+
+
+go_repository(
+    name = "com_github_jinzhu_sqlite",
+    importpath = "github.com/mattn/go-sqlite3",
+    sum = "h1:LnJI81JidiW9r7pS/hXe6cFeO5EXNq7KbfvoJLRI69c=",
+    version = "v1.13.0",
+)
+
