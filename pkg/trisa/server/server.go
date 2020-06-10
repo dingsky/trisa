@@ -83,7 +83,7 @@ func (s *Server) SendRequest(ctx context.Context, target, id string, td *pb.Tran
 	}
 
 	if err := stream.Send(t); err != nil {
-		return err
+		return nil, err
 	}
 
 	// Extract identity
