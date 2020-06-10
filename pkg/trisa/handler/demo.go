@@ -5,10 +5,12 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/trisacrypto/trisa/dao/sqllite"
+
 	"github.com/golang/protobuf/ptypes"
 	log "github.com/sirupsen/logrus"
-	be "github.com/trisacrypto/trisa/proto/trisa/identity/be/v1alpha1"
 	pb "github.com/trisacrypto/trisa/proto/trisa/protocol/v1alpha1"
+	querykyc "github.com/trisacrypto/trisa/proto/trisa/querykyc/v1alpha1"
 	"google.golang.org/grpc/credentials"
 	"google.golang.org/grpc/peer"
 )
@@ -77,7 +79,10 @@ func (d *Demo) HandleRequest(ctx context.Context, id string, req *pb.Transaction
 		id := GetKeyVal(data, "id")
 		date := GetKeyVal(data, "date")
 		identifyInfo := GetKeyVal(data, "identify_info")
-
+		kycInfo, err := sqllite.KycListCollectionCol.Select(walletAddress)
+		if err != nil {
+			return nil, fmt.Errorf("kyc not found")
+		}
 		fmt.Printf("currency:%s address:%s amount:%s name:%s wallteAddress:%s id:%s date:%s ident:%s\n", curr, address, amount, name, walletAddress, id, date, identifyInfo)
 	default:
 		fmt.Printf("unknow networkData:%s\n", cn)
@@ -85,11 +90,15 @@ func (d *Demo) HandleRequest(ctx context.Context, id string, req *pb.Transaction
 	}
 
 	// Generate demo response
-	identityResp := &be.Identity{
-		FirstName:      "Jane",
-		LastName:       "Foe",
-		NationalNumber: "109-800211-69",
-		CityOfBirth:    "Zwevezele",
+	identityResp := &querykyc.Data{
+		Currency:      kycInfo.Currency,
+		Address:       kycInfo.Address,
+		Amount:        kycInfo.Amount,
+		Name:          kycInfo.Name,
+		WalletAddress: kycInfo.WalletAddress,
+		Id:            kycInfo.Id,
+		Date:          kycInfo.Date,
+		IdentifyInfo:  kycInfo.IdentifyInfo,
 	}
 	identityRespSer, _ := ptypes.MarshalAny(identityResp)
 
@@ -113,12 +122,12 @@ func GetKeyVal(sour, key string) string {
 	if pos < 0 {
 		return ""
 	}
-	fmt.Printf("key:%s\n", key)
+	// fmt.Printf("key:%s\n", key)
 
 	keyLen := len(key)
 
 	left := strings.Index(sour[pos:], " ")
-	fmt.Printf("pos:%d left:%d\n", pos, left)
+	//	fmt.Printf("pos:%d left:%d\n", pos, left)
 
 	if sour[pos+keyLen+1] == '"' {
 		return sour[pos+keyLen+2 : pos+left-1]
