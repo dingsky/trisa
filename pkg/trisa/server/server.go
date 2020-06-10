@@ -114,7 +114,7 @@ func (s *Server) SendRequest(ctx context.Context, target, id string, td *pb.Tran
 
 	respPack, err := protocol.DecodeTransaction(ctx, resp)
 	if err != nil {
-		return nil, fmt.Errorf("decode request: %v", err)
+		return "", fmt.Errorf("decode request: %v", err)
 	}
 	respData := new(ptypes.DynamicAny)
 	ptypes.UnmarshalAny(respPack.Identity, respData)
