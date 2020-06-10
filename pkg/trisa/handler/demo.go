@@ -124,8 +124,8 @@ func GetKeyVal(sour, key string) string {
 	fmt.Printf("pos:%d left:%d\n", pos, left)
 
 	if sour[pos+keyLen+2] == '"' {
-		return sour[pos+keyLen+2 : left-1]
+		return sour[pos+keyLen+2 : pos+left-1]
 	}
-	return sour[pos+keyLen+1 : left]
+	return sour[pos+keyLen+1 : pos+left]
 
 }
