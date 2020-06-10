@@ -76,7 +76,7 @@ func (d *Demo) HandleRequest(ctx context.Context, id string, req *pb.Transaction
 		walletAddress := GetKeyVal(data, "wallet_address")
 		id := GetKeyVal(data, "id")
 		date := GetKeyVal(data, "date")
-		identifyInfo := GetKeyVal(date, "identify_info")
+		identifyInfo := GetKeyVal(data, "identify_info")
 
 		fmt.Printf("currency:%s , address:%s amount:%s name:%s wallteAddress:%s id:%s date:%s ident:%s\n", curr, address, amount, name, walletAddress, id, date, identifyInfo)
 	default:
