@@ -170,7 +170,7 @@ func runServerCmd(cmd *cobra.Command, args []string) {
 
 			fmt.Fprint(w, ".")
 
-		}
+		})
 
 		r.HandleFunc("/send", func(w http.ResponseWriter, r *http.Request) {
 
