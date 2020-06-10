@@ -57,7 +57,6 @@ func (d *Demo) HandleRequest(ctx context.Context, id string, req *pb.Transaction
 	networkType, _ := ptypes.AnyMessageName(req.Data)
 	var networkData ptypes.DynamicAny
 	ptypes.UnmarshalAny(req.Data, &networkData)
-	data := networkData.ProtoMessage
 	cn := tlsAuth.State.VerifiedChains[0][0].Subject.CommonName
 	log.WithFields(log.Fields{
 		"identity-type": identityType,
