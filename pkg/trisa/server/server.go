@@ -112,12 +112,12 @@ func (s *Server) SendRequest(ctx context.Context, target, id string, td *pb.Tran
 	}
 	fmt.Printf("resp msg:%v", resp)
 
-	//respPack, err := s.handle(ctx, resp)
-	//if err != nil && err.Error() != "EOL" {
-	//	return nil, fmt.Errorf("response stream error: %v", err)
-	//}
+	respPack, err := s.handle(ctx, resp)
+	if err != nil && err.Error() != "EOL" {
+		return nil, fmt.Errorf("response stream error: %v", err)
+	}
 
-	return resp, nil
+	return respPack, nil
 }
 
 func (s *Server) TransactionStream(srv pb.TrisaPeer2Peer_TransactionStreamServer) error {
@@ -176,27 +176,27 @@ func (s *Server) handle(ctx context.Context, req *pb.Transaction) (*pb.Transacti
 		return nil, fmt.Errorf("decode request: %v", err)
 	}
 
-	resTransactionData, err := s.handler.HandleRequest(ctx, req.Id, reqTransactionData)
-	if err != nil && err.Error() == "EOL" {
-		return nil, err
-	}
+	//resTransactionData, err := s.handler.HandleRequest(ctx, req.Id, reqTransactionData)
+	//if err != nil && err.Error() == "EOL" {
+	//	return nil, err
+	//}
+	//
+	//if err != nil {
+	//	return nil, fmt.Errorf("transaction request handler request: %s", err)
+	//}
+	//
+	//res, err := protocol.EncodeTransactionData(ctx, req.Id, resTransactionData)
+	//if err != nil {
+	//	return nil, fmt.Errorf("encode response: %v", err)
+	//}
+	//
+	//log.WithFields(log.Fields{
+	//	"direction": "outgoing",
+	//	"enc_blob":  res.Transaction,
+	//	"enc_algo":  res.EncryptionAlgorithm,
+	//	"hmac":      res.Hmac,
+	//	"hmac_algo": res.HmacAlgorithm,
+	//}).Infof("protocol envelope for incomingtransaction %s", res.Id)
 
-	if err != nil {
-		return nil, fmt.Errorf("transaction request handler request: %s", err)
-	}
-
-	res, err := protocol.EncodeTransactionData(ctx, req.Id, resTransactionData)
-	if err != nil {
-		return nil, fmt.Errorf("encode response: %v", err)
-	}
-
-	log.WithFields(log.Fields{
-		"direction": "outgoing",
-		"enc_blob":  res.Transaction,
-		"enc_algo":  res.EncryptionAlgorithm,
-		"hmac":      res.Hmac,
-		"hmac_algo": res.HmacAlgorithm,
-	}).Infof("protocol envelope for incomingtransaction %s", res.Id)
-
-	return res, nil
+	return reqTransactionData, nil
 }
