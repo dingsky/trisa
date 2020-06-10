@@ -6,6 +6,6 @@ go_library(
         "kycList.go",
         "txnList.go",
     ],
-    importpath = "github.com/trisacrypto/trisa/dao/sqllite",
+    importpath = "github.com/trisacrypto/trisa/model/sqlliteModel",
     visibility = ["//visibility:public"],
 )

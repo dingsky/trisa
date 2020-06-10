@@ -9,4 +9,7 @@ go_library(
     ],
     importpath = "github.com/trisacrypto/trisa/dao/sqllite",
     visibility = ["//visibility:public"],
+    deps = [
+            "//model/sqlliteModel:go_default_library",
+        ],
 )
