@@ -67,7 +67,7 @@ func (s *Server) getClient(target string) (pb.TrisaPeer2Peer_TransactionStreamCl
 	return stream, nil
 }
 
-func (s *Server) SendRequest(ctx context.Context, target, id string, td *pb.TransactionData) (*pb.TransactionData, error) {
+func (s *Server) SendRequest(ctx context.Context, target, id string, td *pb.TransactionData) (string, error) {
 
 	ctx = handler.WithClientSide(ctx)
 
@@ -124,7 +124,7 @@ func (s *Server) SendRequest(ctx context.Context, target, id string, td *pb.Tran
 	//	return nil, fmt.Errorf("response stream error: %v", err)
 	//}
 
-	return respData, nil
+	return respData.Message.String(), nil
 }
 
 func (s *Server) TransactionStream(srv pb.TrisaPeer2Peer_TransactionStreamServer) error {
