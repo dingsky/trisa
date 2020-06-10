@@ -198,7 +198,8 @@ func runServerCmd(cmd *cobra.Command, args []string) {
 				Data:     data,
 			}
 
-			if err := pServer.SendRequest(r.Context(), r.URL.Query().Get("target"), uuid.New().String(), tData); err != nil {
+			_, err := pServer.SendRequest(r.Context(), r.URL.Query().Get("target"), uuid.New().String(), tData)
+			if err != nil {
 				fmt.Fprintf(w, "error: %v", err)
 				return
 			}
