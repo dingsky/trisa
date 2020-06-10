@@ -110,18 +110,21 @@ func (s *Server) SendRequest(ctx context.Context, target, id string, td *pb.Tran
 	if err != nil {
 		return nil, fmt.Errorf("receive stream error: %v", err)
 	}
-	fmt.Printf("resp msg:%v", resp)
+	fmt.Printf("resp msg:%v\n", resp)
 
 	respPack, err := protocol.DecodeTransaction(ctx, resp)
 	if err != nil {
 		return nil, fmt.Errorf("decode request: %v", err)
 	}
+	respData := new(ptypes.DynamicAny)
+	ptypes.UnmarshalAny(respPack.Identity, respData)
+
 	//respPack, err := s.handle(ctx, resp)
 	//if err != nil && err.Error() != "EOL" {
 	//	return nil, fmt.Errorf("response stream error: %v", err)
 	//}
 
-	return respPack, nil
+	return respData, nil
 }
 
 func (s *Server) TransactionStream(srv pb.TrisaPeer2Peer_TransactionStreamServer) error {
