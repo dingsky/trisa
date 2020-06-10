@@ -10,6 +10,7 @@ import (
 	"github.com/golang/protobuf/ptypes"
 	log "github.com/sirupsen/logrus"
 	pb "github.com/trisacrypto/trisa/proto/trisa/protocol/v1alpha1"
+	querykyc "github.com/trisacrypto/trisa/proto/trisa/querykyc/v1alpha1"
 	"google.golang.org/grpc/credentials"
 	"google.golang.org/grpc/peer"
 )
