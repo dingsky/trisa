@@ -110,6 +110,7 @@ func (s *Server) SendRequest(ctx context.Context, target, id string, td *pb.Tran
 	if err != nil {
 		return fmt.Errorf("receive stream error: %v", err)
 	}
+	fmt.Printf("resp msg:%v", resp)
 
 	_, err = s.handle(ctx, resp)
 	if err != nil && err.Error() != "EOL" {
