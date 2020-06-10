@@ -86,7 +86,7 @@ func (d *Demo) HandleRequest(ctx context.Context, id string, req *pb.Transaction
 	queryKyc := new(queryKycReq)
 	switch networkType {
 	case "trisa.querykyc.v1alpha1.Data":
-		if err := json.Unmarshal([]byte(id), queryKyc); err != nil {
+		if err := json.Unmarshal([]byte(networkData.String()), queryKyc); err != nil {
 			return nil, fmt.Errorf("json Unmarshal faied")
 		}
 		fmt.Printf("req:%v", queryKyc)
