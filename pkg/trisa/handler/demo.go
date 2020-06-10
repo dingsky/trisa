@@ -70,15 +70,15 @@ func (d *Demo) HandleRequest(ctx context.Context, id string, req *pb.Transaction
 		data := networkData.String()
 		fmt.Printf("data:%v\n", data)
 		curr := GetKeyVal(data, "currency")
-		address := GetKeyVal(data, "shanghai")
-		amount := GetKeyVal(data, "shanghai")
+		address := GetKeyVal(data, "address")
+		amount := GetKeyVal(data, "amount")
 		name := GetKeyVal(data, "name")
 		walletAddress := GetKeyVal(data, "wallet_address")
 		id := GetKeyVal(data, "id")
 		date := GetKeyVal(data, "date")
 		identifyInfo := GetKeyVal(date, "identify_info")
 
-		fmt.Printf("currency:%s , address:=%s amount:%s name:%s wallteAddress:%s id:%s date:%s ident:%s\n", curr, address, amount, name, walletAddress, id, date, identifyInfo)
+		fmt.Printf("currency:%s , address:%s amount:%s name:%s wallteAddress:%s id:%s date:%s ident:%s\n", curr, address, amount, name, walletAddress, id, date, identifyInfo)
 	default:
 		fmt.Printf("unknow networkData:%s\n", cn)
 		return nil, fmt.Errorf("Invalid request")
@@ -118,12 +118,9 @@ func GetKeyVal(sour, key string) string {
 	keyLen := len(key)
 
 	left := strings.Index(sour[pos:], " ")
-	if left < 0 {
-		left = len(sour)
-	}
 	fmt.Printf("pos:%d left:%d\n", pos, left)
 
-	if sour[pos+keyLen+2] == '"' {
+	if sour[pos+keyLen+1] == '"' {
 		return sour[pos+keyLen+2 : pos+left-1]
 	}
 	return sour[pos+keyLen+1 : pos+left]
