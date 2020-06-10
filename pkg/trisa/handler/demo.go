@@ -117,6 +117,9 @@ func GetKeyVal(sour, key string) string {
 	keyLen := len(key)
 
 	left := strings.Index(sour[pos:], " ")
+	if left < 0 {
+		left = len(sour)
+	}
 
 	if sour[pos+keyLen+2] == '"' {
 		return sour[pos+keyLen+2 : left-1]
