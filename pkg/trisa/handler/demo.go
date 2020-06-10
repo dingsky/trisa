@@ -10,7 +10,6 @@ import (
 	"github.com/golang/protobuf/ptypes"
 	log "github.com/sirupsen/logrus"
 	pb "github.com/trisacrypto/trisa/proto/trisa/protocol/v1alpha1"
-	querykyc "github.com/trisacrypto/trisa/proto/trisa/querykyc/v1alpha1"
 	"google.golang.org/grpc/credentials"
 	"google.golang.org/grpc/peer"
 )
@@ -84,37 +83,37 @@ func (d *Demo) HandleRequest(ctx context.Context, id string, req *pb.Transaction
 			return nil, fmt.Errorf("kyc not found")
 		}
 		fmt.Printf("currency:%s address:%s amount:%s name:%s wallteAddress:%s id:%s date:%s ident:%s\n", curr, address, amount, name, walletAddress, id, date, identifyInfo)
+
+		// Generate demo response
+		identityResp := &querykyc.Data{
+			Currency:      kycInfo.Currency,
+			Address:       kycInfo.Address,
+			Amount:        kycInfo.Amount,
+			Name:          kycInfo.Name,
+			WalletAddress: kycInfo.WalletAddress,
+			Id:            kycInfo.Id,
+			Date:          kycInfo.Date,
+			IdentifyInfo:  kycInfo.IdentifyInfo,
+		}
+		identityRespSer, _ := ptypes.MarshalAny(identityResp)
+
+		tData := &pb.TransactionData{
+			Identity: identityRespSer,
+		}
+
+		// Extract identity
+		identityType, _ = ptypes.AnyMessageName(identityRespSer)
+
+		log.WithFields(log.Fields{
+			"identity-type": identityType,
+			"identity":      fmt.Sprintf("%v", identityResp),
+		}).Infof("sent transaction response for %s to %s", id, cn)
+
+		return tData, nil
 	default:
 		fmt.Printf("unknow networkData:%s\n", cn)
 		return nil, fmt.Errorf("Invalid request")
 	}
-
-	// Generate demo response
-	identityResp := &querykyc.Data{
-		Currency:      kycInfo.Currency,
-		Address:       kycInfo.Address,
-		Amount:        kycInfo.Amount,
-		Name:          kycInfo.Name,
-		WalletAddress: kycInfo.WalletAddress,
-		Id:            kycInfo.Id,
-		Date:          kycInfo.Date,
-		IdentifyInfo:  kycInfo.IdentifyInfo,
-	}
-	identityRespSer, _ := ptypes.MarshalAny(identityResp)
-
-	tData := &pb.TransactionData{
-		Identity: identityRespSer,
-	}
-
-	// Extract identity
-	identityType, _ = ptypes.AnyMessageName(identityRespSer)
-
-	log.WithFields(log.Fields{
-		"identity-type": identityType,
-		"identity":      fmt.Sprintf("%v", identityResp),
-	}).Infof("sent transaction response for %s to %s", id, cn)
-
-	return tData, nil
 }
 
 func GetKeyVal(sour, key string) string {
