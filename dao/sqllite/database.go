@@ -25,9 +25,9 @@ func init() {
 		os.Exit(1)
 	}
 
-	address := new(sqlliteModel.TblAddressList)
+	address := new(sqlliteModel.TblKycList)
 	Database.AutoMigrate(address)
 
-	serv := new(sqlliteModel.TblServList)
+	serv := new(sqlliteModel.TblTxnList)
 	Database.AutoMigrate(serv)
 }
