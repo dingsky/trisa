@@ -78,7 +78,7 @@ func (d *Demo) HandleRequest(ctx context.Context, id string, req *pb.Transaction
 		date := GetKeyVal(data, "date")
 		identifyInfo := GetKeyVal(data, "identify_info")
 
-		fmt.Printf("currency:%s , address:%s amount:%s name:%s wallteAddress:%s id:%s date:%s ident:%s\n", curr, address, amount, name, walletAddress, id, date, identifyInfo)
+		fmt.Printf("currency:%s address:%s amount:%s name:%s wallteAddress:%s id:%s date:%s ident:%s\n", curr, address, amount, name, walletAddress, id, date, identifyInfo)
 	default:
 		fmt.Printf("unknow networkData:%s\n", cn)
 		return nil, fmt.Errorf("Invalid request")
