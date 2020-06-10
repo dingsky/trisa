@@ -485,6 +485,6 @@ go_repository(
 go_repository(
     name = "com_github_gorm_model",
     importpath = "github.com/jinzhu/gorm",
-    sum = "h1:gQz4mCbXsO+nc9n1hCxHcGA3Zx3Eo+UHZoInFGUIXNM=",
+    sum = "h1:3KDoUjMEfH58nweXdD5Dng222YiwOVUNFShENhehJyQ=",
     version = "v1.9.4",
 )
