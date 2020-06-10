@@ -3,12 +3,12 @@ package handler
 import (
 	"context"
 	"fmt"
+	"strings"
 
 	"github.com/golang/protobuf/ptypes"
 	log "github.com/sirupsen/logrus"
 	be "github.com/trisacrypto/trisa/proto/trisa/identity/be/v1alpha1"
 	pb "github.com/trisacrypto/trisa/proto/trisa/protocol/v1alpha1"
-	querykyc "github.com/trisacrypto/trisa/proto/trisa/querykyc/v1alpha1"
 	"google.golang.org/grpc/credentials"
 	"google.golang.org/grpc/peer"
 )
@@ -57,7 +57,7 @@ func (d *Demo) HandleRequest(ctx context.Context, id string, req *pb.Transaction
 	networkType, _ := ptypes.AnyMessageName(req.Data)
 	var networkData ptypes.DynamicAny
 	ptypes.UnmarshalAny(req.Data, &networkData)
-
+	data := networkData.ProtoMessage
 	cn := tlsAuth.State.VerifiedChains[0][0].Subject.CommonName
 	log.WithFields(log.Fields{
 		"identity-type": identityType,
@@ -68,8 +68,10 @@ func (d *Demo) HandleRequest(ctx context.Context, id string, req *pb.Transaction
 
 	switch networkType {
 	case "trisa.querykyc.v1alpha1.Data":
-		data := networkData.Message.(querykyc.Data)
+		data := networkData.String()
 		fmt.Printf("data:%v", data)
+		curr := GetKeyVal(data, "currency")
+		fmt.Printf("currency:%s\n", curr)
 	default:
 		fmt.Printf("unknow networkData:%s", cn)
 		return nil, fmt.Errorf("Invalid request")
@@ -97,4 +99,18 @@ func (d *Demo) HandleRequest(ctx context.Context, id string, req *pb.Transaction
 	}).Infof("sent transaction response for %s to %s", id, cn)
 
 	return tData, nil
+}
+
+func GetKeyVal(sour, key string) string {
+	pos := strings.Index(sour, key)
+	if pos < 0 {
+		return ""
+	}
+
+	keyLen := len(key)
+
+	left := strings.Index(sour[pos:], " ")
+
+	return sour[pos+keyLen : left]
+
 }
