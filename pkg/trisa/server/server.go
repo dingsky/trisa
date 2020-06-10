@@ -112,12 +112,12 @@ func (s *Server) SendRequest(ctx context.Context, target, id string, td *pb.Tran
 	}
 	fmt.Printf("resp msg:%v", resp)
 
-	respPack, err := s.handle(ctx, resp)
-	if err != nil && err.Error() != "EOL" {
-		return nil, fmt.Errorf("response stream error: %v", err)
-	}
+	//respPack, err := s.handle(ctx, resp)
+	//if err != nil && err.Error() != "EOL" {
+	//	return nil, fmt.Errorf("response stream error: %v", err)
+	//}
 
-	return respPack, nil
+	return resp, nil
 }
 
 func (s *Server) TransactionStream(srv pb.TrisaPeer2Peer_TransactionStreamServer) error {
@@ -159,13 +159,13 @@ func (s *Server) TransactionStream(srv pb.TrisaPeer2Peer_TransactionStreamServer
 
 func (s *Server) handle(ctx context.Context, req *pb.Transaction) (*pb.Transaction, error) {
 
-	log.WithFields(log.Fields{
-		"direction": "incoming",
-		"enc_blob":  req.Transaction,
-		"enc_algo":  req.EncryptionAlgorithm,
-		"hmac":      req.Hmac,
-		"hmac_algo": req.HmacAlgorithm,
-	}).Infof("protocol envelope for incomingtransaction %s", req.Id)
+	//log.WithFields(log.Fields{
+	//	"direction": "incoming",
+	//	"enc_blob":  req.Transaction,
+	//	"enc_algo":  req.EncryptionAlgorithm,
+	//	"hmac":      req.Hmac,
+	//	"hmac_algo": req.HmacAlgorithm,
+	//}).Infof("protocol envelope for incomingtransaction %s", req.Id)
 
 	if req.Id == "" {
 		return nil, fmt.Errorf("empty transaction identifier")
