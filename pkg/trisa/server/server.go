@@ -157,7 +157,7 @@ func (s *Server) TransactionStream(srv pb.TrisaPeer2Peer_TransactionStreamServer
 	return nil
 }
 
-func (s *Server) handle(ctx context.Context, req *pb.Transaction) (*pb.Transaction, error) {
+func (s *Server) handle(ctx context.Context, req *pb.Transaction) (*pb.TransactionData, error) {
 
 	//log.WithFields(log.Fields{
 	//	"direction": "incoming",
