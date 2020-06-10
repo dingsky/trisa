@@ -110,6 +110,6 @@ func GetKeyVal(sour, key string) string {
 
 	left := strings.Index(sour[pos:], " ")
 
-	return sour[pos+keyLen : left]
+	return sour[pos+keyLen+2 : left-1]
 
 }
