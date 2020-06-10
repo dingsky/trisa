@@ -214,7 +214,7 @@ func runServerCmd(cmd *cobra.Command, args []string) {
 			txn.RecieverName = rsp.RecieverKyc.Name
 			txn.RecieverWalletAddress = rsp.RecieverKyc.WalletAddress
 
-			err := sqllite.TxnListCollectionCol.Insert(txn)
+			err = sqllite.TxnListCollectionCol.Insert(txn)
 			if err != nil {
 				fmt.Fprintf(w, "insert db error: %v", err)
 				return
