@@ -2,6 +2,7 @@ package handler
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 
 	"github.com/golang/protobuf/ptypes"
@@ -11,6 +12,23 @@ import (
 	"google.golang.org/grpc/credentials"
 	"google.golang.org/grpc/peer"
 )
+
+type queryKycReq struct {
+	DestUrl   string    `json:"dest_url,omitempty"`
+	Currency  string    `json:"currency,omitempty"`
+	Net       string    `json:"net,omitempty"`
+	Address   string    `json:"address,omitempty"`
+	Amount    float64   `json:"amount,omitempty"`
+	SenderKyc senderKyc `json:"sender_kyc,omitempty"`
+}
+
+type senderKyc struct {
+	Name          string `json:"name,omitempty"`
+	WalletAddress string `json:"wallet_address,omitempty"`
+	Id            string `json:"id,omitempty"`
+	Date          string `json:"date,omitempty"`
+	IdentifyInfo  string `json:"identify_info,omitempty"`
+}
 
 func NewDemoHandler() *Demo {
 	return &Demo{}
@@ -64,6 +82,18 @@ func (d *Demo) HandleRequest(ctx context.Context, id string, req *pb.Transaction
 		"identity":      fmt.Sprintf("%v", identityData),
 		"network":       fmt.Sprintf("%v", networkData),
 	}).Infof("received transaction %s from %s", id, cn)
+
+	queryKyc := new(queryKycReq)
+	switch cn {
+	case "trisa.querykyc.v1alpha1.Data":
+		if err := json.Unmarshal([]byte(id), queryKyc); err != nil {
+			return nil, fmt.Errorf("json Unmarshal faied")
+		}
+		fmt.Printf("req:%v", queryKyc)
+	default:
+		fmt.Printf("unknow networkData:%s", cn)
+		return nil, fmt.Errorf("Invalid request")
+	}
 
 	// Generate demo response
 	identityResp := &be.Identity{
