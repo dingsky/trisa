@@ -481,3 +481,10 @@ go_repository(
     sum = "h1:c2HOrn5iMezYjSlGPncknSEr/8x5LELb/ilJbXi9DEA=",
     version = "v0.0.0-20190121172915-509febef88a4",
 )
+
+go_repository(
+    name = "com_github_gorm_model",
+    importpath = "github.com/jinzhu/gorm",
+    sum = "h1:gQz4mCbXsO+nc9n1hCxHcGA3Zx3Eo+UHZoInFGUIXNM=",
+    version = "v1.9.4",
+)

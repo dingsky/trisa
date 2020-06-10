@@ -11,5 +11,6 @@ go_library(
     visibility = ["//visibility:public"],
     deps = [
             "//model/sqlliteModel:go_default_library",
+            "@com_github_gorm_model//:go_default_library",
         ],
 )
