@@ -10,6 +10,7 @@ import (
 	"net"
 	"net/http"
 	"net/url"
+	"strings"
 	"time"
 
 	"github.com/golang/protobuf/ptypes"
@@ -30,16 +31,22 @@ import (
 	"google.golang.org/grpc/credentials"
 )
 
-type queryKycReq struct {
-	DestUrl   string    `json:"dest_url,omitempty"`
-	Currency  string    `json:"currency,omitempty"`
-	Net       string    `json:"net,omitempty"`
-	Address   string    `json:"address,omitempty"`
-	Amount    float64   `json:"amount,omitempty"`
-	SenderKyc senderKyc `json:"sender_kyc,omitempty"`
+type queryKycRsp struct {
+	RespCode    string  `json:"resp_code,omitempty"`
+	RespDesc    string  `json:"resp_desc,omitempty"`
+	RecieverKyc KycInfo `json:"reciever_kyc,omitempty"`
 }
 
-type senderKyc struct {
+type queryKycReq struct {
+	DestUrl   string  `json:"dest_url,omitempty"`
+	Currency  string  `json:"currency,omitempty"`
+	Net       string  `json:"net,omitempty"`
+	Address   string  `json:"address,omitempty"`
+	Amount    float64 `json:"amount,omitempty"`
+	SenderKyc KycInfo `json:"sender_kyc,omitempty"`
+}
+
+type KycInfo struct {
 	Name          string `json:"name,omitempty"`
 	WalletAddress string `json:"wallet_address,omitempty"`
 	Id            string `json:"id,omitempty"`
@@ -169,7 +176,17 @@ func runServerCmd(cmd *cobra.Command, args []string) {
 				return
 			}
 			fmt.Printf("last resp:%s", resp)
-			fmt.Fprint(w, ".")
+
+			rsp := new(queryKycRsp)
+			rsp.RespDesc = "success"
+			rsp.RespCode = "0000"
+			rsp.RecieverKyc.Name = GetKeyVal(resp, "name")
+			rsp.RecieverKyc.Id = GetKeyVal(resp, "id")
+			rsp.RecieverKyc.IdentifyInfo = GetKeyVal(resp, "identify_info")
+			rsp.RecieverKyc.Date = GetKeyVal(resp, "date")
+			rsp.RecieverKyc.WalletAddress = GetKeyVal(resp, "wallet_address")
+			rspMsg, _ := json.Marshal(rsp)
+			fmt.Fprint(w, rspMsg)
 
 		})
 
@@ -336,4 +353,23 @@ func responseFailure(err error) *PingResponse {
 		Message: "something went wrong",
 		Status:  err.Error(),
 	}
+}
+
+func GetKeyVal(sour, key string) string {
+	pos := strings.Index(sour, key)
+	if pos < 0 {
+		return ""
+	}
+	// fmt.Printf("key:%s\n", key)
+
+	keyLen := len(key)
+
+	left := strings.Index(sour[pos:], " ")
+	//	fmt.Printf("pos:%d left:%d\n", pos, left)
+
+	if sour[pos+keyLen+1] == '"' {
+		return sour[pos+keyLen+2 : pos+left-1]
+	}
+	return sour[pos+keyLen+1 : pos+left]
+
 }
