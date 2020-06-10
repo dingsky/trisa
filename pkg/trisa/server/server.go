@@ -67,7 +67,7 @@ func (s *Server) getClient(target string) (pb.TrisaPeer2Peer_TransactionStreamCl
 	return stream, nil
 }
 
-func (s *Server) SendRequest(ctx context.Context, target, id string, td *pb.TransactionData) (*pb.TransactionData, error) {
+func (s *Server) SendRequest(ctx context.Context, target, id string, td *pb.TransactionData) (*pb.Transaction, error) {
 
 	ctx = handler.WithClientSide(ctx)
 
@@ -112,10 +112,14 @@ func (s *Server) SendRequest(ctx context.Context, target, id string, td *pb.Tran
 	}
 	fmt.Printf("resp msg:%v", resp)
 
-	respPack, err := s.handle(ctx, resp)
-	if err != nil && err.Error() != "EOL" {
-		return nil, fmt.Errorf("response stream error: %v", err)
+	respPack, err := protocol.DecodeTransaction(ctx, resp)
+	if err != nil {
+		return nil, fmt.Errorf("decode request: %v", err)
 	}
+	//respPack, err := s.handle(ctx, resp)
+	//if err != nil && err.Error() != "EOL" {
+	//	return nil, fmt.Errorf("response stream error: %v", err)
+	//}
 
 	return respPack, nil
 }
@@ -157,15 +161,15 @@ func (s *Server) TransactionStream(srv pb.TrisaPeer2Peer_TransactionStreamServer
 	return nil
 }
 
-func (s *Server) handle(ctx context.Context, req *pb.Transaction) (*pb.TransactionData, error) {
+func (s *Server) handle(ctx context.Context, req *pb.Transaction) (*pb.Transaction, error) {
 
-	//log.WithFields(log.Fields{
-	//	"direction": "incoming",
-	//	"enc_blob":  req.Transaction,
-	//	"enc_algo":  req.EncryptionAlgorithm,
-	//	"hmac":      req.Hmac,
-	//	"hmac_algo": req.HmacAlgorithm,
-	//}).Infof("protocol envelope for incomingtransaction %s", req.Id)
+	log.WithFields(log.Fields{
+		"direction": "incoming",
+		"enc_blob":  req.Transaction,
+		"enc_algo":  req.EncryptionAlgorithm,
+		"hmac":      req.Hmac,
+		"hmac_algo": req.HmacAlgorithm,
+	}).Infof("protocol envelope for incomingtransaction %s", req.Id)
 
 	if req.Id == "" {
 		return nil, fmt.Errorf("empty transaction identifier")
@@ -176,27 +180,27 @@ func (s *Server) handle(ctx context.Context, req *pb.Transaction) (*pb.Transacti
 		return nil, fmt.Errorf("decode request: %v", err)
 	}
 
-	//resTransactionData, err := s.handler.HandleRequest(ctx, req.Id, reqTransactionData)
-	//if err != nil && err.Error() == "EOL" {
-	//	return nil, err
-	//}
-	//
-	//if err != nil {
-	//	return nil, fmt.Errorf("transaction request handler request: %s", err)
-	//}
-	//
-	//res, err := protocol.EncodeTransactionData(ctx, req.Id, resTransactionData)
-	//if err != nil {
-	//	return nil, fmt.Errorf("encode response: %v", err)
-	//}
-	//
-	//log.WithFields(log.Fields{
-	//	"direction": "outgoing",
-	//	"enc_blob":  res.Transaction,
-	//	"enc_algo":  res.EncryptionAlgorithm,
-	//	"hmac":      res.Hmac,
-	//	"hmac_algo": res.HmacAlgorithm,
-	//}).Infof("protocol envelope for incomingtransaction %s", res.Id)
+	resTransactionData, err := s.handler.HandleRequest(ctx, req.Id, reqTransactionData)
+	if err != nil && err.Error() == "EOL" {
+		return nil, err
+	}
 
-	return reqTransactionData, nil
+	if err != nil {
+		return nil, fmt.Errorf("transaction request handler request: %s", err)
+	}
+
+	res, err := protocol.EncodeTransactionData(ctx, req.Id, resTransactionData)
+	if err != nil {
+		return nil, fmt.Errorf("encode response: %v", err)
+	}
+
+	log.WithFields(log.Fields{
+		"direction": "outgoing",
+		"enc_blob":  res.Transaction,
+		"enc_algo":  res.EncryptionAlgorithm,
+		"hmac":      res.Hmac,
+		"hmac_algo": res.HmacAlgorithm,
+	}).Infof("protocol envelope for incomingtransaction %s", res.Id)
+
+	return res, nil
 }
