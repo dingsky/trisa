@@ -13,6 +13,9 @@ import (
 	"strings"
 	"time"
 
+	"github.com/trisacrypto/trisa/dao/sqllite"
+	"github.com/trisacrypto/trisa/model/sqlliteModel"
+
 	"github.com/golang/protobuf/ptypes"
 	"github.com/google/uuid"
 	"github.com/gorilla/mux"
@@ -27,7 +30,6 @@ import (
 	us "github.com/trisacrypto/trisa/proto/trisa/identity/us/v1alpha1"
 	pb "github.com/trisacrypto/trisa/proto/trisa/protocol/v1alpha1"
 	querykyc "github.com/trisacrypto/trisa/proto/trisa/querykyc/v1alpha1"
-	querytxn "github.com/trisacrypto/trisa/proto/trisa/querytxn/v1alpha1"
 	synctxn "github.com/trisacrypto/trisa/proto/trisa/synctxn/v1alpha1"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials"
@@ -80,7 +82,7 @@ type TxnInfoDef struct {
 	Id       string  `json:"id,omitempty"`
 	Hash     string  `json:"hash,omitempty"`
 	Currency string  `json:"currency,omitempty"`
-	Count    string  `json:"net,omitempty"`
+	Count    int64   `json:"net,omitempty"`
 	Amount   float64 `json:"amount,omitempty"`
 	Date     string  `json:"date,omitempty"`
 }
@@ -92,6 +94,21 @@ type KycInfo struct {
 	Date          string `json:"date,omitempty"`
 	IdentifyInfo  string `json:"identify_info,omitempty"`
 	Address       string `json:"address,omitempty"`
+}
+
+type queryVaspReq struct {
+	Currency string `json:"currency,omitempty"`
+	Net      string `json:"net,omitempty"`
+	Address  string `json:"address,omitempty"`
+}
+
+type queryVaspRsp struct {
+	RespCode string `json:"resp_code,omitempty"`
+	RespDesc string `json:"resp_desc,omitempty"`
+	Name     string `json:"name,omitempty"`
+	Address  string `json:"address,omitempty"`
+	Type     string `json:"type,omitempty"`
+	Url      string `json:"url,omitempty"`
 }
 
 func NewServerCmd() *cobra.Command {
@@ -187,6 +204,31 @@ func runServerCmd(cmd *cobra.Command, args []string) {
 				return
 			}
 
+			url := "http://127.0.0.1:9995/v0/api/trisacenter/get_vasp"
+			queryVaspReq := new(queryVaspReq)
+			queryVaspReq.Currency = req.Currency
+			queryVaspReq.Net = req.Net
+			queryVaspReq.Address = req.SenderKyc.WalletAddress
+			queryVaspReqMsg, err := json.Marshal(queryVaspReq)
+			if err != nil {
+				fmt.Printf("json Marsharl error:%s", err)
+				return
+			}
+			respM, err := http.Post(url, "application/json", strings.NewReader(string(queryVaspReqMsg)))
+			defer respM.Body.Close()
+			body, err := ioutil.ReadAll(respM.Body)
+			if err != nil {
+				fmt.Printf("http post error:%s", err)
+				return
+			}
+
+			queryVaspRsp := new(queryVaspRsp)
+			err = json.Unmarshal(body, queryVaspRsp)
+			if err != nil {
+				fmt.Printf("json unmarshal error:%s", err)
+				return
+			}
+
 			identity, _ := ptypes.MarshalAny(&querykyc.Data{
 				Currency: req.Currency,
 				Net:      req.Net,
@@ -210,12 +252,40 @@ func runServerCmd(cmd *cobra.Command, args []string) {
 				Data:     data,
 			}
 
-			resp, err := pServer.SendRequest(r.Context(), req.DestUrl, uuid.New().String(), tData)
+			resp, err := pServer.SendRequest(r.Context(), queryVaspRsp.Url, uuid.New().String(), tData)
 			if err != nil {
 				fmt.Fprintf(w, "error: %v", err)
 				return
 			}
 			fmt.Printf("last resp:%s", resp)
+
+			txn := new(sqlliteModel.TblTxnList)
+			txn.Net = req.Net
+			txn.Date = ""
+			txn.Amount = req.Amount
+			txn.Currency = req.Currency
+			txn.Count = 0
+			txn.ID = ""
+			txn.SenderAddress = req.SenderKyc.Address
+			txn.SenderDate = req.SenderKyc.Date
+			txn.SenderId = req.SenderKyc.Id
+			txn.SenderIdentifyInfo = req.SenderKyc.IdentifyInfo
+			txn.SenderName = req.SenderKyc.Name
+			txn.SenderWalletAddress = req.SenderKyc.WalletAddress
+
+			txn.RecieverAddress = GetKeyVal(resp, "address")
+			txn.RecieverDate = GetKeyVal(resp, "date")
+			txn.RecieverId = GetKeyVal(resp, "id")
+			txn.RecieverIdentifyInfo = GetKeyVal(resp, "identify_info")
+			txn.RecieverName = GetKeyVal(resp, "name")
+			txn.RecieverWalletAddress = GetKeyVal(resp, "wallet_address")
+			txn.Key = GetKeyVal(resp, "key")
+
+			err = sqllite.TxnListCollectionCol.Insert(txn)
+			if err != nil {
+				fmt.Fprintf(w, "error: %v", err)
+				return
+			}
 
 			rsp := new(queryKycRsp)
 			rsp.RespDesc = "success"
@@ -250,29 +320,32 @@ func runServerCmd(cmd *cobra.Command, args []string) {
 				return
 			}
 
-			identity, _ := ptypes.MarshalAny(&querytxn.ReqMsg{
-				Hash: req.TxnHash,
-			})
-
-			data, _ := ptypes.MarshalAny(&querytxn.ReqMsg{
-				Hash: req.TxnHash,
-			})
-
-			tData := &pb.TransactionData{
-				Identity: identity,
-				Data:     data,
-			}
-
-			resp, err := pServer.SendRequest(r.Context(), req.DestUrl, uuid.New().String(), tData)
+			txnInfo, err := sqllite.TxnListCollectionCol.SelectByHash(req.TxnHash)
 			if err != nil {
-				fmt.Fprintf(w, "error: %v", err)
+				fmt.Printf("kyc not found error:%s", err)
 				return
 			}
-			fmt.Printf("last resp:%s", resp)
 
 			rsp := new(queryTxnRsp)
 			rsp.RespDesc = "success"
 			rsp.RespCode = "0000"
+			rsp.RecieverKyc.Name = txnInfo.RecieverName
+			rsp.RecieverKyc.WalletAddress = txnInfo.RecieverWalletAddress
+			rsp.RecieverKyc.Date = txnInfo.RecieverDate
+			rsp.RecieverKyc.Id = txnInfo.RecieverId
+			rsp.RecieverKyc.IdentifyInfo = txnInfo.RecieverIdentifyInfo
+			rsp.SenderKyc.Name = txnInfo.SenderName
+			rsp.SenderKyc.WalletAddress = txnInfo.SenderWalletAddress
+			rsp.SenderKyc.Date = txnInfo.SenderDate
+			rsp.SenderKyc.Id = txnInfo.SenderId
+			rsp.SenderKyc.IdentifyInfo = txnInfo.SenderIdentifyInfo
+			rsp.TxnInfo.Id = txnInfo.ID
+			rsp.TxnInfo.Date = txnInfo.Date
+			rsp.TxnInfo.Currency = txnInfo.Currency
+			rsp.TxnInfo.Hash = txnInfo.Hash
+			rsp.TxnInfo.Count = txnInfo.Count
+			rsp.TxnInfo.Amount = txnInfo.Amount
+
 			rspMsg, _ := json.Marshal(rsp)
 			fmt.Fprint(w, string(rspMsg))
 
@@ -296,6 +369,37 @@ func runServerCmd(cmd *cobra.Command, args []string) {
 				return
 			}
 
+			txnInfo, err := sqllite.TxnListCollectionCol.SelectByKey(req.Key)
+			if err != nil {
+				fmt.Printf("kyc not found error:%s", err)
+				return
+			}
+
+			url := "http://127.0.0.1:9995/v0/api/trisacenter/get_vasp"
+			queryVaspReq := new(queryVaspReq)
+			queryVaspReq.Currency = txnInfo.Currency
+			queryVaspReq.Net = txnInfo.Net
+			queryVaspReq.Address = txnInfo.RecieverWalletAddress
+			queryVaspReqMsg, err := json.Marshal(queryVaspReq)
+			if err != nil {
+				fmt.Printf("json Marsharl error:%s", err)
+				return
+			}
+			respM, err := http.Post(url, "application/json", strings.NewReader(string(queryVaspReqMsg)))
+			defer resp.Body.Close()
+			body, err := ioutil.ReadAll(respM.Body)
+			if err != nil {
+				fmt.Printf("http post error:%s", err)
+				return
+			}
+
+			queryVaspRsp := new(queryVaspRsp)
+			err = json.Unmarshal(body, queryVaspRsp)
+			if err != nil {
+				fmt.Printf("json unmarshal error:%s", err)
+				return
+			}
+
 			identity, _ := ptypes.MarshalAny(&synctxn.ReqMsg{
 				Key: req.Key,
 			})
@@ -309,7 +413,7 @@ func runServerCmd(cmd *cobra.Command, args []string) {
 				Data:     data,
 			}
 
-			resp, err := pServer.SendRequest(r.Context(), req.DestUrl, uuid.New().String(), tData)
+			resp, err := pServer.SendRequest(r.Context(), queryVaspRsp.Url, uuid.New().String(), tData)
 			if err != nil {
 				fmt.Fprintf(w, "error: %v", err)
 				return

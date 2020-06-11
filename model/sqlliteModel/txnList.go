@@ -8,6 +8,7 @@ type TblTxnList struct {
 	Currency              string    `"gorm":"column:currency"`
 	Count                 int64     `"gorm":"column:count"`
 	Amount                float64   `"gorm":"column:amount"`
+	Net                   string    `"gorm":"column:net"`
 	Date                  string    `"gorm":"column:date"`
 	SenderName            string    `"gorm":"column:sender_name"`
 	SenderWalletAddress   string    `"gorm":"column:sender_wallet_address"`
@@ -21,6 +22,7 @@ type TblTxnList struct {
 	RecieverId            string    `"gorm":"column:reciever_id"`
 	RecieverDate          string    `"gorm":"column:reciever_date"`
 	RecieverIdentifyInfo  string    `"gorm":"column:reciever_identify_info"`
+	Key                   string    `"gorm":"column:key"`
 	CreateTime            time.Time `"gorm":"column:create_time"`
 	UpdateTime            time.Time `"gorm":"column:update_time"`
 }

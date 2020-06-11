@@ -193,51 +193,6 @@ func (d *Demo) HandleRequest(ctx context.Context, id string, req *pb.Transaction
 		}).Infof("sent transaction response for %s to %s", id, cn)
 
 		return tData, nil
-
-	case "trisa.querytxn.v1alpha1.Data":
-		data := networkData.String()
-		fmt.Printf("data:%v\n", data)
-		hash := GetKeyVal(data, "hash")
-		txnInfo, err := sqllite.TxnListCollectionCol.SelectByHash(hash)
-		if err != nil {
-			return nil, fmt.Errorf("kyc not found")
-		}
-
-		// Generate demo response
-		identityResp := &querytxn.RspMsg{
-			RecieverName:          txnInfo.RecieverName,
-			RecieverId:            txnInfo.RecieverId,
-			RecieverIdentifyInfo:  txnInfo.RecieverIdentifyInfo,
-			RecieverDate:          txnInfo.RecieverDate,
-			RecieverWalletAddress: txnInfo.RecieverWalletAddress,
-			SenderName:            txnInfo.SenderName,
-			SenderId:              txnInfo.SenderId,
-			SenderIdentifyInfo:    txnInfo.SenderIdentifyInfo,
-			SenderDate:            txnInfo.SenderDate,
-			SenderWalletAddress:   txnInfo.SenderWalletAddress,
-			Date:                  txnInfo.Date,
-			Amount:                txnInfo.Amount,
-			Currency:              txnInfo.Currency,
-			Count:                 txnInfo.Count,
-			Id:                    txnInfo.ID,
-			RespCode:              "00",
-			RespDesc:              "success",
-		}
-		identityRespSer, _ := ptypes.MarshalAny(identityResp)
-
-		tData := &pb.TransactionData{
-			Identity: identityRespSer,
-		}
-
-		// Extract identity
-		identityType, _ = ptypes.AnyMessageName(identityRespSer)
-
-		log.WithFields(log.Fields{
-			"identity-type": identityType,
-			"identity":      fmt.Sprintf("%v", identityResp),
-		}).Infof("sent transaction response for %s to %s", id, cn)
-
-		return tData, nil
 	default:
 		fmt.Printf("unknow networkData:%s\n", cn)
 		return nil, fmt.Errorf("Invalid request")

@@ -1,8 +1,8 @@
 // 查询KYC
-curl -ks "https://127.0.0.1:9996/query_kyc" -d'{"dest_url":"ip-10-250-80-1.wxblockchain.com:8887", "currency":"btc", "address":"shahai", "amount":0.01, "sender_kyc":{"name":"sky", "wallet_address":"456", "id":"789","date":"20200610","identify_info":"yeah"}}'
+curl -ks "https://127.0.0.1:9996/query_kyc" -d'{"currency":"btc", "address":"shahai", "amount":0.01, "sender_kyc":{"name":"sky", "wallet_address":"456", "id":"789","date":"20200610","identify_info":"yeah"}}'
 
 // 同步交易
-curl -ks "https://127.0.0.1:9996/query_kyc" -d'{"dest_url":"ip-10-250-80-1.wxblockchain.com:8887", "currency":"btc", "address":"shahai", "amount":0.01, "sender_kyc":{"name":"sky", "wallet_address":"456", "id":"789","date":"20200610","identify_info":"yeah"}}'
+curl -ks "https://127.0.0.1:9996/query_kyc" -d'{"currency":"btc", "address":"shahai", "amount":0.01, "sender_kyc":{"name":"sky", "wallet_address":"456", "id":"789","date":"20200610","identify_info":"yeah"}}'
 
 // 查询交易
 
