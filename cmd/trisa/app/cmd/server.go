@@ -111,6 +111,15 @@ type queryVaspRsp struct {
 	Url      string `json:"url,omitempty"`
 }
 
+type checkKycReq struct {
+	WalletAddress string `json:"wallet_address,omitempty"`
+}
+
+type checkKycRsp struct {
+	RespCode string `json:"resp_code,omitempty"`
+	RespDesc string `json:"resp_desc,omitempty"`
+}
+
 func NewServerCmd() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "server",
@@ -299,6 +308,29 @@ func runServerCmd(cmd *cobra.Command, args []string) {
 			rspMsg, _ := json.Marshal(rsp)
 
 			fmt.Fprint(w, string(rspMsg))
+
+		})
+
+		r.HandleFunc("/check_address", func(w http.ResponseWriter, r *http.Request) {
+
+			// 读请求报文
+			reqMsg, err := ioutil.ReadAll(r.Body)
+			if err != nil {
+				fmt.Printf("read request error:%s\n", err)
+				return
+			}
+			fmt.Printf("req msg:%s\n", reqMsg)
+
+			url := "http://127.0.0.1:9995/v0/api/trisacenter/get_vasp"
+			respM, err := http.Post(url, "application/json", strings.NewReader(string(reqMsg)))
+			defer respM.Body.Close()
+			body, err := ioutil.ReadAll(respM.Body)
+			if err != nil {
+				fmt.Printf("http post error:%s", err)
+				return
+			}
+
+			fmt.Fprint(w, string(body))
 
 		})
 
