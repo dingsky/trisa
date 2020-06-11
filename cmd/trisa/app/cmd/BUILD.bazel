@@ -19,6 +19,8 @@ go_library(
         "//proto/trisa/identity/us/v1alpha1:go_default_library",
         "//proto/trisa/protocol/v1alpha1:go_default_library",
         "//proto/trisa/querykyc/v1alpha1:go_default_library",
+        "//proto/trisa/querytxn/v1alpha1:go_default_library",
+        "//proto/trisa/synctxn/v1alpha1:go_default_library",
         "//dao/sqllite:go_default_library",
         "//model/sqlliteModel:go_default_library",
         "@com_github_golang_protobuf//ptypes:go_default_library_gen",
