@@ -285,7 +285,7 @@ func runServerCmd(cmd *cobra.Command, args []string) {
 			})
 
 			data, _ := ptypes.MarshalAny(&querytxn.ReqMsg{
-				TxnHash: req.TxnHash,
+				Hash: req.TxnHash,
 			})
 
 			tData := &pb.TransactionData{
