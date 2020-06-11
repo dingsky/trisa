@@ -15,7 +15,6 @@ import (
 	pb "github.com/trisacrypto/trisa/proto/trisa/protocol/v1alpha1"
 	querykyc "github.com/trisacrypto/trisa/proto/trisa/querykyc/v1alpha1"
 	querytxn "github.com/trisacrypto/trisa/proto/trisa/querytxn/v1alpha1"
-	synctxn "github.com/trisacrypto/trisa/proto/trisa/synctxn/v1alpha1"
 	"google.golang.org/grpc/credentials"
 	"google.golang.org/grpc/peer"
 )
@@ -145,7 +144,7 @@ func (d *Demo) HandleRequest(ctx context.Context, id string, req *pb.Transaction
 		}).Infof("sent transaction response for %s to %s", id, cn)
 
 		return tData, nil
-	case "trisa.querytxn.v1alpha1.Data":
+	case "trisa.synctxn.v1alpha1.Data":
 		data := networkData.String()
 		fmt.Printf("data:%v\n", data)
 		key := GetKeyVal(data, "key")
@@ -195,17 +194,17 @@ func (d *Demo) HandleRequest(ctx context.Context, id string, req *pb.Transaction
 
 		return tData, nil
 
-	case "trisa.synctxn.v1alpha1.Data":
+	case "trisa.querytxn.v1alpha1.Data":
 		data := networkData.String()
 		fmt.Printf("data:%v\n", data)
-		key := GetKeyVal(data, "key")
-		txnInfo, err := sqllite.TxnListCollectionCol.SelectByKey(key)
+		hash := GetKeyVal(data, "hash")
+		txnInfo, err := sqllite.TxnListCollectionCol.SelectByHash(hash)
 		if err != nil {
 			return nil, fmt.Errorf("kyc not found")
 		}
 
 		// Generate demo response
-		identityResp := &synctxn.RspMsg{
+		identityResp := &querytxn.RspMsg{
 			RecieverName:          txnInfo.RecieverName,
 			RecieverId:            txnInfo.RecieverId,
 			RecieverIdentifyInfo:  txnInfo.RecieverIdentifyInfo,
