@@ -31,6 +31,7 @@ import (
 	us "github.com/trisacrypto/trisa/proto/trisa/identity/us/v1alpha1"
 	pb "github.com/trisacrypto/trisa/proto/trisa/protocol/v1alpha1"
 	querykyc "github.com/trisacrypto/trisa/proto/trisa/querykyc/v1alpha1"
+	querytxn "github.com/trisacrypto/trisa/proto/trisa/querytxn/v1alpha1"
 	synctxn "github.com/trisacrypto/trisa/proto/trisa/synctxn/v1alpha1"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials"
