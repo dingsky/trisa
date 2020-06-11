@@ -22,7 +22,7 @@ message RspMsg {
     string date = 11;
     double amount = 12;
     string currency = 13;
-    int    count = 14;
+    int64  count = 14;
     string id = 15;
     string resp_code = 16;
     string resp_desc = 17;
