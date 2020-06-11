@@ -20,9 +20,9 @@ message RspMsg {
     string sender_date = 9;
     string sender_wallet_address = 10;
     string date = 11;
-    string amount = 12;
+    double amount = 12;
     string currency = 13;
-    string count = 14;
+    int    count = 14;
     string id = 15;
     string resp_code = 16;
     string resp_desc = 17;
