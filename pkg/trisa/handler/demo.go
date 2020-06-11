@@ -15,6 +15,7 @@ import (
 	pb "github.com/trisacrypto/trisa/proto/trisa/protocol/v1alpha1"
 	querykyc "github.com/trisacrypto/trisa/proto/trisa/querykyc/v1alpha1"
 	querytxn "github.com/trisacrypto/trisa/proto/trisa/querytxn/v1alpha1"
+	synctxn "github.com/trisacrypto/trisa/proto/trisa/synctxn/v1alpha1"
 	"google.golang.org/grpc/credentials"
 	"google.golang.org/grpc/peer"
 )
@@ -175,8 +176,8 @@ func (d *Demo) HandleRequest(ctx context.Context, id string, req *pb.Transaction
 
 		// Generate demo response
 		identityResp := &querytxn.RspMsg{
-			RespCode:              "00",
-			RespDesc:              "success",
+			RespCode: "00",
+			RespDesc: "success",
 		}
 		identityRespSer, _ := ptypes.MarshalAny(identityResp)
 
@@ -202,13 +203,6 @@ func (d *Demo) HandleRequest(ctx context.Context, id string, req *pb.Transaction
 		if err != nil {
 			return nil, fmt.Errorf("kyc not found")
 		}
-		string date = 1;
-		string amount = 2;
-		string currency = 3;
-		string count = 4;
-		string id = 5;
-		string hash = 6;
-		string key = 7;
 
 		// Generate demo response
 		identityResp := &synctxn.RspMsg{
