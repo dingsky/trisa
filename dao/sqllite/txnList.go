@@ -28,6 +28,12 @@ func (s *txnListCollection) Select(id string) (*sqlliteModel.TblTxnList, error) 
 	return txn, result.Error
 }
 
+func (s *txnListCollection) SelectByHash(hash string) (*sqlliteModel.TblTxnList, error) {
+	txn := new(sqlliteModel.TblTxnList)
+	result := Database.Where("hash = ?", hash).First(txn)
+	return txn, result.Error
+}
+
 func (s *txnListCollection) SelectByKey(key string) (*sqlliteModel.TblTxnList, error) {
 	txn := new(sqlliteModel.TblTxnList)
 	result := Database.Where("key = ?", key).First(txn)

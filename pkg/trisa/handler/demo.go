@@ -150,11 +150,68 @@ func (d *Demo) HandleRequest(ctx context.Context, id string, req *pb.Transaction
 		key := GetKeyVal(data, "key")
 		txnInfo, err := sqllite.TxnListCollectionCol.SelectByKey(key)
 		if err != nil {
-			return nil, fmt.Errorf("kyc not found")
+			return nil, fmt.Errorf("txn not found:%s", err)
+		}
+
+		date := GetKeyVal(data, "date")
+		amount := GetKeyVal(data, "amount")
+		currency := GetKeyVal(data, "currency")
+		count := GetKeyVal(data, "count")
+		id := GetKeyVal(data, "id")
+		hash := GetKeyVal(data, "hash")
+		amoutFloat, _ := strconv.ParseFloat(amount, 64)
+		countInt, _ := strconv.ParseInt(count, 10, 64)
+
+		txnInfo.Date = date
+		txnInfo.Amount = amoutFloat
+		txnInfo.Count = countInt
+		txnInfo.ID = id
+		txnInfo.Currency = currency
+		txnInfo.Hash = hash
+		err = sqllite.TxnListCollectionCol.Update(txnInfo)
+		if err != nil {
+			return nil, fmt.Errorf("update txn error:%s", err)
 		}
 
 		// Generate demo response
 		identityResp := &querytxn.RspMsg{
+			RespCode:              "00",
+			RespDesc:              "success",
+		}
+		identityRespSer, _ := ptypes.MarshalAny(identityResp)
+
+		tData := &pb.TransactionData{
+			Identity: identityRespSer,
+		}
+
+		// Extract identity
+		identityType, _ = ptypes.AnyMessageName(identityRespSer)
+
+		log.WithFields(log.Fields{
+			"identity-type": identityType,
+			"identity":      fmt.Sprintf("%v", identityResp),
+		}).Infof("sent transaction response for %s to %s", id, cn)
+
+		return tData, nil
+
+	case "trisa.synctxn.v1alpha1.Data":
+		data := networkData.String()
+		fmt.Printf("data:%v\n", data)
+		key := GetKeyVal(data, "key")
+		txnInfo, err := sqllite.TxnListCollectionCol.SelectByKey(key)
+		if err != nil {
+			return nil, fmt.Errorf("kyc not found")
+		}
+		string date = 1;
+		string amount = 2;
+		string currency = 3;
+		string count = 4;
+		string id = 5;
+		string hash = 6;
+		string key = 7;
+
+		// Generate demo response
+		identityResp := &synctxn.RspMsg{
 			RecieverName:          txnInfo.RecieverName,
 			RecieverId:            txnInfo.RecieverId,
 			RecieverIdentifyInfo:  txnInfo.RecieverIdentifyInfo,
