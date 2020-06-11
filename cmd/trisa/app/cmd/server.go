@@ -31,6 +31,7 @@ import (
 	us "github.com/trisacrypto/trisa/proto/trisa/identity/us/v1alpha1"
 	pb "github.com/trisacrypto/trisa/proto/trisa/protocol/v1alpha1"
 	querykyc "github.com/trisacrypto/trisa/proto/trisa/querykyc/v1alpha1"
+	synctxn "github.com/trisacrypto/trisa/proto/trisa/synctxn/v1alpha1"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials"
 )
@@ -49,6 +50,42 @@ type queryKycReq struct {
 	Address   string  `json:"address,omitempty"`
 	Amount    float64 `json:"amount,omitempty"`
 	SenderKyc KycInfo `json:"sender_kyc,omitempty"`
+}
+
+type queryTxnReq struct {
+	DestUrl string `json:"dest_url,omitempty"`
+	TxnHash string `json:"txn_hash,omitempty"`
+}
+
+type queryTxnRsp struct {
+	RespCode    string     `json:"resp_code,omitempty"`
+	RespDesc    string     `json:"resp_desc,omitempty"`
+	SenderKyc   KycInfo    `json:"sender_kyc,omitempty"`
+	RecieverKyc KycInfo    `json:"reciever_kyc,omitempty"`
+	TxnInfo     TxnInfoDef `json:"txn_info,omitempty"`
+}
+
+type syncTxnReq struct {
+	DestUrl string     `json:"dest_url,omitempty"`
+	Key     string     `json:"key,omitempty"`
+	TxnInfo TxnInfoDef `json:"txn_info,omitempty"`
+}
+
+type syncTxnRsp struct {
+	RespCode    string     `json:"resp_code,omitempty"`
+	RespDesc    string     `json:"resp_desc,omitempty"`
+	SenderKyc   KycInfo    `json:"sender_kyc,omitempty"`
+	RecieverKyc KycInfo    `json:"reciever_kyc,omitempty"`
+	TxnInfo     TxnInfoDef `json:"txn_info,omitempty"`
+}
+
+type TxnInfoDef struct {
+	Id       string  `json:"id,omitempty"`
+	Hash     string  `json:"hash,omitempty"`
+	Currency string  `json:"currency,omitempty"`
+	Count    string  `json:"net,omitempty"`
+	Amount   float64 `json:"amount,omitempty"`
+	Date     string  `json:"date,omitempty"`
 }
 
 type KycInfo struct {
@@ -220,6 +257,98 @@ func runServerCmd(cmd *cobra.Command, args []string) {
 				return
 			}
 
+			fmt.Fprint(w, string(rspMsg))
+
+		})
+
+		r.HandleFunc("/query_txn", func(w http.ResponseWriter, r *http.Request) {
+
+			// 读请求报文
+			reqMsg, err := ioutil.ReadAll(r.Body)
+			if err != nil {
+				fmt.Printf("read request error:%s\n", err)
+				return
+			}
+			fmt.Printf("req msg:%s\n", reqMsg)
+
+			// 解包
+			req := new(queryTxnReq)
+			err = json.Unmarshal(reqMsg, req)
+			if err != nil {
+				fmt.Printf("json Unmarshal error:%s", err)
+				return
+			}
+
+			identity, _ := ptypes.MarshalAny(&queryxn.ReqMsg{
+				Hash: req.TxnHash,
+			})
+
+			data, _ := ptypes.MarshalAny(&queryxn.ReqMsg{
+				TxnHash: req.TxnHash,
+			})
+
+			tData := &pb.TransactionData{
+				Identity: identity,
+				Data:     data,
+			}
+
+			resp, err := pServer.SendRequest(r.Context(), req.DestUrl, uuid.New().String(), tData)
+			if err != nil {
+				fmt.Fprintf(w, "error: %v", err)
+				return
+			}
+			fmt.Printf("last resp:%s", resp)
+
+			rsp := new(queryTxnRsp)
+			rsp.RespDesc = "success"
+			rsp.RespCode = "0000"
+			rspMsg, _ := json.Marshal(rsp)
+			fmt.Fprint(w, string(rspMsg))
+
+		})
+
+		r.HandleFunc("/sync_txn", func(w http.ResponseWriter, r *http.Request) {
+
+			// 读请求报文
+			reqMsg, err := ioutil.ReadAll(r.Body)
+			if err != nil {
+				fmt.Printf("read request error:%s\n", err)
+				return
+			}
+			fmt.Printf("req msg:%s\n", reqMsg)
+
+			// 解包
+			req := new(syncTxnReq)
+			err = json.Unmarshal(reqMsg, req)
+			if err != nil {
+				fmt.Printf("json Unmarshal error:%s", err)
+				return
+			}
+
+			identity, _ := ptypes.MarshalAny(&synctxn.ReqMsg{
+				TxnHash: req.TxnHash,
+			})
+
+			data, _ := ptypes.MarshalAny(&synctxn.Data{
+				TxnHash: req.TxnHash,
+			})
+
+			tData := &pb.TransactionData{
+				Identity: identity,
+				Data:     data,
+			}
+
+			resp, err := pServer.SendRequest(r.Context(), req.DestUrl, uuid.New().String(), tData)
+			if err != nil {
+				fmt.Fprintf(w, "error: %v", err)
+				return
+			}
+			fmt.Printf("last resp:%s", resp)
+
+			rsp := new(syncTxnRsp)
+			rsp.RespDesc = "success"
+			rsp.RespCode = "0000"
+			rspMsg, _ := json.Marshal(rsp)
 			fmt.Fprint(w, string(rspMsg))
 
 		})

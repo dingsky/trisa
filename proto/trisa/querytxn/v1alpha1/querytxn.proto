@@ -1,0 +1,29 @@
+syntax = "proto3";
+
+package trisa.querytxn.v1alpha1;
+
+option go_package = "github.com/trisacrypto/trisa/proto/trisa/querytxn/v1alpha1";
+
+message ReqMsg {
+    string  hash = 1;
+}
+
+message RspMsg {
+    string reciever_name = 1;
+    string reciever_id = 2;
+    string reciever_identify_info = 3;
+    string reciever_date = 4;
+    string reciever_wallet_address = 5;
+    string sender_name = 6;
+    string sender_id = 7;
+    string sender_identify_info = 8;
+    string sender_date = 9;
+    string sender_wallet_address = 10;
+    string date = 11;
+    string amount = 12;
+    string currency = 13;
+    string count = 14;
+    string id = 15;
+    string resp_code = 16;
+    string resp_desc = 17;
+}
