@@ -11,6 +11,7 @@ message ReqMsg {
     string count = 4;
     string id = 5;
     string hash = 6;
+    string key = 7;
 }
 
 message rspMsg {

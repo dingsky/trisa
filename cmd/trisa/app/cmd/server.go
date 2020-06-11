@@ -279,11 +279,11 @@ func runServerCmd(cmd *cobra.Command, args []string) {
 				return
 			}
 
-			identity, _ := ptypes.MarshalAny(&queryxn.ReqMsg{
+			identity, _ := ptypes.MarshalAny(&querytxn.ReqMsg{
 				Hash: req.TxnHash,
 			})
 
-			data, _ := ptypes.MarshalAny(&queryxn.ReqMsg{
+			data, _ := ptypes.MarshalAny(&querytxn.ReqMsg{
 				TxnHash: req.TxnHash,
 			})
 
@@ -326,11 +326,11 @@ func runServerCmd(cmd *cobra.Command, args []string) {
 			}
 
 			identity, _ := ptypes.MarshalAny(&synctxn.ReqMsg{
-				TxnHash: req.TxnHash,
+				Key: req.Key,
 			})
 
-			data, _ := ptypes.MarshalAny(&synctxn.Data{
-				TxnHash: req.TxnHash,
+			data, _ := ptypes.MarshalAny(&synctxn.ReqMsg{
+				Key: req.Key,
 			})
 
 			tData := &pb.TransactionData{
