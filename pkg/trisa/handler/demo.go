@@ -6,6 +6,8 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/trisacrypto/trisa/model/sqlliteModel"
+
 	"github.com/trisacrypto/trisa/dao/sqllite"
 
 	"github.com/golang/protobuf/ptypes"
@@ -80,12 +82,40 @@ func (d *Demo) HandleRequest(ctx context.Context, id string, req *pb.Transaction
 		id := GetKeyVal(data, "id")
 		date := GetKeyVal(data, "date")
 		identifyInfo := GetKeyVal(data, "identify_info")
+		count := GetKeyVal(data, "count")
 		kycInfo, err := sqllite.KycListCollectionCol.Select(walletAddress)
 		if err != nil {
 			return nil, fmt.Errorf("kyc not found")
 		}
 		fmt.Printf("currency:%s address:%s amount:%s name:%s wallteAddress:%s id:%s date:%s ident:%s\n", curr, address, amount, name, walletAddress, id, date, identifyInfo)
 		amoutFloat, _ := strconv.ParseFloat(amount, 64)
+		countInt, _ := strconv.ParseInt(count, 10, 64)
+
+		txn := new(sqlliteModel.TblTxnList)
+		txn.Date = date
+		txn.Amount = amoutFloat
+		txn.Currency = curr
+		txn.Count = countInt
+		txn.ID = id
+		txn.SenderAddress = ""
+		txn.SenderDate = ""
+		txn.SenderId = ""
+		txn.SenderIdentifyInfo = identifyInfo
+		txn.SenderName = name
+		txn.SenderWalletAddress = walletAddress
+
+		txn.RecieverAddress = kycInfo.Address
+		txn.RecieverDate = kycInfo.Date
+		txn.RecieverId = kycInfo.Id
+		txn.RecieverIdentifyInfo = kycInfo.IdentifyInfo
+		txn.RecieverName = kycInfo.Name
+		txn.RecieverWalletAddress = kycInfo.WalletAddress
+
+		err = sqllite.TxnListCollectionCol.Insert(txn)
+		if err != nil {
+			fmt.Printf("insert err:%s\n", err)
+			return nil, err
+		}
 
 		// Generate demo response
 		identityResp := &querykyc.Data{

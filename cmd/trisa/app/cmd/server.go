@@ -13,10 +13,6 @@ import (
 	"strings"
 	"time"
 
-	"github.com/trisacrypto/trisa/dao/sqllite"
-
-	"github.com/trisacrypto/trisa/model/sqlliteModel"
-
 	"github.com/golang/protobuf/ptypes"
 	"github.com/google/uuid"
 	"github.com/gorilla/mux"
@@ -231,32 +227,6 @@ func runServerCmd(cmd *cobra.Command, args []string) {
 			rsp.RecieverKyc.WalletAddress = GetKeyVal(resp, "wallet_address")
 			rsp.Key = uuid.New().String()
 			rspMsg, _ := json.Marshal(rsp)
-
-			txn := new(sqlliteModel.TblTxnList)
-			txn.Date = rsp.RecieverKyc.Date
-			txn.Amount = req.Amount
-			txn.Currency = req.Currency
-			txn.Count = 1 //TODO
-			txn.ID = "todo"
-			txn.SenderAddress = req.SenderKyc.Address
-			txn.SenderDate = req.SenderKyc.Date
-			txn.SenderId = req.SenderKyc.Id
-			txn.SenderIdentifyInfo = req.SenderKyc.IdentifyInfo
-			txn.SenderName = req.SenderKyc.Name
-			txn.SenderWalletAddress = req.SenderKyc.WalletAddress
-
-			txn.RecieverAddress = rsp.RecieverKyc.Address
-			txn.RecieverDate = rsp.RecieverKyc.Date
-			txn.RecieverId = rsp.RecieverKyc.Id
-			txn.RecieverIdentifyInfo = rsp.RecieverKyc.IdentifyInfo
-			txn.RecieverName = rsp.RecieverKyc.Name
-			txn.RecieverWalletAddress = rsp.RecieverKyc.WalletAddress
-
-			err = sqllite.TxnListCollectionCol.Insert(txn)
-			if err != nil {
-				fmt.Fprintf(w, "insert db error: %v", err)
-				return
-			}
 
 			fmt.Fprint(w, string(rspMsg))
 
