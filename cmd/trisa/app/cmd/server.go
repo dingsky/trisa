@@ -386,7 +386,7 @@ func runServerCmd(cmd *cobra.Command, args []string) {
 				return
 			}
 			respM, err := http.Post(url, "application/json", strings.NewReader(string(queryVaspReqMsg)))
-			defer resp.Body.Close()
+			defer respM.Body.Close()
 			body, err := ioutil.ReadAll(respM.Body)
 			if err != nil {
 				fmt.Printf("http post error:%s", err)
