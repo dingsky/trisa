@@ -236,12 +236,17 @@ func runServerCmd(cmd *cobra.Command, args []string) {
 				return
 			}
 			respM, err := http.Post(url, "application/json", strings.NewReader(string(queryVaspReqMsg)))
-			defer respM.Body.Close()
-			body, err := ioutil.ReadAll(respM.Body)
 			if err != nil {
 				fmt.Printf("http post error:%s", err)
 				return
 			}
+
+			body, err := ioutil.ReadAll(respM.Body)
+			if err != nil {
+				fmt.Printf("http read error:%s", err)
+				return
+			}
+			defer respM.Body.Close()
 
 			queryVaspRsp := new(queryVaspRsp)
 			err = json.Unmarshal(body, queryVaspRsp)
@@ -335,12 +340,17 @@ func runServerCmd(cmd *cobra.Command, args []string) {
 
 			url := c.Server.TrisaCenterUrl + "/v0/api/trisacenter/check_address"
 			respM, err := http.Post(url, "application/json", strings.NewReader(string(reqMsg)))
-			defer respM.Body.Close()
-			body, err := ioutil.ReadAll(respM.Body)
 			if err != nil {
 				fmt.Printf("http post error:%s", err)
 				return
 			}
+
+			body, err := ioutil.ReadAll(respM.Body)
+			if err != nil {
+				fmt.Printf("http read error:%s", err)
+				return
+			}
+			defer respM.Body.Close()
 
 			fmt.Fprint(w, string(body))
 
@@ -486,12 +496,17 @@ func runServerCmd(cmd *cobra.Command, args []string) {
 				return
 			}
 			respM, err := http.Post(url, "application/json", strings.NewReader(string(queryVaspReqMsg)))
-			defer respM.Body.Close()
-			body, err := ioutil.ReadAll(respM.Body)
 			if err != nil {
 				fmt.Printf("http post error:%s", err)
 				return
 			}
+
+			body, err := ioutil.ReadAll(respM.Body)
+			if err != nil {
+				fmt.Printf("http read error:%s", err)
+				return
+			}
+			defer respM.Body.Close()
 
 			queryVaspRsp := new(queryVaspRsp)
 			err = json.Unmarshal(body, queryVaspRsp)
