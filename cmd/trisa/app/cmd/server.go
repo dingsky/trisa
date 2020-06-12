@@ -120,6 +120,16 @@ type bindKycRsp struct {
 	RespDesc string `json:"resp_desc,omitempty"`
 }
 
+type bindAddressReq struct {
+	Id      string `json:"id,omitempty"`
+	Address string `json:"address,omitempty"`
+}
+
+type bindAddressRsp struct {
+	RespCode string `json:"resp_code,omitempty"`
+	RespDesc string `json:"resp_desc,omitempty"`
+}
+
 func NewServerCmd() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "server",
@@ -321,7 +331,7 @@ func runServerCmd(cmd *cobra.Command, args []string) {
 			}
 			fmt.Printf("req msg:%s\n", reqMsg)
 
-			url := "http://127.0.0.1:9995/v0/api/trisacenter/get_vasp"
+			url := "http://127.0.0.1:9995/v0/api/trisacenter/check_address"
 			respM, err := http.Post(url, "application/json", strings.NewReader(string(reqMsg)))
 			defer respM.Body.Close()
 			body, err := ioutil.ReadAll(respM.Body)
@@ -351,10 +361,20 @@ func runServerCmd(cmd *cobra.Command, args []string) {
 				return
 			}
 
+			url := "http://127.0.0.1:9995/v0/api/trisacenter/bind_address"
+			respM, err := http.Post(url, "application/json", strings.NewReader(string(reqMsg)))
+			defer respM.Body.Close()
+			body, err := ioutil.ReadAll(respM.Body)
+			if err != nil {
+				fmt.Printf("http post error:%s", err)
+				return
+			}
+
 			rsp := new(bindKycRsp)
 			rsp.RespCode = "0000"
+			rsp.RespDesc = "success"
 
-			fmt.Fprint(w, string())
+			fmt.Fprint(w, string(body))
 
 		})
 
