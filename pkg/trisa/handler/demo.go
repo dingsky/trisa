@@ -6,6 +6,8 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/google/uuid"
+
 	"github.com/trisacrypto/trisa/model/sqlliteModel"
 
 	"github.com/trisacrypto/trisa/dao/sqllite"
@@ -111,6 +113,7 @@ func (d *Demo) HandleRequest(ctx context.Context, id string, req *pb.Transaction
 		txn.RecieverIdentifyInfo = kycInfo.IdentifyInfo
 		txn.RecieverName = kycInfo.Name
 		txn.RecieverWalletAddress = kycInfo.WalletAddress
+		txn.Key = uuid.New().String()
 
 		err = sqllite.TxnListCollectionCol.Insert(txn)
 		if err != nil {
@@ -128,6 +131,7 @@ func (d *Demo) HandleRequest(ctx context.Context, id string, req *pb.Transaction
 			Id:            kycInfo.Id,
 			Date:          kycInfo.Date,
 			IdentifyInfo:  kycInfo.IdentifyInfo,
+			Key:           txn.Key,
 		}
 		identityRespSer, _ := ptypes.MarshalAny(identityResp)
 
