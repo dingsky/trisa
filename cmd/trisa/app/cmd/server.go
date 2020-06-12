@@ -43,14 +43,14 @@ type queryKycRsp struct {
 }
 
 type queryKycReq struct {
-	Currency  string  `json:"currency,omitempty"`
-	Net       string  `json:"net,omitempty"`
-	Address   string  `json:"address,omitempty"`
-	Amount    float64 `json:"amount,omitempty"`
-	TxnId     string  `json:"txn_id,omitempty"`
-	Count     int64   `json:"count,omitempty"`
-	TxnDate   string  `json:"txn_date,omitempty"`
-	SenderKyc KycInfo `json:"sender_kyc,omitempty"`
+	Currency         string  `json:"currency,omitempty"`
+	Net              string  `json:"net,omitempty"`
+	Address          string  `json:"address,omitempty"`
+	Amount           float64 `json:"amount,omitempty"`
+	TxnId            string  `json:"txn_id,omitempty"`
+	Count            int64   `json:"count,omitempty"`
+	TxnDate          string  `json:"txn_date,omitempty"`
+	SenderWalletAddr string  `json:"sender_wallet_address,omitempty"`
 }
 
 type queryTxnReq struct {
@@ -224,6 +224,12 @@ func runServerCmd(cmd *cobra.Command, args []string) {
 				return
 			}
 
+			kyc, err := sqllite.KycListCollectionCol.Select(req.Currency, req.Net, req.SenderWalletAddr)
+			if err != nil {
+				fmt.Printf("unkow KYC error:%s", err)
+				return
+			}
+
 			url := c.Server.TrisaCenterUrl + "/v0/api/trisacenter/get_vasp"
 			queryVaspReq := new(queryVaspReq)
 			queryVaspReq.Currency = req.Currency
@@ -265,11 +271,11 @@ func runServerCmd(cmd *cobra.Command, args []string) {
 				Net:           req.Net,
 				Address:       req.Address,
 				Amount:        req.Amount,
-				Name:          req.SenderKyc.Name,
-				WalletAddress: req.SenderKyc.WalletAddress,
-				Id:            req.SenderKyc.Id,
-				Date:          req.SenderKyc.Date,
-				IdentifyInfo:  req.SenderKyc.IdentifyInfo,
+				Name:          kyc.Name,
+				WalletAddress: kyc.WalletAddress,
+				Id:            kyc.KycId,
+				Date:          kyc.Date,
+				IdentifyInfo:  kyc.IdentifyInfo,
 				TxnId:         req.TxnId,
 				Count:         req.Count,
 				TxnDate:       req.TxnDate,
