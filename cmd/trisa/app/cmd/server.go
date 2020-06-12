@@ -449,7 +449,7 @@ func runServerCmd(cmd *cobra.Command, args []string) {
 			rsp.SenderKyc.Date = txnInfo.SenderDate
 			rsp.SenderKyc.Id = txnInfo.SenderId
 			rsp.SenderKyc.IdentifyInfo = txnInfo.SenderIdentifyInfo
-			rsp.TxnInfo.Id = txnInfo.ID
+			rsp.TxnInfo.Id = txnInfo.TxnID
 			rsp.TxnInfo.Date = txnInfo.Date
 			rsp.TxnInfo.Currency = txnInfo.Currency
 			rsp.TxnInfo.Hash = txnInfo.Hash
