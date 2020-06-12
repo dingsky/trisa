@@ -363,7 +363,7 @@ func runServerCmd(cmd *cobra.Command, args []string) {
 				return
 			}
 
-			url := c.Server.TrisaCenterUrl + "v0/api/trisacenter/bind_address"
+			url := c.Server.TrisaCenterUrl + "/v0/api/trisacenter/bind_address"
 			bindAddr := new(bindAddressReq)
 			bindAddr.ID = c.Server.TrisaCustomerId
 			bindAddr.Address = req.Address
