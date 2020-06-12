@@ -278,6 +278,7 @@ func runServerCmd(cmd *cobra.Command, args []string) {
 				Data:     data,
 			}
 
+			fmt.Printf("url:%s\n", queryVaspRsp.Url)
 			resp, err := pServer.SendRequest(r.Context(), queryVaspRsp.Url, uuid.New().String(), tData)
 			if err != nil {
 				fmt.Fprintf(w, "error: %v", err)
