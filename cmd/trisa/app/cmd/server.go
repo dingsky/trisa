@@ -477,7 +477,7 @@ func runServerCmd(cmd *cobra.Command, args []string) {
 				fmt.Printf("json Marsharl error:%s", err)
 				return
 			}
-			respM, err := http.Post(c.Server.TrisaCenterUrl, "application/json", strings.NewReader(string(queryVaspReqMsg)))
+			respM, err := http.Post(url, "application/json", strings.NewReader(string(queryVaspReqMsg)))
 			defer respM.Body.Close()
 			body, err := ioutil.ReadAll(respM.Body)
 			if err != nil {
