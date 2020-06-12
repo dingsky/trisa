@@ -99,7 +99,7 @@ func (d *Demo) HandleRequest(ctx context.Context, id string, req *pb.Transaction
 		txn.Amount = amoutFloat
 		txn.Currency = curr
 		txn.Count = countInt
-		txn.ID = id
+		txn.TxnID = id
 		txn.SenderAddress = address
 		txn.SenderDate = date
 		txn.SenderId = id
