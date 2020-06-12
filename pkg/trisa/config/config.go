@@ -24,6 +24,8 @@ type Server struct {
 	ListenAddress      string `yaml:"listenAddress,omitempty"`
 	ListenAddressAdmin string `yaml:"listenAddressAdmin,omitempty"`
 	Hostname           string `yaml:"hostname,omitempty"`
+	TrisaCenterUrl     string `yaml:"trisacenterurl,omitempty"`
+	TrisaCustomerId    string `yaml:"trisacustomerid,omitempty"`
 }
 
 type Wallet struct {
