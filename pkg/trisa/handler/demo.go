@@ -161,20 +161,20 @@ func (d *Demo) HandleRequest(ctx context.Context, id string, req *pb.Transaction
 			return nil, fmt.Errorf("txn not found:%s", err)
 		}
 
-		date := GetKeyVal(data, "date")
-		amount := GetKeyVal(data, "amount")
-		currency := GetKeyVal(data, "currency")
-		count := GetKeyVal(data, "count")
-		id := GetKeyVal(data, "id")
+		//date := GetKeyVal(data, "date")
+		//amount := GetKeyVal(data, "amount")
+		//currency := GetKeyVal(data, "currency")
+		//count := GetKeyVal(data, "count")
+		//id := GetKeyVal(data, "id")
 		hash := GetKeyVal(data, "hash")
-		amoutFloat, _ := strconv.ParseFloat(amount, 64)
-		countInt, _ := strconv.ParseInt(count, 10, 64)
+		//amoutFloat, _ := strconv.ParseFloat(amount, 64)
+		//countInt, _ := strconv.ParseInt(count, 10, 64)
 
-		txnInfo.Date = date
-		txnInfo.Amount = amoutFloat
-		txnInfo.Count = countInt
-		txnInfo.TxnID = id
-		txnInfo.Currency = currency
+		//txnInfo.Date = date
+		//txnInfo.Amount = amoutFloat
+		//txnInfo.Count = countInt
+		//txnInfo.TxnID = id
+		//txnInfo.Currency = currency
 		txnInfo.Hash = hash
 		err = sqllite.TxnListCollectionCol.Update(txnInfo)
 		if err != nil {
