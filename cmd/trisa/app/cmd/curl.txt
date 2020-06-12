@@ -1,5 +1,5 @@
 // 查询KYC
-curl -ks "https://127.0.0.1:9996/query_kyc" -d'{"currency":"btc", "address":"shahai", "amount":0.01, "sender_kyc":{"name":"sky", "wallet_address":"456", "id":"789","date":"20200610","identify_info":"yeah"}}'
+curl -ks "https://127.0.0.1:9996/query_kyc" -d'{"currency":"btc", "address":"777777", "amount":0.01, "sender_kyc":{"name":"dingchun", "wallet_address":"7111", "id":"89757","date":"20200612","identify_info":"woshisky"}}'
 
 // 同步交易
 curl -ks "https://127.0.0.1:9996/query_kyc" -d'{"currency":"btc", "address":"shahai", "amount":0.01, "sender_kyc":{"name":"sky", "wallet_address":"456", "id":"789","date":"20200610","identify_info":"yeah"}}'
@@ -8,3 +8,4 @@ curl -ks "https://127.0.0.1:9996/query_kyc" -d'{"currency":"btc", "address":"sha
 
 // 绑定KYC
 curl -ks "https://127.0.0.1:9996/bind_kyc" -d'{"currency":"btc", "net":"bitcoin", "address":"666666", "kyc":{"name":"dingchun", "wallet_address":"7111", "id":"89757","date":"20200612","identify_info":"woshisky"}}'
+curl -ks "https://127.0.0.1:9997/bind_kyc" -d'{"currency":"btc", "net":"bitcoin", "address":"777777", "kyc":{"name":"spring", "wallet_address":"8111", "id":"95271","date":"20200612","identify_info":"woshispring"}}'

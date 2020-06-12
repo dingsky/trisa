@@ -229,7 +229,7 @@ func runServerCmd(cmd *cobra.Command, args []string) {
 			queryVaspReq := new(queryVaspReq)
 			queryVaspReq.Currency = req.Currency
 			queryVaspReq.Net = req.Net
-			queryVaspReq.Address = req.SenderKyc.WalletAddress
+			queryVaspReq.Address = req.SenderKyc.Address
 			queryVaspReqMsg, err := json.Marshal(queryVaspReq)
 			if err != nil {
 				fmt.Printf("json Marsharl error:%s", err)
