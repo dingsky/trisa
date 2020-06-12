@@ -98,9 +98,9 @@ func (d *Demo) HandleRequest(ctx context.Context, id string, req *pb.Transaction
 		txn.Currency = curr
 		txn.Count = countInt
 		txn.ID = id
-		txn.SenderAddress = ""
-		txn.SenderDate = ""
-		txn.SenderId = ""
+		txn.SenderAddress = address
+		txn.SenderDate = date
+		txn.SenderId = id
 		txn.SenderIdentifyInfo = identifyInfo
 		txn.SenderName = name
 		txn.SenderWalletAddress = walletAddress
