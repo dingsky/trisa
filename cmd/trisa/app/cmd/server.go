@@ -223,7 +223,7 @@ func runServerCmd(cmd *cobra.Command, args []string) {
 				return
 			}
 
-			//url := "http://127.0.0.1:9995/v0/api/trisacenter/get_vasp"
+			url := c.Server.TrisaCenterUrl + "/v0/api/trisacenter/get_vasp"
 			queryVaspReq := new(queryVaspReq)
 			queryVaspReq.Currency = req.Currency
 			queryVaspReq.Net = req.Net
@@ -233,7 +233,7 @@ func runServerCmd(cmd *cobra.Command, args []string) {
 				fmt.Printf("json Marsharl error:%s", err)
 				return
 			}
-			respM, err := http.Post(c.Server.TrisaCenterUrl, "application/json", strings.NewReader(string(queryVaspReqMsg)))
+			respM, err := http.Post(url, "application/json", strings.NewReader(string(queryVaspReqMsg)))
 			defer respM.Body.Close()
 			body, err := ioutil.ReadAll(respM.Body)
 			if err != nil {
@@ -331,8 +331,8 @@ func runServerCmd(cmd *cobra.Command, args []string) {
 			}
 			fmt.Printf("req msg:%s\n", reqMsg)
 
-			//url := "http://127.0.0.1:9995/v0/api/trisacenter/check_address"
-			respM, err := http.Post(c.Server.TrisaCenterUrl, "application/json", strings.NewReader(string(reqMsg)))
+			url := c.Server.TrisaCenterUrl + "/v0/api/trisacenter/check_address"
+			respM, err := http.Post(url, "application/json", strings.NewReader(string(reqMsg)))
 			defer respM.Body.Close()
 			body, err := ioutil.ReadAll(respM.Body)
 			if err != nil {
@@ -361,12 +361,12 @@ func runServerCmd(cmd *cobra.Command, args []string) {
 				return
 			}
 
-			//url := "http://127.0.0.1:9995/v0/api/trisacenter/bind_address"
+			url := c.Server.TrisaCenterUrl + "v0/api/trisacenter/bind_address"
 			bindAddr := new(bindAddressReq)
 			bindAddr.Id = c.Server.TrisaCustomerId
 			bindAddr.Address = req.WalletAddress
 			reqq, _ := json.Marshal(bindAddr)
-			respM, err := http.Post(c.Server.TrisaCenterUrl, "application/json", strings.NewReader(string(reqq)))
+			respM, err := http.Post(url, "application/json", strings.NewReader(string(reqq)))
 			defer respM.Body.Close()
 			body, err := ioutil.ReadAll(respM.Body)
 			if err != nil {
@@ -467,7 +467,7 @@ func runServerCmd(cmd *cobra.Command, args []string) {
 				return
 			}
 
-			//url := "http://127.0.0.1:9995/v0/api/trisacenter/get_vasp"
+			url := c.Server.TrisaCenterUrl + "/v0/api/trisacenter/get_vasp"
 			queryVaspReq := new(queryVaspReq)
 			queryVaspReq.Currency = txnInfo.Currency
 			queryVaspReq.Net = txnInfo.Net
