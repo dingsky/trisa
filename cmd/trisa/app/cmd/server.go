@@ -109,10 +109,10 @@ type queryVaspRsp struct {
 }
 
 type bindKycReq struct {
-	Currency string `json:"currency,omitempty"`
-	Net      string `json:"net,omitempty"`
-	Address  string `json:"address,omitempty"`
-	Kyc      KycInfo
+	Currency string  `json:"currency,omitempty"`
+	Net      string  `json:"net,omitempty"`
+	Address  string  `json:"address,omitempty"`
+	Kyc      KycInfo `json:"kyc,omitempty"`
 }
 
 type bindKycRsp struct {
@@ -371,10 +371,14 @@ func runServerCmd(cmd *cobra.Command, args []string) {
 			bindAddr.Currency = req.Currency
 			reqq, _ := json.Marshal(bindAddr)
 			respM, err := http.Post(url, "application/json", strings.NewReader(string(reqq)))
+			if err != nil {
+				fmt.Printf("http post error:%s\n", err)
+				return
+			}
 			defer respM.Body.Close()
 			body, err := ioutil.ReadAll(respM.Body)
 			if err != nil {
-				fmt.Printf("http post error:%s", err)
+				fmt.Printf("read rsp error:%s\n", err)
 				return
 			}
 

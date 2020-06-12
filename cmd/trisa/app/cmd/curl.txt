@@ -7,3 +7,4 @@ curl -ks "https://127.0.0.1:9996/query_kyc" -d'{"currency":"btc", "address":"sha
 // 查询交易
 
 // 绑定KYC
+curl -ks "https://127.0.0.1:9996/bind_kyc" -d'{"currency":"btc", "net":"bitcoin", "address":"666666", "kyc":{"name":"dingchun", "wallet_address":"7111", "id":"89757","date":"20200612","identify_info":"woshisky"}}'
