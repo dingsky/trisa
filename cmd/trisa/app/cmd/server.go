@@ -433,7 +433,7 @@ func runServerCmd(cmd *cobra.Command, args []string) {
 
 			txnInfo, err := sqllite.TxnListCollectionCol.SelectByHash(req.TxnHash)
 			if err != nil {
-				fmt.Printf("kyc not found error:%s", err)
+				fmt.Printf("txn not found error:%s", err)
 				return
 			}
 
@@ -482,7 +482,7 @@ func runServerCmd(cmd *cobra.Command, args []string) {
 
 			txnInfo, err := sqllite.TxnListCollectionCol.SelectByKey(req.Key)
 			if err != nil {
-				fmt.Printf("kyc not found error:%s", err)
+				fmt.Printf("txn not found error:%s", err)
 				return
 			}
 

@@ -84,7 +84,7 @@ func (d *Demo) HandleRequest(ctx context.Context, id string, req *pb.Transaction
 		date := GetKeyVal(data, "date")
 		identifyInfo := GetKeyVal(data, "identify_info")
 		count := GetKeyVal(data, "count")
-		kycInfo, err := sqllite.KycListCollectionCol.Select(walletAddress)
+		kycInfo, err := sqllite.KycListCollectionCol.Select(address)
 		if err != nil {
 			return nil, fmt.Errorf("kyc not found")
 		}
