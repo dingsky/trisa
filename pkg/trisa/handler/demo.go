@@ -148,7 +148,7 @@ func (d *Demo) HandleRequest(ctx context.Context, id string, req *pb.Transaction
 		}).Infof("sent transaction response for %s to %s", id, cn)
 
 		return tData, nil
-	case "trisa.synctxn.v1alpha1.Data":
+	case "trisa.synctxn.v1alpha1.ReqMsg":
 		data := networkData.String()
 		fmt.Printf("data:%v\n", data)
 		key := GetKeyVal(data, "key")

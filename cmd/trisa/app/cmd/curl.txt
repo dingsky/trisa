@@ -2,7 +2,7 @@
 curl -ks "https://127.0.0.1:9996/query_kyc" -d'{"currency":"btc", "address":"777777", "net":"bitcoin", "amount":0.01, "sender_kyc":{"name":"dingchun", "wallet_address":"7111", "id":"89757","date":"20200612","identify_info":"woshisky"}}'
 
 // 同步交易
-curl -ks "https://127.0.0.1:9996/sync_txn" -d'{"key":"142d7a3f-6314-4fa6-9727-40c19715bf30", "hash":"FFFFFFFFFFFFFFFFFFFFFFFFF"}'
+curl -ks "https://127.0.0.1:9996/sync_txn" -d'{"key":"d1f62166-5f22-48e1-ac77-3fbe5c0bdf15", "hash":"FFFFFFFFFFFFFFFFFFFFFFFFF"}'
 
 // 查询交易
 
