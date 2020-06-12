@@ -18,9 +18,9 @@ func (s *txnListCollection) Delete(id string) error {
 	return Database.Where("id = ?", id).Delete(txn).Error
 }
 
-func (s *txnListCollection) Update(hash string, txn *sqlliteModel.TblTxnList) error {
+func (s *txnListCollection) Update(key string, txn *sqlliteModel.TblTxnList) error {
 	return Database.Save(txn).Error
-	return Database.Model(&sqlliteModel.TblTxnList{}).Where("hash = ?", hash).Updates(txn).Error
+	return Database.Model(&sqlliteModel.TblTxnList{}).Where("key = ?", key).Updates(txn).Error
 }
 
 func (s *txnListCollection) Select(id string) (*sqlliteModel.TblTxnList, error) {

@@ -176,7 +176,7 @@ func (d *Demo) HandleRequest(ctx context.Context, id string, req *pb.Transaction
 		//txnInfo.TxnID = id
 		//txnInfo.Currency = currency
 		txnInfo.Hash = hash
-		err = sqllite.TxnListCollectionCol.Update(hash, txnInfo)
+		err = sqllite.TxnListCollectionCol.Update(key, txnInfo)
 		if err != nil {
 			return nil, fmt.Errorf("update txn error:%s", err)
 		}
