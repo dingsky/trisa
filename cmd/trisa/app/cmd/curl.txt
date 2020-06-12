@@ -1,8 +1,8 @@
 // 查询KYC
-curl -ks "https://127.0.0.1:9996/query_kyc" -d'{"currency":"btc", "address":"777777", "net":"bitcoin", "amount":0.01, "sender_kyc":{"name":"dingchun", "wallet_address":"7111", "id":"89757","date":"20200612","identify_info":"woshisky"}}'
+curl -ks "https://127.0.0.1:9996/query_kyc" -d'{"currency":"btc", "address":"777777", "net":"bitcoin", "amount":0.01, "txn_id":"tx123","count":5, "txn_date":"20200613", "sender_kyc":{"name":"dingchun", "wallet_address":"7111", "id":"89757","date":"20200612","identify_info":"woshisky"}}'
 
 // 同步交易
-curl -ks "https://127.0.0.1:9996/sync_txn" -d'{"key":"d1f62166-5f22-48e1-ac77-3fbe5c0bdf15", "hash":""}'
+curl -ks "https://127.0.0.1:9996/sync_txn" -d'{"key":"e32c8447-532e-4d20-bcab-00d604ea91bb", "hash":"FFFFFFFFFFFFFFFFFFFFFFFFF"}'
 
 // 查询交易
 curl -ks "https://127.0.0.1:9997/query_txn" -d'{ "hash":"FFFFFFFFFFFFFFFFFFFFFFFFF"}'

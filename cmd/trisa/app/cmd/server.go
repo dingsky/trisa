@@ -66,8 +66,8 @@ type queryTxnRsp struct {
 }
 
 type syncTxnReq struct {
-	Key     string     `json:"key,omitempty"`
-	TxnInfo TxnInfoDef `json:"txn_info,omitempty"`
+	Key  string `json:"key,omitempty"`
+	Hash string `json:"hash,omitempty"`
 }
 
 type syncTxnRsp struct {
