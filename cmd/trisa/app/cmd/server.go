@@ -111,11 +111,11 @@ type queryVaspRsp struct {
 	Url      string `json:"url,omitempty"`
 }
 
-type checkKycReq struct {
-	WalletAddress string `json:"wallet_address,omitempty"`
+type bindKycReq struct {
+	KycInfo
 }
 
-type checkKycRsp struct {
+type bindKycRsp struct {
 	RespCode string `json:"resp_code,omitempty"`
 	RespDesc string `json:"resp_desc,omitempty"`
 }
@@ -331,6 +331,30 @@ func runServerCmd(cmd *cobra.Command, args []string) {
 			}
 
 			fmt.Fprint(w, string(body))
+
+		})
+
+		r.HandleFunc("/bind_kyc", func(w http.ResponseWriter, r *http.Request) {
+
+			// 读请求报文
+			reqMsg, err := ioutil.ReadAll(r.Body)
+			if err != nil {
+				fmt.Printf("read request error:%s\n", err)
+				return
+			}
+			fmt.Printf("req msg:%s\n", reqMsg)
+
+			req := new(bindKycReq)
+			err = json.Unmarshal(reqMsg, req)
+			if err != nil {
+				fmt.Printf("json unmarshal error:%s\n", err)
+				return
+			}
+
+			rsp := new(bindKycRsp)
+			rsp.RespCode = "0000"
+
+			fmt.Fprint(w, string())
 
 		})
 

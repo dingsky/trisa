@@ -13,7 +13,7 @@ require (
 	github.com/sirupsen/logrus v1.4.2
 	github.com/spf13/cobra v0.0.5
 	github.com/stretchr/testify v1.2.2
-	gitlab.devops.wx/blockchains/baseutil v0.0.0-20200605112028-39081bffecc4
+	gitlab.devops.wx/blockchains/baseutil v0.0.0-20200611025910-7d9de4254b8f
 	golang.org/x/sys v0.0.0-20190825160603-fb81701db80f // indirect
 	google.golang.org/grpc v1.29.1
 	google.golang.org/protobuf v1.23.0
