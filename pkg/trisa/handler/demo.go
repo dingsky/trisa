@@ -78,6 +78,7 @@ func (d *Demo) HandleRequest(ctx context.Context, id string, req *pb.Transaction
 		data := networkData.String()
 		fmt.Printf("data:%v\n", data)
 		curr := GetKeyVal(data, "currency")
+		net := GetKeyVal(data, "net")
 		address := GetKeyVal(data, "address")
 		amount := GetKeyVal(data, "amount")
 		name := GetKeyVal(data, "name")
@@ -89,7 +90,7 @@ func (d *Demo) HandleRequest(ctx context.Context, id string, req *pb.Transaction
 		txnId := GetKeyVal(data, "txn_id")
 		txnDate := GetKeyVal(data, "txn_date")
 
-		kycInfo, err := sqllite.KycListCollectionCol.Select(address)
+		kycInfo, err := sqllite.KycListCollectionCol.Select(curr, net, address)
 		if err != nil {
 			return nil, fmt.Errorf("kyc not found")
 		}

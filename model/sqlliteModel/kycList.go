@@ -3,6 +3,8 @@ package sqlliteModel
 import "time"
 
 type TblKycList struct {
+	Currency      string    `"gorm":"column:currency"`
+	Net           string    `"gorm":"column:net"`
 	Name          string    `"gorm":"column:name"`
 	WalletAddress string    `"gorm":"column:wallet_address"`
 	Address       string    `"gorm":"column:address"`
