@@ -291,7 +291,7 @@ func runServerCmd(cmd *cobra.Command, args []string) {
 			txn.Amount = req.Amount
 			txn.Currency = req.Currency
 			txn.Count = 0
-			txn.ID = ""
+			txn.TxnID = ""
 			txn.SenderAddress = req.SenderKyc.Address
 			txn.SenderDate = req.SenderKyc.Date
 			txn.SenderId = req.SenderKyc.Id
@@ -397,7 +397,7 @@ func runServerCmd(cmd *cobra.Command, args []string) {
 			kycInfo.Address = req.Kyc.Address
 			kycInfo.Name = req.Kyc.Name
 			kycInfo.IdentifyInfo = req.Kyc.IdentifyInfo
-			kycInfo.Id = req.Kyc.Id
+			kycInfo.KycId = req.Kyc.Id
 			err = sqllite.KycListCollectionCol.Insert(kycInfo)
 			if err != nil {
 				fmt.Printf("insert kyc error:%s", err)

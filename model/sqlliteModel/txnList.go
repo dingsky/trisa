@@ -3,7 +3,7 @@ package sqlliteModel
 import "time"
 
 type TblTxnList struct {
-	ID                    string    `"gorm":"column:id"`
+	TxnID                 string    `"gorm":"column:txn_id"`
 	Hash                  string    `"gorm":"column:hash"`
 	Currency              string    `"gorm":"column:currency"`
 	Count                 int64     `"gorm":"column:count"`

@@ -109,7 +109,7 @@ func (d *Demo) HandleRequest(ctx context.Context, id string, req *pb.Transaction
 
 		txn.RecieverAddress = kycInfo.Address
 		txn.RecieverDate = kycInfo.Date
-		txn.RecieverId = kycInfo.Id
+		txn.RecieverId = kycInfo.KycId
 		txn.RecieverIdentifyInfo = kycInfo.IdentifyInfo
 		txn.RecieverName = kycInfo.Name
 		txn.RecieverWalletAddress = kycInfo.WalletAddress
@@ -128,7 +128,7 @@ func (d *Demo) HandleRequest(ctx context.Context, id string, req *pb.Transaction
 			Amount:        amoutFloat,
 			Name:          kycInfo.Name,
 			WalletAddress: kycInfo.WalletAddress,
-			Id:            kycInfo.Id,
+			Id:            kycInfo.KycId,
 			Date:          kycInfo.Date,
 			IdentifyInfo:  kycInfo.IdentifyInfo,
 			Key:           txn.Key,
@@ -169,7 +169,7 @@ func (d *Demo) HandleRequest(ctx context.Context, id string, req *pb.Transaction
 		txnInfo.Date = date
 		txnInfo.Amount = amoutFloat
 		txnInfo.Count = countInt
-		txnInfo.ID = id
+		txnInfo.TxnID = id
 		txnInfo.Currency = currency
 		txnInfo.Hash = hash
 		err = sqllite.TxnListCollectionCol.Update(txnInfo)
