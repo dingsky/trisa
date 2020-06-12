@@ -15,4 +15,7 @@ message Data {
     string  date = 8;
     string identify_info = 9;
     string key = 10;
+    string txn_id = 11;
+    int64  count = 12;
+    string txn_date = 13;
 }

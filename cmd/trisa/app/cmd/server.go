@@ -47,11 +47,14 @@ type queryKycReq struct {
 	Net       string  `json:"net,omitempty"`
 	Address   string  `json:"address,omitempty"`
 	Amount    float64 `json:"amount,omitempty"`
+	TxnId     string  `json:"txn_id,omitempty"`
+	Count     int64   `json:"count,omitempty"`
+	TxnDate   string  `json:"txn_date,omitempty"`
 	SenderKyc KycInfo `json:"sender_kyc,omitempty"`
 }
 
 type queryTxnReq struct {
-	TxnHash string `json:"txn_hash,omitempty"`
+	Hash string `json:"hash,omitempty"`
 }
 
 type queryTxnRsp struct {
@@ -68,11 +71,8 @@ type syncTxnReq struct {
 }
 
 type syncTxnRsp struct {
-	RespCode    string     `json:"resp_code,omitempty"`
-	RespDesc    string     `json:"resp_desc,omitempty"`
-	SenderKyc   KycInfo    `json:"sender_kyc,omitempty"`
-	RecieverKyc KycInfo    `json:"reciever_kyc,omitempty"`
-	TxnInfo     TxnInfoDef `json:"txn_info,omitempty"`
+	RespCode string `json:"resp_code,omitempty"`
+	RespDesc string `json:"resp_desc,omitempty"`
 }
 
 type TxnInfoDef struct {
@@ -270,6 +270,9 @@ func runServerCmd(cmd *cobra.Command, args []string) {
 				Id:            req.SenderKyc.Id,
 				Date:          req.SenderKyc.Date,
 				IdentifyInfo:  req.SenderKyc.IdentifyInfo,
+				TxnId:         req.TxnId,
+				Count:         req.Count,
+				TxnDate:       req.TxnDate,
 			})
 
 			tData := &pb.TransactionData{
@@ -287,11 +290,11 @@ func runServerCmd(cmd *cobra.Command, args []string) {
 
 			txn := new(sqlliteModel.TblTxnList)
 			txn.Net = req.Net
-			txn.Date = ""
+			txn.Date = req.TxnDate
 			txn.Amount = req.Amount
 			txn.Currency = req.Currency
-			txn.Count = 0
-			txn.TxnID = ""
+			txn.Count = req.Count
+			txn.TxnID = req.TxnId
 			txn.SenderAddress = req.SenderKyc.Address
 			txn.SenderDate = req.SenderKyc.Date
 			txn.SenderId = req.SenderKyc.Id
@@ -398,6 +401,10 @@ func runServerCmd(cmd *cobra.Command, args []string) {
 			kycInfo.Name = req.Kyc.Name
 			kycInfo.IdentifyInfo = req.Kyc.IdentifyInfo
 			kycInfo.KycId = req.Kyc.Id
+			err = sqllite.KycListCollectionCol.Delete(kycInfo.WalletAddress)
+			if err != nil {
+				fmt.Printf("double bind KYC delete the old\n")
+			}
 			err = sqllite.KycListCollectionCol.Insert(kycInfo)
 			if err != nil {
 				fmt.Printf("insert kyc error:%s", err)
@@ -430,7 +437,7 @@ func runServerCmd(cmd *cobra.Command, args []string) {
 				return
 			}
 
-			txnInfo, err := sqllite.TxnListCollectionCol.SelectByHash(req.TxnHash)
+			txnInfo, err := sqllite.TxnListCollectionCol.SelectByHash(req.Hash)
 			if err != nil {
 				fmt.Printf("txn not found error:%s", err)
 				return

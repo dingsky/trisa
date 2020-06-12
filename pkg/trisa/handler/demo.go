@@ -86,6 +86,9 @@ func (d *Demo) HandleRequest(ctx context.Context, id string, req *pb.Transaction
 		date := GetKeyVal(data, "date")
 		identifyInfo := GetKeyVal(data, "identify_info")
 		count := GetKeyVal(data, "count")
+		txnId := GetKeyVal(data, "txn_id")
+		txnDate := GetKeyVal(data, "txn_date")
+
 		kycInfo, err := sqllite.KycListCollectionCol.Select(address)
 		if err != nil {
 			return nil, fmt.Errorf("kyc not found")
@@ -95,11 +98,11 @@ func (d *Demo) HandleRequest(ctx context.Context, id string, req *pb.Transaction
 		countInt, _ := strconv.ParseInt(count, 10, 64)
 
 		txn := new(sqlliteModel.TblTxnList)
-		txn.Date = date
+		txn.Date = txnDate
 		txn.Amount = amoutFloat
 		txn.Currency = curr
 		txn.Count = countInt
-		txn.TxnID = id
+		txn.TxnID = txnId
 		txn.SenderAddress = address
 		txn.SenderDate = date
 		txn.SenderId = id
