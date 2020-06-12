@@ -6,4 +6,4 @@ curl -ks "https://127.0.0.1:9996/query_kyc" -d'{"currency":"btc", "address":"sha
 
 // 查询交易
 
-// 查询KYC是否通知过我们
+// 绑定KYC

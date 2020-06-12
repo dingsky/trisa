@@ -43,7 +43,6 @@ type queryKycRsp struct {
 }
 
 type queryKycReq struct {
-	DestUrl   string  `json:"dest_url,omitempty"`
 	Currency  string  `json:"currency,omitempty"`
 	Net       string  `json:"net,omitempty"`
 	Address   string  `json:"address,omitempty"`
@@ -52,7 +51,6 @@ type queryKycReq struct {
 }
 
 type queryTxnReq struct {
-	DestUrl string `json:"dest_url,omitempty"`
 	TxnHash string `json:"txn_hash,omitempty"`
 }
 
@@ -65,7 +63,6 @@ type queryTxnRsp struct {
 }
 
 type syncTxnReq struct {
-	DestUrl string     `json:"dest_url,omitempty"`
 	Key     string     `json:"key,omitempty"`
 	TxnInfo TxnInfoDef `json:"txn_info,omitempty"`
 }
@@ -112,7 +109,10 @@ type queryVaspRsp struct {
 }
 
 type bindKycReq struct {
-	KycInfo
+	Currency string `json:"currency,omitempty"`
+	Net      string `json:"net,omitempty"`
+	Address  string `json:"address,omitempty"`
+	Kyc      KycInfo
 }
 
 type bindKycRsp struct {
@@ -121,8 +121,10 @@ type bindKycRsp struct {
 }
 
 type bindAddressReq struct {
-	Id      string `json:"id,omitempty"`
-	Address string `json:"address,omitempty"`
+	ID       string `json:"id,omitempty"`
+	Currency string `json:"currency,omitempty"`
+	Net      string `json:"net,omitempty"`
+	Address  string `json:"address,omitempty"`
 }
 
 type bindAddressRsp struct {
@@ -363,8 +365,10 @@ func runServerCmd(cmd *cobra.Command, args []string) {
 
 			url := c.Server.TrisaCenterUrl + "v0/api/trisacenter/bind_address"
 			bindAddr := new(bindAddressReq)
-			bindAddr.Id = c.Server.TrisaCustomerId
-			bindAddr.Address = req.WalletAddress
+			bindAddr.ID = c.Server.TrisaCustomerId
+			bindAddr.Address = req.Address
+			bindAddr.Net = req.Net
+			bindAddr.Currency = req.Currency
 			reqq, _ := json.Marshal(bindAddr)
 			respM, err := http.Post(url, "application/json", strings.NewReader(string(reqq)))
 			defer respM.Body.Close()
@@ -375,11 +379,11 @@ func runServerCmd(cmd *cobra.Command, args []string) {
 			}
 
 			kycInfo := new(sqlliteModel.TblKycList)
-			kycInfo.WalletAddress = req.WalletAddress
-			kycInfo.Address = req.Address
-			kycInfo.Name = req.Name
-			kycInfo.IdentifyInfo = req.IdentifyInfo
-			kycInfo.Id = req.Id
+			kycInfo.WalletAddress = req.Kyc.WalletAddress
+			kycInfo.Address = req.Kyc.Address
+			kycInfo.Name = req.Kyc.Name
+			kycInfo.IdentifyInfo = req.Kyc.IdentifyInfo
+			kycInfo.Id = req.Kyc.Id
 			err = sqllite.KycListCollectionCol.Insert(kycInfo)
 			if err != nil {
 				fmt.Printf("insert kyc error:%s", err)
