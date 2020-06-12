@@ -301,12 +301,12 @@ func runServerCmd(cmd *cobra.Command, args []string) {
 			txn.Currency = req.Currency
 			txn.Count = req.Count
 			txn.TxnID = req.TxnId
-			txn.SenderAddress = req.SenderKyc.Address
-			txn.SenderDate = req.SenderKyc.Date
-			txn.SenderId = req.SenderKyc.Id
-			txn.SenderIdentifyInfo = req.SenderKyc.IdentifyInfo
-			txn.SenderName = req.SenderKyc.Name
-			txn.SenderWalletAddress = req.SenderKyc.WalletAddress
+			txn.SenderAddress = kyc.Address
+			txn.SenderDate = kyc.Date
+			txn.SenderId = kyc.KycId
+			txn.SenderIdentifyInfo = kyc.IdentifyInfo
+			txn.SenderName = kyc.Name
+			txn.SenderWalletAddress = kyc.WalletAddress
 
 			txn.RecieverAddress = GetKeyVal(resp, "address")
 			txn.RecieverDate = GetKeyVal(resp, "date")
