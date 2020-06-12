@@ -2,7 +2,6 @@ package sqllite
 
 import (
 	"os"
-	"time"
 
 	"github.com/trisacrypto/trisa/model/sqlliteModel"
 
@@ -29,13 +28,13 @@ func init() {
 
 	txn := new(sqlliteModel.TblTxnList)
 	Database.AutoMigrate(txn)
-	address.Id = "123"
-	address.WalletAddress = "456"
-	address.Date = "20200611"
-	address.Name = "hello"
-	address.IdentifyInfo = "isme"
-	address.Address = "world"
-	address.CreateTime = time.Now()
-	address.UpdateTime = time.Now()
-	Database.Create(&address)
+	//address.Kyc = "123"
+	//address.WalletAddress = "456"
+	//address.Date = "20200611"
+	//address.Name = "hello"
+	//address.IdentifyInfo = "isme"
+	//address.Address = "world"
+	//address.CreateTime = time.Now()
+	//address.UpdateTime = time.Now()
+	//Database.Create(&address)
 }
