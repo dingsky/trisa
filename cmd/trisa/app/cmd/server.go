@@ -515,8 +515,8 @@ func runServerCmd(cmd *cobra.Command, args []string) {
 			rsp.RespDesc = "success"
 			rsp.RespCode = "0000"
 			rsp.KycList = kycList
-
 			rspMsg, _ := json.Marshal(rsp)
+			fmt.Printf("query kyc list resp:%s", rspMsg)
 			w.WriteHeader(http.StatusOK)
 			w.Write(rspMsg)
 		})
@@ -537,6 +537,7 @@ func runServerCmd(cmd *cobra.Command, args []string) {
 			rsp.TxnList = txnList
 
 			rspMsg, _ := json.Marshal(rsp)
+			fmt.Printf("query txn list resp:%s", rspMsg)
 			w.WriteHeader(http.StatusOK)
 			w.Write(rspMsg)
 		})
