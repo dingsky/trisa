@@ -65,6 +65,18 @@ type queryTxnRsp struct {
 	TxnInfo     TxnInfoDef `json:"txn_info,omitempty"`
 }
 
+type queryKycList struct {
+	RespCode string                     `json:"resp_code,omitempty"`
+	RespDesc string                     `json:"resp_desc,omitempty"`
+	KycList  []*sqlliteModel.TblKycList `json:"kyc_list,omitempty"`
+}
+
+type queryTxnList struct {
+	RespCode string                     `json:"resp_code,omitempty"`
+	RespDesc string                     `json:"resp_desc,omitempty"`
+	TxnList  []*sqlliteModel.TblTxnList `json:"txn_list,omitempty"`
+}
+
 type syncTxnReq struct {
 	Key  string `json:"key,omitempty"`
 	Hash string `json:"hash,omitempty"`
@@ -334,8 +346,8 @@ func runServerCmd(cmd *cobra.Command, args []string) {
 			rsp.Key = GetKeyVal(resp, "key")
 			rspMsg, _ := json.Marshal(rsp)
 
-			fmt.Fprint(w, string(rspMsg))
-
+			w.WriteHeader(http.StatusOK)
+			w.Write(rspMsg)
 		})
 
 		r.HandleFunc("/check_address", func(w http.ResponseWriter, r *http.Request) {
@@ -363,8 +375,8 @@ func runServerCmd(cmd *cobra.Command, args []string) {
 			}
 			defer respM.Body.Close()
 
-			fmt.Fprint(w, string(body))
-
+			w.WriteHeader(http.StatusOK)
+			w.Write(body)
 		})
 
 		r.HandleFunc("/bind_kyc", func(w http.ResponseWriter, r *http.Request) {
@@ -484,8 +496,49 @@ func runServerCmd(cmd *cobra.Command, args []string) {
 			rsp.TxnInfo.Amount = txnInfo.Amount
 
 			rspMsg, _ := json.Marshal(rsp)
-			fmt.Fprint(w, string(rspMsg))
+			w.WriteHeader(http.StatusOK)
+			w.Write(rspMsg)
 
+		})
+
+		r.HandleFunc("/query_kyc_list", func(w http.ResponseWriter, r *http.Request) {
+
+			w.Header().Set("Access-Control-Allow-Origin", "*")
+
+			kycList, err := sqllite.KycListCollectionCol.SelectAll()
+			if err != nil {
+				fmt.Printf("txn not found error:%s", err)
+				return
+			}
+
+			rsp := new(queryKycList)
+			rsp.RespDesc = "success"
+			rsp.RespCode = "0000"
+			rsp.KycList = kycList
+
+			rspMsg, _ := json.Marshal(rsp)
+			w.WriteHeader(http.StatusOK)
+			w.Write(rspMsg)
+		})
+
+		r.HandleFunc("/query_txn_list", func(w http.ResponseWriter, r *http.Request) {
+
+			w.Header().Set("Access-Control-Allow-Origin", "*")
+
+			txnList, err := sqllite.TxnListCollectionCol.SelectAll()
+			if err != nil {
+				fmt.Printf("txn not found error:%s", err)
+				return
+			}
+
+			rsp := new(queryTxnList)
+			rsp.RespDesc = "success"
+			rsp.RespCode = "0000"
+			rsp.TxnList = txnList
+
+			rspMsg, _ := json.Marshal(rsp)
+			w.WriteHeader(http.StatusOK)
+			w.Write(rspMsg)
 		})
 
 		r.HandleFunc("/sync_txn", func(w http.ResponseWriter, r *http.Request) {
@@ -569,7 +622,8 @@ func runServerCmd(cmd *cobra.Command, args []string) {
 			rsp.RespDesc = "success"
 			rsp.RespCode = "0000"
 			rspMsg, _ := json.Marshal(rsp)
-			fmt.Fprint(w, string(rspMsg))
+			w.WriteHeader(http.StatusOK)
+			w.Write(rspMsg)
 
 		})
 
@@ -619,7 +673,7 @@ func runServerCmd(cmd *cobra.Command, args []string) {
 			"port":      c.Server.ListenAddressAdmin,
 		}).Info("starting TRISA admin server")
 
-	//	errs <- srv.ListenAndServeTLS(c.TLS.CertificateFile, c.TLS.PrivateKeyFile)
+		//	errs <- srv.ListenAndServeTLS(c.TLS.CertificateFile, c.TLS.PrivateKeyFile)
 		errs <- srv.ListenAndServe()
 	}()
 

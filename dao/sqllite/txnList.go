@@ -29,6 +29,12 @@ func (s *txnListCollection) Select(id string) (*sqlliteModel.TblTxnList, error) 
 	return txn, result.Error
 }
 
+func (s *txnListCollection) SelectAll() ([]*sqlliteModel.TblTxnList, error) {
+	txnlist := make([]*sqlliteModel.TblTxnList, 0)
+	result := Database.Find(&txnlist)
+	return txnlist, result.Error
+}
+
 func (s *txnListCollection) SelectByHash(hash string) (*sqlliteModel.TblTxnList, error) {
 	txn := new(sqlliteModel.TblTxnList)
 	result := Database.Where("hash = ?", hash).First(txn)

@@ -27,3 +27,9 @@ func (a *kycListCollection) Select(currency, net, address string) (*sqlliteModel
 	result := Database.Where("currency = ? and net = ? and wallet_address = ?", currency, net, address).First(serv)
 	return serv, result.Error
 }
+
+func (a *kycListCollection) SelectAll() ([]*sqlliteModel.TblKycList, error) {
+	serv := make([]*sqlliteModel.TblKycList, 0)
+	result := Database.Find(&serv)
+	return serv, result.Error
+}
