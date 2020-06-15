@@ -207,6 +207,7 @@ func runServerCmd(cmd *cobra.Command, args []string) {
 		})
 
 		r.HandleFunc("/query_kyc", func(w http.ResponseWriter, r *http.Request) {
+			w.Header().Set("Access-Control-Allow-Origin", "*")
 
 			// 读请求报文
 			reqMsg, err := ioutil.ReadAll(r.Body)
@@ -338,6 +339,7 @@ func runServerCmd(cmd *cobra.Command, args []string) {
 		})
 
 		r.HandleFunc("/check_address", func(w http.ResponseWriter, r *http.Request) {
+			w.Header().Set("Access-Control-Allow-Origin", "*")
 
 			// 读请求报文
 			reqMsg, err := ioutil.ReadAll(r.Body)
@@ -366,6 +368,8 @@ func runServerCmd(cmd *cobra.Command, args []string) {
 		})
 
 		r.HandleFunc("/bind_kyc", func(w http.ResponseWriter, r *http.Request) {
+
+			w.Header().Set("Access-Control-Allow-Origin", "*")
 
 			// 读请求报文
 			reqMsg, err := ioutil.ReadAll(r.Body)
@@ -400,6 +404,7 @@ func runServerCmd(cmd *cobra.Command, args []string) {
 				fmt.Printf("read rsp error:%s\n", err)
 				return
 			}
+			fmt.Printf("==========body:%s\n", body)
 
 			kycInfo := new(sqlliteModel.TblKycList)
 			kycInfo.WalletAddress = req.Kyc.WalletAddress
@@ -418,17 +423,24 @@ func runServerCmd(cmd *cobra.Command, args []string) {
 				fmt.Printf("insert kyc error:%s", err)
 				return
 			}
+			fmt.Printf("==========lllllllllllkkkkkkkkkkkkkkkkkk\n")
 
 			rsp := new(bindKycRsp)
 			rsp.RespCode = "0000"
 			rsp.RespDesc = "success"
 
-			fmt.Fprint(w, string(body))
+			fmt.Printf("==========nnnnnnnnnnnnnkkkkkkkkkkkkkkkkkk\n")
+			rtt, _ := json.Marshal(rsp)
+			w.WriteHeader(http.StatusOK)
+			w.Write(rtt)
+
+			// fmt.Fprint(w, string(body))
 
 		})
 
 		r.HandleFunc("/query_txn", func(w http.ResponseWriter, r *http.Request) {
 
+			w.Header().Set("Access-Control-Allow-Origin", "*")
 			// 读请求报文
 			reqMsg, err := ioutil.ReadAll(r.Body)
 			if err != nil {
@@ -477,6 +489,7 @@ func runServerCmd(cmd *cobra.Command, args []string) {
 		})
 
 		r.HandleFunc("/sync_txn", func(w http.ResponseWriter, r *http.Request) {
+			w.Header().Set("Access-Control-Allow-Origin", "*")
 
 			// 读请求报文
 			reqMsg, err := ioutil.ReadAll(r.Body)
@@ -606,7 +619,8 @@ func runServerCmd(cmd *cobra.Command, args []string) {
 			"port":      c.Server.ListenAddressAdmin,
 		}).Info("starting TRISA admin server")
 
-		errs <- srv.ListenAndServeTLS(c.TLS.CertificateFile, c.TLS.PrivateKeyFile)
+	//	errs <- srv.ListenAndServeTLS(c.TLS.CertificateFile, c.TLS.PrivateKeyFile)
+		errs <- srv.ListenAndServe()
 	}()
 
 	/*go func() {
