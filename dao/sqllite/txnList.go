@@ -19,7 +19,6 @@ func (s *txnListCollection) Delete(id string) error {
 }
 
 func (s *txnListCollection) Update(key string, txn *sqlliteModel.TblTxnList) error {
-	return Database.Save(txn).Error
 	return Database.Model(&sqlliteModel.TblTxnList{}).Where("key = ?", key).Updates(txn).Error
 }
 

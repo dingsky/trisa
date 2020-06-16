@@ -698,6 +698,15 @@ func runServerCmd(cmd *cobra.Command, args []string) {
 			}
 			fmt.Printf("last resp:%s", resp)
 
+			txnInfo.Hash = req.Hash
+			err = sqllite.TxnListCollectionCol.Update(req.Key, txnInfo)
+			if err != nil {
+				fmt.Printf("update db error:%s", err)
+				w.WriteHeader(http.StatusBadGateway)
+				w.Write([]byte("update db error"))
+				return
+			}
+
 			rsp := new(syncTxnRsp)
 			rsp.RespDesc = "success"
 			rsp.RespCode = "0000"
