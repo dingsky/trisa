@@ -471,6 +471,8 @@ func runServerCmd(cmd *cobra.Command, args []string) {
 			kycInfo.IdentifyInfo = req.Kyc.IdentifyInfo
 			kycInfo.KycId = req.Kyc.Id
 			kycInfo.Date = req.Kyc.Date
+			kycInfo.CreateTime = time.Now()
+			kycInfo.UpdateTime = time.Now()
 			err = sqllite.KycListCollectionCol.Delete(kycInfo.Currency, kycInfo.Net, kycInfo.WalletAddress)
 			if err != nil {
 				fmt.Printf("double bind KYC delete the old\n")
