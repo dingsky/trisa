@@ -366,7 +366,7 @@ func runServerCmd(cmd *cobra.Command, args []string) {
 			rsp.RecieverKyc.IdentifyInfo = GetKeyVal(resp, "identify_info")
 			rsp.RecieverKyc.Date = GetKeyVal(resp, "date")
 			rsp.RecieverKyc.WalletAddress = GetKeyVal(resp, "wallet_address")
-			rsp.RecieverKyc.WalletAddress = GetKeyVal(resp, "address")
+			rsp.RecieverKyc.Address = GetKeyVal(resp, "address")
 			rsp.Key = GetKeyVal(resp, "key")
 			rspMsg, _ := json.Marshal(rsp)
 			fmt.Printf("rspMsg:%s", rspMsg)
