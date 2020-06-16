@@ -404,8 +404,10 @@ func runServerCmd(cmd *cobra.Command, args []string) {
 			}
 			defer respM.Body.Close()
 			if respM.StatusCode != 200 {
-				resp := new(baseRsp)
-				resp.RespDesc = "not found"
+				fmt.Printf("http error:%s", err)
+				w.WriteHeader(respM.StatusCode)
+				w.Write([]byte("not found"))
+				return
 
 			}
 			fmt.Printf("resp Msg:%s", body)
