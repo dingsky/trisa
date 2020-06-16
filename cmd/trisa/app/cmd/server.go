@@ -408,7 +408,6 @@ func runServerCmd(cmd *cobra.Command, args []string) {
 				w.WriteHeader(respM.StatusCode)
 				w.Write([]byte("not found"))
 				return
-
 			}
 			fmt.Printf("resp Msg:%s", body)
 
@@ -471,6 +470,7 @@ func runServerCmd(cmd *cobra.Command, args []string) {
 			kycInfo.Name = req.Kyc.Name
 			kycInfo.IdentifyInfo = req.Kyc.IdentifyInfo
 			kycInfo.KycId = req.Kyc.Id
+			kycInfo.Date = req.Kyc.Date
 			err = sqllite.KycListCollectionCol.Delete(kycInfo.Currency, kycInfo.Net, kycInfo.WalletAddress)
 			if err != nil {
 				fmt.Printf("double bind KYC delete the old\n")
