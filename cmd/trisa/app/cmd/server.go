@@ -224,7 +224,9 @@ func runServerCmd(cmd *cobra.Command, args []string) {
 			// 读请求报文
 			reqMsg, err := ioutil.ReadAll(r.Body)
 			if err != nil {
-				fmt.Printf("read request error:%s\n", err)
+				w.WriteHeader(http.StatusBadGateway)
+				w.Write([]byte("read http err"))
+				fmt.Printf("read http err\n")
 				return
 			}
 			fmt.Printf("req msg:%s\n", reqMsg)
@@ -233,13 +235,17 @@ func runServerCmd(cmd *cobra.Command, args []string) {
 			req := new(queryKycReq)
 			err = json.Unmarshal(reqMsg, req)
 			if err != nil {
+				w.WriteHeader(http.StatusBadGateway)
+				w.Write([]byte("json Unmarshal error"))
 				fmt.Printf("json Unmarshal error:%s", err)
 				return
 			}
 
 			kyc, err := sqllite.KycListCollectionCol.Select(req.Currency, req.Net, req.SenderWalletAddr)
 			if err != nil {
-				fmt.Printf("unkow KYC error:%s", err)
+				fmt.Printf("unknow KYC error:%s", err)
+				w.WriteHeader(http.StatusNotFound)
+				w.Write([]byte("unknow KYC"))
 				return
 			}
 
@@ -250,18 +256,24 @@ func runServerCmd(cmd *cobra.Command, args []string) {
 			queryVaspReq.Address = req.Address
 			queryVaspReqMsg, err := json.Marshal(queryVaspReq)
 			if err != nil {
-				fmt.Printf("json Marsharl error:%s", err)
+				fmt.Printf("json KYC Marsharl:%s", err)
+				w.WriteHeader(http.StatusBadGateway)
+				w.Write([]byte("json KYC Marsharl error"))
 				return
 			}
 			respM, err := http.Post(url, "application/json", strings.NewReader(string(queryVaspReqMsg)))
 			if err != nil {
 				fmt.Printf("http post error:%s", err)
+				w.WriteHeader(http.StatusBadGateway)
+				w.Write([]byte("http post error"))
 				return
 			}
 
 			body, err := ioutil.ReadAll(respM.Body)
 			if err != nil {
 				fmt.Printf("http read error:%s", err)
+				w.WriteHeader(http.StatusBadGateway)
+				w.Write([]byte("http read error"))
 				return
 			}
 			defer respM.Body.Close()
@@ -270,6 +282,8 @@ func runServerCmd(cmd *cobra.Command, args []string) {
 			err = json.Unmarshal(body, queryVaspRsp)
 			if err != nil {
 				fmt.Printf("json unmarshal error:%s", err)
+				w.WriteHeader(http.StatusBadGateway)
+				w.Write([]byte("json unmarshal error"))
 				return
 			}
 
@@ -302,7 +316,9 @@ func runServerCmd(cmd *cobra.Command, args []string) {
 			fmt.Printf("url:%s\n", queryVaspRsp.Url)
 			resp, err := pServer.SendRequest(r.Context(), queryVaspRsp.Url, uuid.New().String(), tData)
 			if err != nil {
-				fmt.Fprintf(w, "error: %v", err)
+				fmt.Printf("send request error:%s", err)
+				w.WriteHeader(http.StatusBadGateway)
+				w.Write([]byte("send request error"))
 				return
 			}
 			fmt.Printf("last resp:%s", resp)
@@ -331,7 +347,9 @@ func runServerCmd(cmd *cobra.Command, args []string) {
 
 			err = sqllite.TxnListCollectionCol.Insert(txn)
 			if err != nil {
-				fmt.Fprintf(w, "error: %v", err)
+				fmt.Printf("insert db error:%s", err)
+				w.WriteHeader(http.StatusBadGateway)
+				w.Write([]byte("insert db error"))
 				return
 			}
 
@@ -357,6 +375,8 @@ func runServerCmd(cmd *cobra.Command, args []string) {
 			reqMsg, err := ioutil.ReadAll(r.Body)
 			if err != nil {
 				fmt.Printf("read request error:%s\n", err)
+				w.WriteHeader(http.StatusBadGateway)
+				w.Write([]byte("read requesterror"))
 				return
 			}
 			fmt.Printf("req msg:%s\n", reqMsg)
@@ -365,12 +385,16 @@ func runServerCmd(cmd *cobra.Command, args []string) {
 			respM, err := http.Post(url, "application/json", strings.NewReader(string(reqMsg)))
 			if err != nil {
 				fmt.Printf("http post error:%s", err)
+				w.WriteHeader(http.StatusBadGateway)
+				w.Write([]byte("http post error"))
 				return
 			}
 
 			body, err := ioutil.ReadAll(respM.Body)
 			if err != nil {
 				fmt.Printf("http read error:%s", err)
+				w.WriteHeader(http.StatusBadGateway)
+				w.Write([]byte("http read error"))
 				return
 			}
 			defer respM.Body.Close()
@@ -387,6 +411,8 @@ func runServerCmd(cmd *cobra.Command, args []string) {
 			reqMsg, err := ioutil.ReadAll(r.Body)
 			if err != nil {
 				fmt.Printf("read request error:%s\n", err)
+				w.WriteHeader(http.StatusBadGateway)
+				w.Write([]byte("read request error"))
 				return
 			}
 			fmt.Printf("req msg:%s\n", reqMsg)
@@ -395,6 +421,8 @@ func runServerCmd(cmd *cobra.Command, args []string) {
 			err = json.Unmarshal(reqMsg, req)
 			if err != nil {
 				fmt.Printf("json unmarshal error:%s\n", err)
+				w.WriteHeader(http.StatusBadGateway)
+				w.Write([]byte("json unmarshal error"))
 				return
 			}
 
@@ -408,12 +436,16 @@ func runServerCmd(cmd *cobra.Command, args []string) {
 			respM, err := http.Post(url, "application/json", strings.NewReader(string(reqq)))
 			if err != nil {
 				fmt.Printf("http post error:%s\n", err)
+				w.WriteHeader(http.StatusBadGateway)
+				w.Write([]byte("http post error"))
 				return
 			}
 			defer respM.Body.Close()
 			body, err := ioutil.ReadAll(respM.Body)
 			if err != nil {
 				fmt.Printf("read rsp error:%s\n", err)
+				w.WriteHeader(http.StatusBadGateway)
+				w.Write([]byte("read rsp error"))
 				return
 			}
 			fmt.Printf("==========body:%s\n", body)
@@ -433,20 +465,18 @@ func runServerCmd(cmd *cobra.Command, args []string) {
 			err = sqllite.KycListCollectionCol.Insert(kycInfo)
 			if err != nil {
 				fmt.Printf("insert kyc error:%s", err)
+				w.WriteHeader(http.StatusBadGateway)
+				w.Write([]byte("insert kyc error"))
 				return
 			}
-			fmt.Printf("==========lllllllllllkkkkkkkkkkkkkkkkkk\n")
 
 			rsp := new(bindKycRsp)
 			rsp.RespCode = "0000"
 			rsp.RespDesc = "success"
 
-			fmt.Printf("==========nnnnnnnnnnnnnkkkkkkkkkkkkkkkkkk\n")
 			rtt, _ := json.Marshal(rsp)
 			w.WriteHeader(http.StatusOK)
 			w.Write(rtt)
-
-			// fmt.Fprint(w, string(body))
 
 		})
 
@@ -457,6 +487,8 @@ func runServerCmd(cmd *cobra.Command, args []string) {
 			reqMsg, err := ioutil.ReadAll(r.Body)
 			if err != nil {
 				fmt.Printf("read request error:%s\n", err)
+				w.WriteHeader(http.StatusBadGateway)
+				w.Write([]byte("read request error"))
 				return
 			}
 			fmt.Printf("req msg:%s\n", reqMsg)
@@ -466,12 +498,16 @@ func runServerCmd(cmd *cobra.Command, args []string) {
 			err = json.Unmarshal(reqMsg, req)
 			if err != nil {
 				fmt.Printf("json Unmarshal error:%s", err)
+				w.WriteHeader(http.StatusBadGateway)
+				w.Write([]byte("json Unmarshal error"))
 				return
 			}
 
 			txnInfo, err := sqllite.TxnListCollectionCol.SelectByHash(req.Hash)
 			if err != nil {
 				fmt.Printf("txn not found error:%s", err)
+				w.WriteHeader(http.StatusBadGateway)
+				w.Write([]byte("txn not found"))
 				return
 			}
 
@@ -507,7 +543,9 @@ func runServerCmd(cmd *cobra.Command, args []string) {
 
 			kycList, err := sqllite.KycListCollectionCol.SelectAll()
 			if err != nil {
-				fmt.Printf("txn not found error:%s", err)
+				fmt.Printf("kyc not found error:%s", err)
+				w.WriteHeader(http.StatusBadGateway)
+				w.Write([]byte("kyc not found"))
 				return
 			}
 
@@ -528,6 +566,8 @@ func runServerCmd(cmd *cobra.Command, args []string) {
 			txnList, err := sqllite.TxnListCollectionCol.SelectAll()
 			if err != nil {
 				fmt.Printf("txn not found error:%s", err)
+				w.WriteHeader(http.StatusBadGateway)
+				w.Write([]byte("txn not found"))
 				return
 			}
 
@@ -549,6 +589,8 @@ func runServerCmd(cmd *cobra.Command, args []string) {
 			reqMsg, err := ioutil.ReadAll(r.Body)
 			if err != nil {
 				fmt.Printf("read request error:%s\n", err)
+				w.WriteHeader(http.StatusBadGateway)
+				w.Write([]byte("read request found"))
 				return
 			}
 			fmt.Printf("req msg:%s\n", reqMsg)
@@ -558,12 +600,16 @@ func runServerCmd(cmd *cobra.Command, args []string) {
 			err = json.Unmarshal(reqMsg, req)
 			if err != nil {
 				fmt.Printf("json Unmarshal error:%s", err)
+				w.WriteHeader(http.StatusBadGateway)
+				w.Write([]byte("json Unmarshal found"))
 				return
 			}
 
 			txnInfo, err := sqllite.TxnListCollectionCol.SelectByKey(req.Key)
 			if err != nil {
 				fmt.Printf("txn not found error:%s", err)
+				w.WriteHeader(http.StatusBadGateway)
+				w.Write([]byte("txn not found"))
 				return
 			}
 
@@ -575,17 +621,23 @@ func runServerCmd(cmd *cobra.Command, args []string) {
 			queryVaspReqMsg, err := json.Marshal(queryVaspReq)
 			if err != nil {
 				fmt.Printf("json Marsharl error:%s", err)
+				w.WriteHeader(http.StatusBadGateway)
+				w.Write([]byte("json Marsharl error"))
 				return
 			}
 			respM, err := http.Post(url, "application/json", strings.NewReader(string(queryVaspReqMsg)))
 			if err != nil {
 				fmt.Printf("http post error:%s", err)
+				w.WriteHeader(http.StatusBadGateway)
+				w.Write([]byte("http post error"))
 				return
 			}
 
 			body, err := ioutil.ReadAll(respM.Body)
 			if err != nil {
 				fmt.Printf("http read error:%s", err)
+				w.WriteHeader(http.StatusBadGateway)
+				w.Write([]byte("http read error"))
 				return
 			}
 			defer respM.Body.Close()
@@ -594,6 +646,8 @@ func runServerCmd(cmd *cobra.Command, args []string) {
 			err = json.Unmarshal(body, queryVaspRsp)
 			if err != nil {
 				fmt.Printf("json unmarshal error:%s", err)
+				w.WriteHeader(http.StatusBadGateway)
+				w.Write([]byte("json unmarshal error"))
 				return
 			}
 
@@ -614,7 +668,9 @@ func runServerCmd(cmd *cobra.Command, args []string) {
 
 			resp, err := pServer.SendRequest(r.Context(), queryVaspRsp.Url, uuid.New().String(), tData)
 			if err != nil {
-				fmt.Fprintf(w, "error: %v", err)
+				fmt.Printf("send request error:%s", err)
+				w.WriteHeader(http.StatusBadGateway)
+				w.Write([]byte("send request error"))
 				return
 			}
 			fmt.Printf("last resp:%s", resp)
