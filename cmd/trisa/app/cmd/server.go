@@ -398,6 +398,7 @@ func runServerCmd(cmd *cobra.Command, args []string) {
 				return
 			}
 			defer respM.Body.Close()
+			fmt.Printf("resp Msg:%s", body)
 
 			w.WriteHeader(http.StatusOK)
 			w.Write(body)
@@ -475,6 +476,8 @@ func runServerCmd(cmd *cobra.Command, args []string) {
 			rsp.RespDesc = "success"
 
 			rtt, _ := json.Marshal(rsp)
+			fmt.Printf("resp Msg:%s", rtt)
+
 			w.WriteHeader(http.StatusOK)
 			w.Write(rtt)
 
@@ -532,6 +535,8 @@ func runServerCmd(cmd *cobra.Command, args []string) {
 			rsp.TxnInfo.Amount = txnInfo.Amount
 
 			rspMsg, _ := json.Marshal(rsp)
+			fmt.Printf("resp Msg:%s", rspMsg)
+
 			w.WriteHeader(http.StatusOK)
 			w.Write(rspMsg)
 
@@ -679,6 +684,8 @@ func runServerCmd(cmd *cobra.Command, args []string) {
 			rsp.RespDesc = "success"
 			rsp.RespCode = "0000"
 			rspMsg, _ := json.Marshal(rsp)
+			fmt.Printf("resp Msg:%s", rspMsg)
+
 			w.WriteHeader(http.StatusOK)
 			w.Write(rspMsg)
 
