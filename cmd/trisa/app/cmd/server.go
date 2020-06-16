@@ -349,6 +349,8 @@ func runServerCmd(cmd *cobra.Command, args []string) {
 			txn.RecieverName = GetKeyVal(resp, "name")
 			txn.RecieverWalletAddress = GetKeyVal(resp, "wallet_address")
 			txn.Key = GetKeyVal(resp, "key")
+			txn.CreateTime = time.Now()
+			txn.UpdateTime = time.Now()
 
 			err = sqllite.TxnListCollectionCol.Insert(txn)
 			if err != nil {

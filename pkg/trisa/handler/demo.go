@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"strconv"
 	"strings"
+	"time"
 
 	"github.com/google/uuid"
 
@@ -118,6 +119,8 @@ func (d *Demo) HandleRequest(ctx context.Context, id string, req *pb.Transaction
 		txn.RecieverName = kycInfo.Name
 		txn.RecieverWalletAddress = kycInfo.WalletAddress
 		txn.Key = uuid.New().String()
+		txn.CreateTime = time.Now()
+		txn.UpdateTime = time.Now()
 
 		err = sqllite.TxnListCollectionCol.Insert(txn)
 		if err != nil {
