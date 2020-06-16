@@ -65,6 +65,11 @@ type queryTxnRsp struct {
 	TxnInfo     TxnInfoDef `json:"txn_info,omitempty"`
 }
 
+type baseRsp struct {
+	RespCode string `json:"resp_code,omitempty"`
+	RespDesc string `json:"resp_desc,omitempty"`
+}
+
 type queryKycList struct {
 	RespCode string                     `json:"resp_code,omitempty"`
 	RespDesc string                     `json:"resp_desc,omitempty"`
@@ -398,6 +403,11 @@ func runServerCmd(cmd *cobra.Command, args []string) {
 				return
 			}
 			defer respM.Body.Close()
+			if respM.StatusCode != 200 {
+				resp := new(baseRsp)
+				resp.RespDesc = "not found"
+
+			}
 			fmt.Printf("resp Msg:%s", body)
 
 			w.WriteHeader(http.StatusOK)
