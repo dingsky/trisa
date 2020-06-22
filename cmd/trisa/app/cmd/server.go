@@ -204,7 +204,7 @@ func NewServerCmd() *cobra.Command {
 }
 
 var gCenterUrl string
-var gPSever interface{}
+var gPSever *server.Server
 
 func runServerCmd(cmd *cobra.Command, args []string) {
 
