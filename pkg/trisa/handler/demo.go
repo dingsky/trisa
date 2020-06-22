@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"strconv"
 	"strings"
-	"time"
 
 	"github.com/google/uuid"
 
@@ -91,19 +90,19 @@ func (d *Demo) HandleRequest(ctx context.Context, id string, req *pb.Transaction
 		txnId := GetKeyVal(data, "txn_id")
 		txnDate := GetKeyVal(data, "txn_date")
 
-		kycInfo, err := sqllite.KycListCollectionCol.Select(curr, net, address)
+		kycInfo, err := sqllite.KycListCollectionCol.Select(curr, address)
 		if err != nil {
 			return nil, fmt.Errorf("kyc not found")
 		}
 		fmt.Printf("currency:%s address:%s amount:%s name:%s wallteAddress:%s id:%s date:%s ident:%s\n", curr, address, amount, name, walletAddress, id, date, identifyInfo)
 		amoutFloat, _ := strconv.ParseFloat(amount, 64)
-		countInt, _ := strconv.ParseInt(count, 10, 64)
+		countFloat, _ := strconv.ParseFloat(count, 10, 64)
 
 		txn := new(sqlliteModel.TblTxnList)
 		txn.Date = txnDate
 		txn.Amount = amoutFloat
 		txn.Currency = curr
-		txn.Count = countInt
+		txn.Count = countFloat
 		txn.TxnID = txnId
 		txn.SenderAddress = address
 		txn.SenderDate = date
@@ -119,8 +118,6 @@ func (d *Demo) HandleRequest(ctx context.Context, id string, req *pb.Transaction
 		txn.RecieverName = kycInfo.Name
 		txn.RecieverWalletAddress = kycInfo.WalletAddress
 		txn.Key = uuid.New().String()
-		txn.CreateTime = time.Now()
-		txn.UpdateTime = time.Now()
 
 		err = sqllite.TxnListCollectionCol.Insert(txn)
 		if err != nil {
