@@ -11,6 +11,8 @@ type TblKycList struct {
 	KycId         string    `"gorm":"column:kyc_id" json:"kyc_id,omitempty"`
 	Date          string    `"gorm":"column:date" json:"date,omitempty"`
 	IdentifyInfo  string    `"gorm":"column:identify_info" json:"identify_info,omitempty"`
+	Type          string    `"gorm":"column:type" json:"type,omitempty"`
+	CertificateID string    `"gorm":"column:certificate_id" json:"certificate_id,omitempty"`
 	CreateTime    time.Time `"gorm":"column:create_time" json:"create_time,omitempty"`
 	UpdateTime    time.Time `"gorm":"column:update_time" json:"update_time,omitempty"`
 }

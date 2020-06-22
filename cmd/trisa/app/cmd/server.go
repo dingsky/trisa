@@ -29,28 +29,71 @@ import (
 	bitcoin "github.com/trisacrypto/trisa/proto/trisa/data/bitcoin/v1alpha1"
 	us "github.com/trisacrypto/trisa/proto/trisa/identity/us/v1alpha1"
 	pb "github.com/trisacrypto/trisa/proto/trisa/protocol/v1alpha1"
-	querykyc "github.com/trisacrypto/trisa/proto/trisa/querykyc/v1alpha1"
 	synctxn "github.com/trisacrypto/trisa/proto/trisa/synctxn/v1alpha1"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials"
 )
 
-type queryKycRsp struct {
-	RespCode    string  `json:"resp_code,omitempty"`
-	RespDesc    string  `json:"resp_desc,omitempty"`
-	Key         string  `json:"key,omitempty"`
-	RecieverKyc KycInfo `json:"reciever_kyc,omitempty"`
+type createTxnReq struct {
+	Id          string  `json:"id,omitempty"`
+	Name        string  `json:"name,omitempty"`
+	TxnTime     string  `json:"txn_time,omitempty"`
+	Type        string  `json:"type,omitempty"`
+	FromAddress string  `json:"from_address,omitempty"`
+	ToAddress   string  `json:"to_address,omitempty"`
+	Currency    string  `json:"currency,omitempty"`
+	Amount      float64 `json:"amount,omitempty"`
+	Count       float64 `json:"count,omitempty"`
+	Hash        string  `json:"hash,omitempty"`
 }
 
-type queryKycReq struct {
-	Currency         string  `json:"currency,omitempty"`
-	Net              string  `json:"net,omitempty"`
-	Address          string  `json:"address,omitempty"`
-	Amount           float64 `json:"amount,omitempty"`
-	TxnId            string  `json:"txn_id,omitempty"`
-	Count            int64   `json:"count,omitempty"`
-	TxnDate          string  `json:"txn_date,omitempty"`
-	SenderWalletAddr string  `json:"sender_wallet_address,omitempty"`
+type createTxnRsp struct {
+	RespCode string `json:"resp_code,omitempty"`
+	RespDesc string `json:"resp_desc,omitempty"`
+	Key      string `json:"key,omitempty"`
+}
+
+type queryKycListReq struct {
+	Id        string `json:"id,omitempty"`
+	Name      string `json:"name,omitempty"`
+	Type      string `json:"type,omitempty"`
+	Currency  string `json:"currency,omitempty"`
+	TimeStart string `json:"time_start,omitempty"`
+	TimeEnd   string `json:"time_end,omitempty"`
+}
+
+type queryKycListRsp struct {
+	RespCode string     `json:"resp_code,omitempty"`
+	RespDesc string     `json:"resp_desc,omitempty"`
+	KycList  []*KycList `json:"kyc_list,omitempty"`
+}
+
+type queryKycDetailReq struct {
+	Currency      string `json:"currency,omitempty"`
+	WalletAddress string `json:"wallet_address,omitempty"`
+}
+
+type queryKycDetailRsp struct {
+	RespCode      string `json:"resp_code,omitempty"`
+	RespDesc      string `json:"resp_desc,omitempty"`
+	Id            string `json:"id,omitempty"`
+	Name          string `json:"name,omitempty"`
+	Type          string `json:"type,omitempty"`
+	Date          string `json:"date,omitempty"`
+	CertificateID string `json:"certificate_id,omitempty"`
+	Address       string `json:"address,omitempty"`
+	Currency      string `json:"currency,omitempty"`
+	WalletAddress string `json:"wallet_address,omitempty"`
+	CreateTime    string `json:"create_time,omitempty"`
+}
+
+type KycList struct {
+	Id            string `json:"id,omitempty"`
+	Name          string `json:"name,omitempty"`
+	Type          string `json:"type,omitempty"`
+	Currency      string `json:"currency,omitempty"`
+	WalletAddress string `json:"wallet_address,omitempty"`
+	CreateTime    string `json:"create_time,omitempty"`
 }
 
 type queryTxnReq struct {
@@ -68,12 +111,6 @@ type queryTxnRsp struct {
 type baseRsp struct {
 	RespCode string `json:"resp_code,omitempty"`
 	RespDesc string `json:"resp_desc,omitempty"`
-}
-
-type queryKycList struct {
-	RespCode string                     `json:"resp_code,omitempty"`
-	RespDesc string                     `json:"resp_desc,omitempty"`
-	KycList  []*sqlliteModel.TblKycList `json:"kyc_list,omitempty"`
 }
 
 type queryTxnList struct {
@@ -126,9 +163,16 @@ type queryVaspRsp struct {
 }
 
 type bindKycReq struct {
-	Currency string  `json:"currency,omitempty"`
-	Net      string  `json:"net,omitempty"`
-	Kyc      KycInfo `json:"kyc,omitempty"`
+	Id            string `json:"id,omitempty"`
+	Name          string `json:"name,omitempty"`
+	Type          string `json:"type,omitempty"`
+	Date          string `json:"date,omitempty"`
+	CertificateID string `json:"certificate_id,omitempty"`
+	Address       string `json:"address,omitempty"`
+	Currency      string `json:"currency,omitempty"`
+	//	Net      string `json:"net,omitempty"`
+	WalletAddress string `json:"wallet_address,omitempty"`
+	IdentifyInfo  string `json:"identify_info,omitempty"`
 }
 
 type bindKycRsp struct {
@@ -139,8 +183,8 @@ type bindKycRsp struct {
 type bindAddressReq struct {
 	ID       string `json:"id,omitempty"`
 	Currency string `json:"currency,omitempty"`
-	Net      string `json:"net,omitempty"`
-	Address  string `json:"address,omitempty"`
+	//	Net      string `json:"net,omitempty"`
+	Address string `json:"address,omitempty"`
 }
 
 type bindAddressRsp struct {
@@ -157,6 +201,9 @@ func NewServerCmd() *cobra.Command {
 
 	return cmd
 }
+
+var gCenterUrl string
+var gPSever interface{}
 
 func runServerCmd(cmd *cobra.Command, args []string) {
 
@@ -195,8 +242,10 @@ func runServerCmd(cmd *cobra.Command, args []string) {
 
 	handler := handler.NewDemoHandler()
 	pServer := server.New(handler, crt, tp.GetCertPool())
+	gPSever = pServer
 
 	errs := make(chan error, 2)
+	gCenterUrl = c.Server.TrisaCenterUrl
 
 	go func() {
 
@@ -223,7 +272,7 @@ func runServerCmd(cmd *cobra.Command, args []string) {
 			w.Write(out)
 		})
 
-		r.HandleFunc("/query_kyc", func(w http.ResponseWriter, r *http.Request) {
+		r.HandleFunc("/create_txn", func(w http.ResponseWriter, r *http.Request) {
 			w.Header().Set("Access-Control-Allow-Origin", "*")
 
 			// 读请求报文
@@ -237,7 +286,7 @@ func runServerCmd(cmd *cobra.Command, args []string) {
 			fmt.Printf("req msg:%s\n", reqMsg)
 
 			// 解包
-			req := new(queryKycReq)
+			req := new(createTxnReq)
 			err = json.Unmarshal(reqMsg, req)
 			if err != nil {
 				w.WriteHeader(http.StatusBadGateway)
@@ -246,111 +295,18 @@ func runServerCmd(cmd *cobra.Command, args []string) {
 				return
 			}
 
-			kyc, err := sqllite.KycListCollectionCol.Select(req.Currency, req.Net, req.SenderWalletAddr)
-			if err != nil {
-				fmt.Printf("unknow KYC error:%s", err)
-				w.WriteHeader(http.StatusNotFound)
-				w.Write([]byte("unknow KYC"))
-				return
-			}
-
-			url := c.Server.TrisaCenterUrl + "/v0/api/trisacenter/get_vasp"
-			queryVaspReq := new(queryVaspReq)
-			queryVaspReq.Currency = req.Currency
-			queryVaspReq.Net = req.Net
-			queryVaspReq.Address = req.Address
-			queryVaspReqMsg, err := json.Marshal(queryVaspReq)
-			if err != nil {
-				fmt.Printf("json KYC Marsharl:%s", err)
-				w.WriteHeader(http.StatusBadGateway)
-				w.Write([]byte("json KYC Marsharl error"))
-				return
-			}
-			respM, err := http.Post(url, "application/json", strings.NewReader(string(queryVaspReqMsg)))
-			if err != nil {
-				fmt.Printf("http post error:%s", err)
-				w.WriteHeader(http.StatusBadGateway)
-				w.Write([]byte("http post error"))
-				return
-			}
-
-			body, err := ioutil.ReadAll(respM.Body)
-			if err != nil {
-				fmt.Printf("http read error:%s", err)
-				w.WriteHeader(http.StatusBadGateway)
-				w.Write([]byte("http read error"))
-				return
-			}
-			defer respM.Body.Close()
-
-			queryVaspRsp := new(queryVaspRsp)
-			err = json.Unmarshal(body, queryVaspRsp)
-			if err != nil {
-				fmt.Printf("json unmarshal error:%s", err)
-				w.WriteHeader(http.StatusBadGateway)
-				w.Write([]byte("json unmarshal error"))
-				return
-			}
-
-			identity, _ := ptypes.MarshalAny(&querykyc.Data{
-				Currency: req.Currency,
-				Net:      req.Net,
-				Address:  req.Address,
-			})
-
-			data, _ := ptypes.MarshalAny(&querykyc.Data{
-				Currency:      req.Currency,
-				Net:           req.Net,
-				Address:       req.Address,
-				Amount:        req.Amount,
-				Name:          kyc.Name,
-				WalletAddress: kyc.WalletAddress,
-				Id:            kyc.KycId,
-				Date:          kyc.Date,
-				IdentifyInfo:  kyc.IdentifyInfo,
-				TxnId:         req.TxnId,
-				Count:         req.Count,
-				TxnDate:       req.TxnDate,
-			})
-
-			tData := &pb.TransactionData{
-				Identity: identity,
-				Data:     data,
-			}
-
-			fmt.Printf("url:%s\n", queryVaspRsp.Url)
-			resp, err := pServer.SendRequest(r.Context(), queryVaspRsp.Url, uuid.New().String(), tData)
-			if err != nil {
-				fmt.Printf("send request error:%s", err)
-				w.WriteHeader(http.StatusBadGateway)
-				w.Write([]byte("send request error"))
-				return
-			}
-			fmt.Printf("last resp:%s", resp)
-
 			txn := new(sqlliteModel.TblTxnList)
-			txn.Net = req.Net
-			txn.Date = req.TxnDate
-			txn.Amount = req.Amount
+			txn.CusId = req.Id
+			txn.Name = req.Name
+			txn.TxnTime = req.TxnTime
+			txn.Type = req.Type
+			txn.SenderWalletAddress = req.FromAddress
+			txn.RecieverWalletAddress = req.ToAddress
 			txn.Currency = req.Currency
+			txn.Amount = req.Amount
 			txn.Count = req.Count
-			txn.TxnID = req.TxnId
-			txn.SenderAddress = kyc.Address
-			txn.SenderDate = kyc.Date
-			txn.SenderId = kyc.KycId
-			txn.SenderIdentifyInfo = kyc.IdentifyInfo
-			txn.SenderName = kyc.Name
-			txn.SenderWalletAddress = kyc.WalletAddress
-
-			txn.RecieverAddress = GetKeyVal(resp, "address")
-			txn.RecieverDate = GetKeyVal(resp, "date")
-			txn.RecieverId = GetKeyVal(resp, "id")
-			txn.RecieverIdentifyInfo = GetKeyVal(resp, "identify_info")
-			txn.RecieverName = GetKeyVal(resp, "name")
-			txn.RecieverWalletAddress = GetKeyVal(resp, "wallet_address")
-			txn.Key = GetKeyVal(resp, "key")
-			txn.CreateTime = time.Now()
-			txn.UpdateTime = time.Now()
+			txn.Hash = req.Hash
+			txn.KeyRet = uuid.New().String()
 
 			err = sqllite.TxnListCollectionCol.Insert(txn)
 			if err != nil {
@@ -360,21 +316,18 @@ func runServerCmd(cmd *cobra.Command, args []string) {
 				return
 			}
 
-			rsp := new(queryKycRsp)
+			rsp := new(createTxnRsp)
 			rsp.RespDesc = "success"
 			rsp.RespCode = "0000"
-			rsp.RecieverKyc.Name = GetKeyVal(resp, "name")
-			rsp.RecieverKyc.Id = GetKeyVal(resp, "id")
-			rsp.RecieverKyc.IdentifyInfo = GetKeyVal(resp, "identify_info")
-			rsp.RecieverKyc.Date = GetKeyVal(resp, "date")
-			rsp.RecieverKyc.WalletAddress = GetKeyVal(resp, "wallet_address")
-			rsp.RecieverKyc.Address = GetKeyVal(resp, "address")
-			rsp.Key = GetKeyVal(resp, "key")
+			rsp.Key = txn.KeyRet
 			rspMsg, _ := json.Marshal(rsp)
 			fmt.Printf("rspMsg:%s", rspMsg)
 
 			w.WriteHeader(http.StatusOK)
 			w.Write(rspMsg)
+			go func() {
+				flushTxn(req, txn.KeyRet)
+			}()
 		})
 
 		r.HandleFunc("/check_address", func(w http.ResponseWriter, r *http.Request) {
@@ -417,88 +370,6 @@ func runServerCmd(cmd *cobra.Command, args []string) {
 
 			w.WriteHeader(http.StatusOK)
 			w.Write(body)
-		})
-
-		r.HandleFunc("/bind_kyc", func(w http.ResponseWriter, r *http.Request) {
-
-			w.Header().Set("Access-Control-Allow-Origin", "*")
-
-			// 读请求报文
-			reqMsg, err := ioutil.ReadAll(r.Body)
-			if err != nil {
-				fmt.Printf("read request error:%s\n", err)
-				w.WriteHeader(http.StatusBadGateway)
-				w.Write([]byte("read request error"))
-				return
-			}
-			fmt.Printf("req msg:%s\n", reqMsg)
-
-			req := new(bindKycReq)
-			err = json.Unmarshal(reqMsg, req)
-			if err != nil {
-				fmt.Printf("json unmarshal error:%s\n", err)
-				w.WriteHeader(http.StatusBadGateway)
-				w.Write([]byte("json unmarshal error"))
-				return
-			}
-
-			url := c.Server.TrisaCenterUrl + "/v0/api/trisacenter/bind_address"
-			bindAddr := new(bindAddressReq)
-			bindAddr.ID = c.Server.TrisaCustomerId
-			bindAddr.Address = req.Kyc.WalletAddress
-			bindAddr.Net = req.Net
-			bindAddr.Currency = req.Currency
-			reqq, _ := json.Marshal(bindAddr)
-			respM, err := http.Post(url, "application/json", strings.NewReader(string(reqq)))
-			if err != nil {
-				fmt.Printf("http post error:%s\n", err)
-				w.WriteHeader(http.StatusBadGateway)
-				w.Write([]byte("http post error"))
-				return
-			}
-			defer respM.Body.Close()
-			body, err := ioutil.ReadAll(respM.Body)
-			if err != nil {
-				fmt.Printf("read rsp error:%s\n", err)
-				w.WriteHeader(http.StatusBadGateway)
-				w.Write([]byte("read rsp error"))
-				return
-			}
-			fmt.Printf("==========body:%s\n", body)
-
-			kycInfo := new(sqlliteModel.TblKycList)
-			kycInfo.WalletAddress = req.Kyc.WalletAddress
-			kycInfo.Currency = req.Currency
-			kycInfo.Net = req.Net
-			kycInfo.Address = req.Kyc.Address
-			kycInfo.Name = req.Kyc.Name
-			kycInfo.IdentifyInfo = req.Kyc.IdentifyInfo
-			kycInfo.KycId = req.Kyc.Id
-			kycInfo.Date = req.Kyc.Date
-			kycInfo.CreateTime = time.Now()
-			kycInfo.UpdateTime = time.Now()
-			err = sqllite.KycListCollectionCol.Delete(kycInfo.Currency, kycInfo.Net, kycInfo.WalletAddress)
-			if err != nil {
-				fmt.Printf("double bind KYC delete the old\n")
-			}
-			err = sqllite.KycListCollectionCol.Insert(kycInfo)
-			if err != nil {
-				fmt.Printf("insert kyc error:%s", err)
-				w.WriteHeader(http.StatusBadGateway)
-				w.Write([]byte("insert kyc error"))
-				return
-			}
-
-			rsp := new(bindKycRsp)
-			rsp.RespCode = "0000"
-			rsp.RespDesc = "success"
-
-			rtt, _ := json.Marshal(rsp)
-			fmt.Printf("resp Msg:%s", rtt)
-
-			w.WriteHeader(http.StatusOK)
-			w.Write(rtt)
-
 		})
 
 		r.HandleFunc("/query_txn", func(w http.ResponseWriter, r *http.Request) {
@@ -560,11 +431,112 @@ func runServerCmd(cmd *cobra.Command, args []string) {
 
 		})
 
-		r.HandleFunc("/query_kyc_list", func(w http.ResponseWriter, r *http.Request) {
+		r.HandleFunc("/add_kyc", func(w http.ResponseWriter, r *http.Request) {
 
 			w.Header().Set("Access-Control-Allow-Origin", "*")
 
-			kycList, err := sqllite.KycListCollectionCol.SelectAll()
+			// 读请求报文
+			reqMsg, err := ioutil.ReadAll(r.Body)
+			if err != nil {
+				fmt.Printf("read request error:%s\n", err)
+				w.WriteHeader(http.StatusBadGateway)
+				w.Write([]byte("read request error"))
+				return
+			}
+			fmt.Printf("req msg:%s\n", reqMsg)
+
+			req := new(bindKycReq)
+			err = json.Unmarshal(reqMsg, req)
+			if err != nil {
+				fmt.Printf("json unmarshal error:%s\n", err)
+				w.WriteHeader(http.StatusBadGateway)
+				w.Write([]byte("json unmarshal error"))
+				return
+			}
+
+			url := c.Server.TrisaCenterUrl + "/v0/api/trisacenter/bind_address"
+			bindAddr := new(bindAddressReq)
+			bindAddr.ID = c.Server.TrisaCustomerId
+			bindAddr.Address = req.WalletAddress
+			// bindAddr.Net = req.Net
+			bindAddr.Currency = req.Currency
+			reqq, _ := json.Marshal(bindAddr)
+			respM, err := http.Post(url, "application/json", strings.NewReader(string(reqq)))
+			if err != nil {
+				fmt.Printf("http post error:%s\n", err)
+				w.WriteHeader(http.StatusBadGateway)
+				w.Write([]byte("http post error"))
+				return
+			}
+			defer respM.Body.Close()
+			body, err := ioutil.ReadAll(respM.Body)
+			if err != nil {
+				fmt.Printf("read rsp error:%s\n", err)
+				w.WriteHeader(http.StatusBadGateway)
+				w.Write([]byte("read rsp error"))
+				return
+			}
+			fmt.Printf("==========body:%s\n", body)
+			kycInfo := new(sqlliteModel.TblKycList)
+			kycInfo.WalletAddress = req.WalletAddress
+			kycInfo.Currency = req.Currency
+			kycInfo.Type = req.Type
+			kycInfo.CertificateID = req.CertificateID
+			kycInfo.Address = req.Address
+			kycInfo.Name = req.Name
+			kycInfo.IdentifyInfo = req.IdentifyInfo
+			kycInfo.KycId = req.Id
+			kycInfo.Date = req.Date
+			kycInfo.CreateTime = time.Now()
+			kycInfo.UpdateTime = time.Now()
+			err = sqllite.KycListCollectionCol.Delete(kycInfo.Currency, kycInfo.Net, kycInfo.WalletAddress)
+			if err != nil {
+				fmt.Printf("double bind KYC delete the old\n")
+			}
+			err = sqllite.KycListCollectionCol.Insert(kycInfo)
+			if err != nil {
+				fmt.Printf("insert kyc error:%s", err)
+				w.WriteHeader(http.StatusBadGateway)
+				w.Write([]byte("insert kyc error"))
+				return
+			}
+
+			rsp := new(bindKycRsp)
+			rsp.RespCode = "0000"
+			rsp.RespDesc = "success"
+
+			rtt, _ := json.Marshal(rsp)
+			fmt.Printf("resp Msg:%s", rtt)
+
+			w.WriteHeader(http.StatusOK)
+			w.Write(rtt)
+
+		})
+
+		r.HandleFunc("/query_kyc_list", func(w http.ResponseWriter, r *http.Request) {
+
+			w.Header().Set("Access-Control-Allow-Origin", "*")
+			// 读请求报文
+			reqMsg, err := ioutil.ReadAll(r.Body)
+			if err != nil {
+				fmt.Printf("read request error:%s\n", err)
+				w.WriteHeader(http.StatusBadGateway)
+				w.Write([]byte("read request error"))
+				return
+			}
+			fmt.Printf("query kyc list req msg:%s\n", reqMsg)
+
+			// 解包
+			req := new(queryKycListReq)
+			err = json.Unmarshal(reqMsg, req)
+			if err != nil {
+				fmt.Printf("json Unmarshal error:%s", err)
+				w.WriteHeader(http.StatusBadGateway)
+				w.Write([]byte("json Unmarshal error"))
+				return
+			}
+
+			kycList, err := sqllite.KycListCollectionCol.SelectAll(req.Id, req.Name, req.Type, req.Currency, req.TimeStart, req.TimeEnd)
 			if err != nil {
 				fmt.Printf("kyc not found error:%s", err)
 				w.WriteHeader(http.StatusBadGateway)
@@ -572,12 +544,74 @@ func runServerCmd(cmd *cobra.Command, args []string) {
 				return
 			}
 
-			rsp := new(queryKycList)
+			rsp := new(queryKycListRsp)
 			rsp.RespDesc = "success"
 			rsp.RespCode = "0000"
-			rsp.KycList = kycList
+
+			rsp.KycList = make([]*KycList, 0)
+			for _, record := range kycList {
+				kyc := new(KycList)
+				kyc.Id = record.KycId
+				kyc.Name = record.Name
+				kyc.Type = record.Type
+				kyc.Currency = record.Currency
+				kyc.WalletAddress = record.WalletAddress
+				kyc.CreateTime = record.CreateTime.Format("2006-01-02 15:03:04")
+				rsp.KycList = append(rsp.KycList, kyc)
+			}
 			rspMsg, _ := json.Marshal(rsp)
 			fmt.Printf("query kyc list resp:%s", rspMsg)
+			w.WriteHeader(http.StatusOK)
+			w.Write(rspMsg)
+		})
+
+		r.HandleFunc("/query_kyc_detail", func(w http.ResponseWriter, r *http.Request) {
+
+			w.Header().Set("Access-Control-Allow-Origin", "*")
+			// 读请求报文
+			reqMsg, err := ioutil.ReadAll(r.Body)
+			if err != nil {
+				fmt.Printf("read request error:%s\n", err)
+				w.WriteHeader(http.StatusBadGateway)
+				w.Write([]byte("read request error"))
+				return
+			}
+			fmt.Printf("query kyc detail req msg:%s\n", reqMsg)
+
+			// 解包
+			req := new(queryKycDetailReq)
+			err = json.Unmarshal(reqMsg, req)
+			if err != nil {
+				fmt.Printf("json Unmarshal error:%s", err)
+				w.WriteHeader(http.StatusBadGateway)
+				w.Write([]byte("json Unmarshal error"))
+				return
+			}
+
+			kycInfo, err := sqllite.KycListCollectionCol.Select(req.Currency, req.WalletAddress)
+			if err != nil {
+				fmt.Printf("kyc not found error:%s", err)
+				w.WriteHeader(http.StatusBadGateway)
+				w.Write([]byte("kyc not found"))
+				return
+			}
+
+			rsp := new(queryKycDetailRsp)
+			rsp.RespDesc = "success"
+			rsp.RespCode = "0000"
+
+			rsp.Currency = kycInfo.Currency
+			rsp.Name = kycInfo.Name
+			rsp.WalletAddress = kycInfo.WalletAddress
+			rsp.Address = kycInfo.Address
+			rsp.Id = kycInfo.KycId
+			rsp.Date = kycInfo.Date
+			rsp.Type = kycInfo.Type
+			rsp.CertificateID = kycInfo.CertificateID
+			rsp.CreateTime = kycInfo.CreateTime.Format("2006-01-02 15:03:04")
+
+			rspMsg, _ := json.Marshal(rsp)
+			fmt.Printf("query kyc detail resp:%s", rspMsg)
 			w.WriteHeader(http.StatusOK)
 			w.Write(rspMsg)
 		})
@@ -598,7 +632,6 @@ func runServerCmd(cmd *cobra.Command, args []string) {
 			rsp.RespDesc = "success"
 			rsp.RespCode = "0000"
 			rsp.TxnList = txnList
-
 			rspMsg, _ := json.Marshal(rsp)
 			fmt.Printf("query txn list resp:%s", rspMsg)
 			w.WriteHeader(http.StatusOK)
@@ -901,4 +934,191 @@ func GetKeyVal(sour, key string) string {
 	}
 	return sour[pos+keyLen+1 : pos+left]
 
+}
+
+const (
+	txnFail           = "F"
+	gap               = 5
+	checkAddressOK    = "0"
+	exchangeCaOK      = "1"
+	SecurityConnectOK = "2"
+	SendKycOK         = "3"
+	RecKycOK          = "4"
+)
+
+func flushTxn(req *createTxnReq, key string) {
+	// 判断提现地址是否在Trisa体系内
+	time.Sleep(time.Second * gap)
+	txn := new(sqlliteModel.TblTxnList)
+	err := checkAddress(req.Currency, req.ToAddress)
+	if err != nil {
+		txn.Status = txnFail
+		sqllite.TxnListCollectionCol.UpdateByKeyRet(key, txn)
+		return
+	}
+	txn.Status = checkAddressOK
+	sqllite.TxnListCollectionCol.UpdateByKeyRet(key, txn)
+
+	//CA证书交换
+	time.Sleep(time.Second * gap)
+	destUrl, err := getDestVasp(req.Currency, req.ToAddress)
+	if err != nil {
+		txn.Status = txnFail
+		sqllite.TxnListCollectionCol.UpdateByKeyRet(key, txn)
+		return
+	}
+	txn.Status = exchangeCaOK
+	sqllite.TxnListCollectionCol.UpdateByKeyRet(key, txn)
+
+	//加密通道构建
+	time.Sleep(time.Second * gap)
+	txn.Status = SecurityConnectOK
+	sqllite.TxnListCollectionCol.UpdateByKeyRet(key, txn)
+
+	//发送Kyc
+	time.Sleep(time.Second * gap)
+	txnr, err := exchangeKyc(req, destUrl)
+	if err != nil {
+		txn.Status = txnFail
+		sqllite.TxnListCollectionCol.UpdateByKeyRet(key, txn)
+	}
+	txn.Status = SendKycOK
+	sqllite.TxnListCollectionCol.UpdateByKeyRet(key, txn)
+
+	//接收kyc
+	time.Sleep(time.Second * gap)
+	txnr.Status = RecKycOK
+	sqllite.TxnListCollectionCol.UpdateByKeyRet(key, txnr)
+}
+
+type checkAddressReq struct {
+	Currency string `json:"currency,omitempty"`
+	Net      string `json:"net,omitempty"`
+	Address  string `json:"address,omitempty"`
+}
+
+func checkAddress(currency, address string) error {
+	url := gCenterUrl + "/v0/api/trisacenter/check_address"
+	req := new(checkAddressReq)
+	req.Currency = currency
+	req.Address = address
+	reqMsg, _ := json.Marshal(req)
+	respM, err := http.Post(url, "application/json", strings.NewReader(string(reqMsg)))
+	if err != nil {
+		fmt.Printf("http post error:%s", err)
+		return err
+	}
+
+	body, err := ioutil.ReadAll(respM.Body)
+	if err != nil {
+		fmt.Printf("http read error:%s", err)
+		return err
+	}
+	defer respM.Body.Close()
+	if respM.StatusCode != 200 {
+		fmt.Printf("http error:%s", err)
+		return err
+	}
+	fmt.Printf("resp Msg:%s", body)
+	return nil
+}
+
+func getDestVasp(currency, address string) (string, error) {
+	url := gCenterUrl + "/v0/api/trisacenter/get_vasp"
+	queryVaspReq := new(queryVaspReq)
+	queryVaspReq.Currency = currency
+	queryVaspReq.Address = address
+	queryVaspReqMsg, _ := json.Marshal(queryVaspReq)
+	respM, err := http.Post(url, "application/json", strings.NewReader(string(queryVaspReqMsg)))
+	if err != nil {
+		fmt.Printf("http post error:%s", err)
+		return "", err
+	}
+
+	body, err := ioutil.ReadAll(respM.Body)
+	if err != nil {
+		fmt.Printf("http read error:%s", err)
+		return "", err
+	}
+	defer respM.Body.Close()
+
+	queryVaspRsp := new(queryVaspRsp)
+	err = json.Unmarshal(body, queryVaspRsp)
+	if err != nil {
+		fmt.Printf("json unmarshal error:%s", err)
+		return "", err
+	}
+	return queryVaspRsp.Url, nil
+}
+
+func exchangeKyc(req createTxnReq, url string) (*sqlliteModel.TblTxnList, error) {
+	identity, _ := ptypes.MarshalAny(&querykyc.Data{
+		Currency: req.Currency,
+		Net:      "",
+		Address:  req.ToAddress,
+	})
+
+	kyc, err := sqllite.KycListCollectionCol.Select(req.Currency, req.FromAddress)
+	if err != nil {
+		fmt.Printf("query kyc not found err:%s\n", err)
+		return nil, err
+	}
+
+	data, _ := ptypes.MarshalAny(&querykyc.Data{
+		Currency:      req.Currency,
+		Net:           "",
+		Address:       req.ToAddress,
+		Amount:        req.Amount,
+		Name:          kyc.Name,
+		WalletAddress: kyc.WalletAddress,
+		Id:            kyc.KycId,
+		Date:          kyc.Date,
+		IdentifyInfo:  kyc.IdentifyInfo,
+		TxnId:         req.Id,
+		Count:         req.Count,
+		TxnDate:       req.TxnTime,
+	})
+
+	tData := &pb.TransactionData{
+		Identity: identity,
+		Data:     data,
+	}
+
+	fmt.Printf("url:%s\n", queryVaspRsp.Url)
+	resp, err := gPSever.SendRequest(r.Context(), queryVaspRsp.Url, uuid.New().String(), tData)
+	if err != nil {
+		fmt.Printf("send request error:%s", err)
+		return nil, err
+	}
+	fmt.Printf("last resp:%s", resp)
+
+	txn := new(sqlliteModel.TblTxnList)
+	txn.CusId = req.Id
+	txn.Name = req.Name
+	txn.TxnTime = req.TxnTime
+	txn.Type = req.Type
+	txn.SenderWalletAddress = req.FromAddress
+	txn.RecieverWalletAddress = req.ToAddress
+	txn.Currency = req.Currency
+	txn.Amount = req.Amount
+	txn.Count = req.Count
+	txn.Hash = req.Hash
+	txn.KeyRet = uuid.New().String()
+
+	txn.SenderAddress = kyc.Address
+	txn.SenderDate = kyc.Date
+	txn.SenderId = kyc.KycId
+	txn.SenderIdentifyInfo = kyc.IdentifyInfo
+	txn.SenderName = kyc.Name
+	txn.SenderWalletAddress = kyc.WalletAddress
+
+	txn.RecieverAddress = GetKeyVal(resp, "address")
+	txn.RecieverDate = GetKeyVal(resp, "date")
+	txn.RecieverId = GetKeyVal(resp, "id")
+	txn.RecieverIdentifyInfo = GetKeyVal(resp, "identify_info")
+	txn.RecieverName = GetKeyVal(resp, "name")
+	txn.RecieverWalletAddress = GetKeyVal(resp, "wallet_address")
+	txn.Key = GetKeyVal(resp, "key")
+
+	return txn, nil
 }

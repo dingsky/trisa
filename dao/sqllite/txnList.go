@@ -22,6 +22,10 @@ func (s *txnListCollection) Update(key string, txn *sqlliteModel.TblTxnList) err
 	return Database.Model(&sqlliteModel.TblTxnList{}).Where("key = ?", key).Updates(txn).Error
 }
 
+func (s *txnListCollection) UpdateByKeyRet(key string, txn *sqlliteModel.TblTxnList) error {
+	return Database.Model(&sqlliteModel.TblTxnList{}).Where("key_ret = ?", key).Updates(txn).Error
+}
+
 func (s *txnListCollection) Select(id string) (*sqlliteModel.TblTxnList, error) {
 	txn := new(sqlliteModel.TblTxnList)
 	result := Database.Where("id = ?", id).First(txn)
