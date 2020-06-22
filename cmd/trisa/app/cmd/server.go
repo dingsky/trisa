@@ -130,6 +130,16 @@ type syncTxnRsp struct {
 	RespDesc string `json:"resp_desc,omitempty"`
 }
 
+type actionReq struct {
+	Key       string `json:"key,omitempty"`
+	Operation string `json:"operation,omitempty"`
+}
+
+type actionRsp struct {
+	RespCode string `json:"resp_code,omitempty"`
+	RespDesc string `json:"resp_desc,omitempty"`
+}
+
 type TxnInfoDef struct {
 	Id       string  `json:"id,omitempty"`
 	Hash     string  `json:"hash,omitempty"`
@@ -373,7 +383,69 @@ func runServerCmd(cmd *cobra.Command, args []string) {
 			w.Write(body)
 		})
 
-		r.HandleFunc("/query_txn", func(w http.ResponseWriter, r *http.Request) {
+		r.HandleFunc("/query_txn_list", func(w http.ResponseWriter, r *http.Request) {
+
+			w.Header().Set("Access-Control-Allow-Origin", "*")
+
+			txnList, err := sqllite.TxnListCollectionCol.SelectAll()
+			if err != nil {
+				fmt.Printf("txn not found error:%s", err)
+				w.WriteHeader(http.StatusBadGateway)
+				w.Write([]byte("txn not found"))
+				return
+			}
+
+			rsp := new(queryTxnList)
+			rsp.RespDesc = "success"
+			rsp.RespCode = "0000"
+			rsp.TxnList = txnList
+			rspMsg, _ := json.Marshal(rsp)
+			fmt.Printf("query txn list resp:%s", rspMsg)
+			w.WriteHeader(http.StatusOK)
+			w.Write(rspMsg)
+		})
+
+		r.HandleFunc("/action", func(w http.ResponseWriter, r *http.Request) {
+
+			w.Header().Set("Access-Control-Allow-Origin", "*")
+			reqMsg, err := ioutil.ReadAll(r.Body)
+			if err != nil {
+				fmt.Printf("read request error:%s\n", err)
+				w.WriteHeader(http.StatusBadGateway)
+				w.Write([]byte("read requesterror"))
+				return
+			}
+			fmt.Printf("action req msg:%s\n", reqMsg)
+
+			req := new(actionReq)
+			err = json.Unmarshal(reqMsg, req)
+			if err != nil {
+				fmt.Printf("json unmarshal error:%s\n", err)
+				w.WriteHeader(http.StatusBadGateway)
+				w.Write([]byte("read requesterror"))
+				return
+			}
+
+			txn := new(sqlliteModel.TblTxnList)
+			txn.Status = req.Operation
+			err = sqllite.TxnListCollectionCol.UpdateByKeyRet(req.Key, txn)
+			if err != nil {
+				fmt.Printf("txn not found error:%s", err)
+				w.WriteHeader(http.StatusBadGateway)
+				w.Write([]byte("txn not found"))
+				return
+			}
+
+			rsp := new(queryTxnList)
+			rsp.RespDesc = "success"
+			rsp.RespCode = "0000"
+			rspMsg, _ := json.Marshal(rsp)
+			fmt.Printf("action txn list resp:%s", rspMsg)
+			w.WriteHeader(http.StatusOK)
+			w.Write(rspMsg)
+		})
+
+		r.HandleFunc("/query_txn_detail", func(w http.ResponseWriter, r *http.Request) {
 
 			w.Header().Set("Access-Control-Allow-Origin", "*")
 			// 读请求报文
@@ -613,28 +685,6 @@ func runServerCmd(cmd *cobra.Command, args []string) {
 
 			rspMsg, _ := json.Marshal(rsp)
 			fmt.Printf("query kyc detail resp:%s", rspMsg)
-			w.WriteHeader(http.StatusOK)
-			w.Write(rspMsg)
-		})
-
-		r.HandleFunc("/query_txn_list", func(w http.ResponseWriter, r *http.Request) {
-
-			w.Header().Set("Access-Control-Allow-Origin", "*")
-
-			txnList, err := sqllite.TxnListCollectionCol.SelectAll()
-			if err != nil {
-				fmt.Printf("txn not found error:%s", err)
-				w.WriteHeader(http.StatusBadGateway)
-				w.Write([]byte("txn not found"))
-				return
-			}
-
-			rsp := new(queryTxnList)
-			rsp.RespDesc = "success"
-			rsp.RespCode = "0000"
-			rsp.TxnList = txnList
-			rspMsg, _ := json.Marshal(rsp)
-			fmt.Printf("query txn list resp:%s", rspMsg)
 			w.WriteHeader(http.StatusOK)
 			w.Write(rspMsg)
 		})
