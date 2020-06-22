@@ -29,6 +29,7 @@ import (
 	bitcoin "github.com/trisacrypto/trisa/proto/trisa/data/bitcoin/v1alpha1"
 	us "github.com/trisacrypto/trisa/proto/trisa/identity/us/v1alpha1"
 	pb "github.com/trisacrypto/trisa/proto/trisa/protocol/v1alpha1"
+	querykyc "github.com/trisacrypto/trisa/proto/trisa/querykyc/v1alpha1"
 	synctxn "github.com/trisacrypto/trisa/proto/trisa/synctxn/v1alpha1"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials"
@@ -133,7 +134,7 @@ type TxnInfoDef struct {
 	Id       string  `json:"id,omitempty"`
 	Hash     string  `json:"hash,omitempty"`
 	Currency string  `json:"currency,omitempty"`
-	Count    int64   `json:"net,omitempty"`
+	Count    float64 `json:"net,omitempty"`
 	Amount   float64 `json:"amount,omitempty"`
 	Date     string  `json:"date,omitempty"`
 }
@@ -326,7 +327,7 @@ func runServerCmd(cmd *cobra.Command, args []string) {
 			w.WriteHeader(http.StatusOK)
 			w.Write(rspMsg)
 			go func() {
-				flushTxn(req, txn.KeyRet)
+				flushTxn(r, req, txn.KeyRet)
 			}()
 		})
 
@@ -672,7 +673,7 @@ func runServerCmd(cmd *cobra.Command, args []string) {
 			url := c.Server.TrisaCenterUrl + "/v0/api/trisacenter/get_vasp"
 			queryVaspReq := new(queryVaspReq)
 			queryVaspReq.Currency = txnInfo.Currency
-			queryVaspReq.Net = txnInfo.Net
+			//	queryVaspReq.Net = txnInfo.Net
 			queryVaspReq.Address = txnInfo.RecieverWalletAddress
 			queryVaspReqMsg, err := json.Marshal(queryVaspReq)
 			if err != nil {
@@ -946,7 +947,7 @@ const (
 	RecKycOK          = "4"
 )
 
-func flushTxn(req *createTxnReq, key string) {
+func flushTxn(r *http.Request, req *createTxnReq, key string) {
 	// 判断提现地址是否在Trisa体系内
 	time.Sleep(time.Second * gap)
 	txn := new(sqlliteModel.TblTxnList)
@@ -977,7 +978,7 @@ func flushTxn(req *createTxnReq, key string) {
 
 	//发送Kyc
 	time.Sleep(time.Second * gap)
-	txnr, err := exchangeKyc(req, destUrl)
+	txnr, err := exchangeKyc(r, req, destUrl)
 	if err != nil {
 		txn.Status = txnFail
 		sqllite.TxnListCollectionCol.UpdateByKeyRet(key, txn)
@@ -1051,7 +1052,7 @@ func getDestVasp(currency, address string) (string, error) {
 	return queryVaspRsp.Url, nil
 }
 
-func exchangeKyc(req createTxnReq, url string) (*sqlliteModel.TblTxnList, error) {
+func exchangeKyc(r *http.Request, req *createTxnReq, url string) (*sqlliteModel.TblTxnList, error) {
 	identity, _ := ptypes.MarshalAny(&querykyc.Data{
 		Currency: req.Currency,
 		Net:      "",
@@ -1084,8 +1085,8 @@ func exchangeKyc(req createTxnReq, url string) (*sqlliteModel.TblTxnList, error)
 		Data:     data,
 	}
 
-	fmt.Printf("url:%s\n", queryVaspRsp.Url)
-	resp, err := gPSever.SendRequest(r.Context(), queryVaspRsp.Url, uuid.New().String(), tData)
+	fmt.Printf("url:%s\n", url)
+	resp, err := gPSever.SendRequest(r.Context(), url, uuid.New().String(), tData)
 	if err != nil {
 		fmt.Printf("send request error:%s", err)
 		return nil, err
