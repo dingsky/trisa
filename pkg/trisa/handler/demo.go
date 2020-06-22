@@ -96,7 +96,7 @@ func (d *Demo) HandleRequest(ctx context.Context, id string, req *pb.Transaction
 		}
 		fmt.Printf("currency:%s address:%s amount:%s name:%s wallteAddress:%s id:%s date:%s ident:%s\n", curr, address, amount, name, walletAddress, id, date, identifyInfo)
 		amoutFloat, _ := strconv.ParseFloat(amount, 64)
-		countFloat, _ := strconv.ParseFloat(count, 10, 64)
+		countFloat, _ := strconv.ParseFloat(count, 64)
 
 		txn := new(sqlliteModel.TblTxnList)
 		txn.Date = txnDate
