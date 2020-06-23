@@ -102,11 +102,12 @@ type queryTxnDetailReq struct {
 }
 
 type queryTxnDetailRsp struct {
-	RespCode    string     `json:"resp_code,omitempty"`
-	RespDesc    string     `json:"resp_desc,omitempty"`
-	SenderKyc   KycInfo    `json:"sender_kyc,omitempty"`
-	RecieverKyc KycInfo    `json:"reciever_kyc,omitempty"`
-	TxnInfo     TxnInfoDef `json:"txn_info,omitempty"`
+	RespCode      string     `json:"resp_code,omitempty"`
+	RespDesc      string     `json:"resp_desc,omitempty"`
+	ExamineStatus string     `json:"examine_status,omitempty"`
+	SenderKyc     KycInfo    `json:"sender_kyc,omitempty"`
+	RecieverKyc   KycInfo    `json:"reciever_kyc,omitempty"`
+	TxnInfo       TxnInfoDef `json:"txn_info,omitempty"`
 }
 
 type baseRsp struct {
@@ -132,17 +133,18 @@ type queryTxnListReq struct {
 }
 
 type txnListDef struct {
-	Id          string  `json:"id,omitempty"`
-	Name        string  `json:"name,omitempty"`
-	TxnTime     string  `json:"txn_time,omitempty"`
-	Type        string  `json:"type,omitempty"`
-	FromAddress string  `json:"from_address,omitempty"`
-	ToAddress   string  `json:"to_address,omitempty"`
-	Currency    string  `json:"currency,omitempty"`
-	Amount      float64 `json:"amount,omitempty"`
-	Count       float64 `json:"count,omitempty"`
-	TotalAmount float64 `json:"total_amount,omitempty"`
-	Key         string  `json:"key,omitempty"`
+	Id            string  `json:"id,omitempty"`
+	Name          string  `json:"name,omitempty"`
+	TxnTime       string  `json:"txn_time,omitempty"`
+	Type          string  `json:"type,omitempty"`
+	FromAddress   string  `json:"from_address,omitempty"`
+	ToAddress     string  `json:"to_address,omitempty"`
+	Currency      string  `json:"currency,omitempty"`
+	Amount        float64 `json:"amount,omitempty"`
+	Count         float64 `json:"count,omitempty"`
+	TotalAmount   float64 `json:"total_amount,omitempty"`
+	Key           string  `json:"key,omitempty"`
+	ExamineStatus string  `json:"examine_status,omitempty"`
 }
 
 type queryTxnListRsp struct {
@@ -468,6 +470,7 @@ func runServerCmd(cmd *cobra.Command, args []string) {
 				txn.Count = v.Count
 				txn.TotalAmount = v.TotalAmount
 				txn.Key = v.KeyRet
+				txn.ExamineStatus = v.ExamineStatus
 				rsp.TxnList = append(rsp.TxnList, txn)
 			}
 			rspMsg, _ := json.Marshal(rsp)
@@ -550,6 +553,7 @@ func runServerCmd(cmd *cobra.Command, args []string) {
 			rsp := new(queryTxnDetailRsp)
 			rsp.RespDesc = "success"
 			rsp.RespCode = "0000"
+			rsp.ExamineStatus = txnInfo.ExamineStatus
 			rsp.RecieverKyc.Name = txnInfo.RecieverName
 			rsp.RecieverKyc.WalletAddress = txnInfo.RecieverWalletAddress
 			rsp.RecieverKyc.Date = txnInfo.RecieverDate
