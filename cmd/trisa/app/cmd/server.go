@@ -170,6 +170,11 @@ type actionRsp struct {
 	RespDesc string `json:"resp_desc,omitempty"`
 }
 
+type actionRsp struct {
+	RespCode string `json:"resp_code,omitempty"`
+	RespDesc string `json:"resp_desc,omitempty"`
+}
+
 type TxnInfoDef struct {
 	Id       string  `json:"id,omitempty"`
 	Hash     string  `json:"hash,omitempty"`
@@ -505,7 +510,7 @@ func runServerCmd(cmd *cobra.Command, args []string) {
 				return
 			}
 
-			rsp := new(queryTxnList)
+			rsp := new(actionRsp)
 			rsp.RespDesc = "success"
 			rsp.RespCode = "0000"
 			rspMsg, _ := json.Marshal(rsp)
