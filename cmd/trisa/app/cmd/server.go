@@ -141,7 +141,7 @@ type txnListDef struct {
 	Currency    string  `json:"currency,omitempty"`
 	Amount      float64 `json:"amount,omitempty"`
 	Count       float64 `json:"count,omitempty"`
-	TotalAmount string  `json:"total_amount,omitempty"`
+	TotalAmount float64 `json:"total_amount,omitempty"`
 }
 
 type queryTxnListRsp struct {
@@ -458,16 +458,16 @@ func runServerCmd(cmd *cobra.Command, args []string) {
 				txn := new(txnListDef)
 				txn.Id = v.CusId
 				txn.Name = v.Name
-				txn.TxnTime
-				txn.Type
-				txn.FromAddress
-				txn.ToAddress
-				txn.Currency
-				txn.Amount
-				txn.Count
-				txn.TotalAmount
+				txn.TxnTime = v.TxnTime
+				txn.Type = v.Type
+				txn.FromAddress = v.SenderWalletAddress
+				txn.ToAddress = v.RecieverWalletAddress
+				txn.Currency = v.Currency
+				txn.Amount = v.Amount
+				txn.Count = v.Count
+				txn.TotalAmount = v.TotalAmount
+				rsp.TxnList = append(rsp.TxnList, txn)
 			}
-			rsp.TxnList = txnList
 			rspMsg, _ := json.Marshal(rsp)
 			fmt.Printf("query txn list resp:%s", rspMsg)
 			w.WriteHeader(http.StatusOK)
