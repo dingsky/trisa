@@ -142,6 +142,7 @@ type txnListDef struct {
 	Amount      float64 `json:"amount,omitempty"`
 	Count       float64 `json:"count,omitempty"`
 	TotalAmount float64 `json:"total_amount,omitempty"`
+	Key         string  `json:"key,omitempty"`
 }
 
 type queryTxnListRsp struct {
@@ -466,6 +467,7 @@ func runServerCmd(cmd *cobra.Command, args []string) {
 				txn.Amount = v.Amount
 				txn.Count = v.Count
 				txn.TotalAmount = v.TotalAmount
+				txn.Key = v.KeyRet
 				rsp.TxnList = append(rsp.TxnList, txn)
 			}
 			rspMsg, _ := json.Marshal(rsp)
