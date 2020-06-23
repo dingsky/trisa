@@ -61,11 +61,11 @@ func (s *txnListCollection) SelectAll(query *sqlliteModel.TblTxnList, minAmount,
 	}
 
 	if startTime != "" {
-		db = db.Where("create_time <= ?", startTime)
+		db = db.Where("create_time >= ?", startTime)
 	}
 
 	if endTime != "" {
-		db = db.Where("update_time <= ?", endTime)
+		db = db.Where("create_time <= ?", endTime)
 	}
 
 	result := db.Order("create_time desc").Find(&txnlist)

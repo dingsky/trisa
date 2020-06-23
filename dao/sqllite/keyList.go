@@ -41,7 +41,7 @@ func (a *kycListCollection) SelectAll(id, name, kycType, currency, timeStart, ti
 		db = db.Where("create_time >= ?", timeStart)
 	}
 	if timeEnd != "" {
-		db = db.Where("update_time <= ?", timeEnd)
+		db = db.Where("create_time <= ?", timeEnd)
 	}
 
 	result := db.Order("create_time desc").Find(&serv)
