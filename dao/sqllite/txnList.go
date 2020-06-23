@@ -32,21 +32,40 @@ func (s *txnListCollection) Select(id string) (*sqlliteModel.TblTxnList, error) 
 	return txn, result.Error
 }
 
-func (s *txnListCollection) SelectAll(key string, txn *sqlliteModel.TblTxnList) ([]*sqlliteModel.TblTxnList, error) {
+func (s *txnListCollection) SelectAll(query *sqlliteModel.TblTxnList, minAmount, maxAmount, minCount, maxCount, minTotalAmount, maxTotalAmount float64, startTime, endTime string) ([]*sqlliteModel.TblTxnList, error) {
 
-	txnlist := make([]*sqlliteModel.TblKycList, 0)
-
-	query := new(sqlliteModel.TblTxnList)
-	query.KycId = id
-	query.Name = name
-	query.Type = kycType
-	query.Currency = currency
-	db := Database.Model(&sqlliteModel.TblKycList{}).Where(query)
-	if timeStart != "" {
-		db = db.Where("create_time >= ?", timeStart)
+	txnlist := make([]*sqlliteModel.TblTxnList, 0)
+	db := Database.Model(&sqlliteModel.TblTxnList{}).Where(query)
+	if minAmount > 0.00000000 {
+		db = db.Where("amount >= ?", minAmount)
 	}
-	if timeEnd != "" {
-		db = db.Where("create_time <= ?", timeEnd)
+
+	if maxAmount > 0.00000000 {
+		db = db.Where("amount <= ?", maxAmount)
+	}
+
+	if minCount > 0.00000000 {
+		db = db.Where("count >= ?", minCount)
+	}
+
+	if maxCount > 0.00000000 {
+		db = db.Where("count <= ?", maxCount)
+	}
+
+	if minTotalAmount > 0.00000000 {
+		db = db.Where("total_amount >= ?", minTotalAmount)
+	}
+
+	if maxTotalAmount > 0.00000000 {
+		db = db.Where("total_amount <= ?", maxTotalAmount)
+	}
+
+	if startTime != "" {
+		db = db.Where("create_time <= ?", startTime)
+	}
+
+	if endTime != "" {
+		db = db.Where("create_time <= ?", endTime)
 	}
 
 	result := db.Order("create_time desc").Find(&txnlist)

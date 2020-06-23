@@ -6,12 +6,13 @@ type TblTxnList struct {
 	TxnTime string `"gorm":"column:txn_time" json:"txn_time,omitempty"`
 	Type    string `"gorm":"column:type" json:"type,omitempty"`
 
-	TxnID    string  `"gorm":"column:txn_id" json:"txn_id,omitempty"`
-	Hash     string  `"gorm":"column:hash" json:"hash,omitempty"`
-	Currency string  `"gorm":"column:currency" json:"currency,omitempty"`
-	Count    float64 `"gorm":"column:count" json:"count,omitempty"`
-	Amount   float64 `"gorm":"column:amount" json:"amount,omitempty"`
-	Status   string  `"gorm":"column:status" json:"status,omitempty"`
+	TxnID       string  `"gorm":"column:txn_id" json:"txn_id,omitempty"`
+	Hash        string  `"gorm":"column:hash" json:"hash,omitempty"`
+	Currency    string  `"gorm":"column:currency" json:"currency,omitempty"`
+	Count       float64 `"gorm":"column:count" json:"count,omitempty"`
+	Amount      float64 `"gorm":"column:amount" json:"amount,omitempty"`
+	TotalAmount float64 `"gorm":"column:total_amount" json:"total_amount,omitempty"`
+	Status      string  `"gorm":"column:status" json:"status,omitempty"`
 
 	//	Net                   string    `"gorm":"column:net" json:"net,omitempty"`
 	Date                  string `"gorm":"column:date" json:"date,omitempty"`
