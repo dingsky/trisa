@@ -22,6 +22,10 @@ func (s *txnListCollection) Update(key string, txn *sqlliteModel.TblTxnList) err
 	return Database.Model(&sqlliteModel.TblTxnList{}).Where("key = ?", key).Updates(txn).Error
 }
 
+func (s *txnListCollection) UpdateTotalAmount(query *sqlliteModel.TblTxnList, totalAmount float64) error {
+	return Database.Model(&sqlliteModel.TblTxnList{}).Where(query).Update("total_amount", totalAmount).Error
+}
+
 func (s *txnListCollection) UpdateByKeyRet(key string, txn *sqlliteModel.TblTxnList) error {
 	return Database.Model(&sqlliteModel.TblTxnList{}).Where("key_ret = ?", key).Updates(txn).Error
 }

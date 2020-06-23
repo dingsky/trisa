@@ -1111,6 +1111,21 @@ func flushTxn(r *http.Request, req *createTxnReq, key string) {
 	time.Sleep(time.Second * gap)
 	txnr.Status = RecKycOK
 	sqllite.TxnListCollectionCol.UpdateByKeyRet(key, txnr)
+
+	//更新累计金额
+	query := new(sqlliteModel.TblTxnList)
+	query.Currency = req.Currency
+	query.SenderWalletAddress = req.FromAddress
+	txnList, err := sqllite.TxnListCollectionCol.SelectAll(query, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, "", "")
+	var totalAmount float64
+	for _, txn := range txnList {
+		totalAmount += txn.Amount
+	}
+
+	err = sqllite.TxnListCollectionCol.UpdateTotalAmount(query, totalAmount)
+	if err != nil {
+		fmt.Printf("update total amount err:%s\n", err)
+	}
 }
 
 type checkAddressReq struct {
