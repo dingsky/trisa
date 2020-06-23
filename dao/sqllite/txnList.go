@@ -32,9 +32,24 @@ func (s *txnListCollection) Select(id string) (*sqlliteModel.TblTxnList, error) 
 	return txn, result.Error
 }
 
-func (s *txnListCollection) SelectAll() ([]*sqlliteModel.TblTxnList, error) {
-	txnlist := make([]*sqlliteModel.TblTxnList, 0)
-	result := Database.Find(&txnlist)
+func (s *txnListCollection) SelectAll(key string, txn *sqlliteModel.TblTxnList) ([]*sqlliteModel.TblTxnList, error) {
+
+	txnlist := make([]*sqlliteModel.TblKycList, 0)
+
+	query := new(sqlliteModel.TblTxnList)
+	query.KycId = id
+	query.Name = name
+	query.Type = kycType
+	query.Currency = currency
+	db := Database.Model(&sqlliteModel.TblKycList{}).Where(query)
+	if timeStart != "" {
+		db = db.Where("create_time >= ?", timeStart)
+	}
+	if timeEnd != "" {
+		db = db.Where("create_time <= ?", timeEnd)
+	}
+
+	result := db.Order("create_time desc").Find(&txnlist)
 	return txnlist, result.Error
 }
 

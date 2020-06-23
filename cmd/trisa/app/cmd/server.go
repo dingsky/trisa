@@ -114,6 +114,23 @@ type baseRsp struct {
 	RespDesc string `json:"resp_desc,omitempty"`
 }
 
+type queryTxnListReq struct {
+	Id             string  `json:"id,omitempty"`
+	Name           string  `json:"name,omitempty"`
+	Type           string  `json:"type,omitempty"`
+	FromAddress    string  `json:"from_address,omitempty"`
+	ToAddress      string  `json:"to_address,omitempty"`
+	Currency       string  `json:"currency,omitempty"`
+	MinAmount      float64 `json:"min_amount,omitempty"`
+	MaxAmount      float64 `json:"max_amount,omitempty"`
+	MinCount       float64 `json:"min_count,omitempty"`
+	MaxCount       float64 `json:"max_count,omitempty"`
+	MinTotalAmount float64 `json:"min_total_amount,omitempty"`
+	MaxTotalAmount float64 `json:"max_total_amount,omitempty"`
+	StartTime      string  `json:"start_time,omitempty"`
+	EndTime        string  `json:"end_time,omitempty"`
+}
+
 type queryTxnList struct {
 	RespCode string                     `json:"resp_code,omitempty"`
 	RespDesc string                     `json:"resp_desc,omitempty"`
@@ -386,7 +403,29 @@ func runServerCmd(cmd *cobra.Command, args []string) {
 		r.HandleFunc("/query_txn_list", func(w http.ResponseWriter, r *http.Request) {
 
 			w.Header().Set("Access-Control-Allow-Origin", "*")
+			// 读请求报文
+			reqMsg, err := ioutil.ReadAll(r.Body)
+			if err != nil {
+				w.WriteHeader(http.StatusBadGateway)
+				w.Write([]byte("read http err"))
+				fmt.Printf("read http err\n")
+				return
+			}
+			fmt.Printf("req msg:%s\n", reqMsg)
 
+			// 解包
+			req := new(queryTxnListReq)
+			err = json.Unmarshal(reqMsg, req)
+			if err != nil {
+				w.WriteHeader(http.StatusBadGateway)
+				w.Write([]byte("json Unmarshal error"))
+				fmt.Printf("json Unmarshal error:%s", err)
+				return
+			}
+
+			query := new(sqlliteModel.TblTxnList)
+			query.CusId = req.Id
+			query.Name = req.Name
 			txnList, err := sqllite.TxnListCollectionCol.SelectAll()
 			if err != nil {
 				fmt.Printf("txn not found error:%s", err)
