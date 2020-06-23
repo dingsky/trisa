@@ -97,11 +97,11 @@ type KycList struct {
 	CreateTime    string `json:"create_time,omitempty"`
 }
 
-type queryTxnReq struct {
-	Hash string `json:"hash,omitempty"`
+type queryTxnDetailReq struct {
+	Key string `json:"key,omitempty"`
 }
 
-type queryTxnRsp struct {
+type queryTxnDetailRsp struct {
 	RespCode    string     `json:"resp_code,omitempty"`
 	RespDesc    string     `json:"resp_desc,omitempty"`
 	SenderKyc   KycInfo    `json:"sender_kyc,omitempty"`
@@ -530,7 +530,7 @@ func runServerCmd(cmd *cobra.Command, args []string) {
 			fmt.Printf("req msg:%s\n", reqMsg)
 
 			// 解包
-			req := new(queryTxnReq)
+			req := new(queryTxnDetailReq)
 			err = json.Unmarshal(reqMsg, req)
 			if err != nil {
 				fmt.Printf("json Unmarshal error:%s", err)
@@ -539,7 +539,7 @@ func runServerCmd(cmd *cobra.Command, args []string) {
 				return
 			}
 
-			txnInfo, err := sqllite.TxnListCollectionCol.SelectByHash(req.Hash)
+			txnInfo, err := sqllite.TxnListCollectionCol.SelectByRetKey(req.Key)
 			if err != nil {
 				fmt.Printf("txn not found error:%s", err)
 				w.WriteHeader(http.StatusBadGateway)
@@ -547,7 +547,7 @@ func runServerCmd(cmd *cobra.Command, args []string) {
 				return
 			}
 
-			rsp := new(queryTxnRsp)
+			rsp := new(queryTxnDetailRsp)
 			rsp.RespDesc = "success"
 			rsp.RespCode = "0000"
 			rsp.RecieverKyc.Name = txnInfo.RecieverName
@@ -568,7 +568,7 @@ func runServerCmd(cmd *cobra.Command, args []string) {
 			rsp.TxnInfo.Amount = txnInfo.Amount
 
 			rspMsg, _ := json.Marshal(rsp)
-			fmt.Printf("resp Msg:%s", rspMsg)
+			fmt.Printf("query txn detail resp Msg:%s\n", rspMsg)
 
 			w.WriteHeader(http.StatusOK)
 			w.Write(rspMsg)
