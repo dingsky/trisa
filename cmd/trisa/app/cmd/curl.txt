@@ -31,3 +31,6 @@ curl "http://127.0.0.1:9996/create_txn" -d'{"txn_time": "2020-06-23 14:58:30", "
 
 //查询交易
 curl "http://127.0.0.1:9996/query_txn_list" -d'{"to_address":"78901234"}'
+
+//查询交易明细
+curl "http://127.0.0.1:9996/query_txn_detail" -d'{"key":"af697885-bfff-4e71-9878-b703466bdc31"}'

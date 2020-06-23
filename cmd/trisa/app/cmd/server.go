@@ -349,7 +349,7 @@ func runServerCmd(cmd *cobra.Command, args []string) {
 			txn.Count = req.Count
 			txn.Hash = req.Hash
 			txn.KeyRet = uuid.New().String()
-
+			txn.ExamineStatus = "todo"
 			err = sqllite.TxnListCollectionCol.Insert(txn)
 			if err != nil {
 				fmt.Printf("insert db error:%s", err)
@@ -498,7 +498,7 @@ func runServerCmd(cmd *cobra.Command, args []string) {
 			}
 
 			txn := new(sqlliteModel.TblTxnList)
-			txn.Status = req.Operation
+			txn.ExamineStatus = req.Operation
 			err = sqllite.TxnListCollectionCol.UpdateByKeyRet(req.Key, txn)
 			if err != nil {
 				fmt.Printf("txn not found error:%s", err)

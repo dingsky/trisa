@@ -30,4 +30,5 @@ type TblTxnList struct {
 	RecieverIdentifyInfo  string `"gorm":"column:reciever_identify_info" json:"reciever_identify_info,omitempty"`
 	Key                   string `"gorm":"column:key" json:"key,omitempty"`
 	KeyRet                string `"gorm":"column:key_ret" json:"key_ret,omitempty"`
+	ExamineStatus         string `"gorm":"column:examine_status" json:"examine_status,omitempty"`
 }
