@@ -1065,13 +1065,16 @@ func GetKeyVal(sour, key string) string {
 }
 
 const (
-	txnFail           = "F"
 	gap               = 5
 	checkAddressOK    = "0"
 	exchangeCaOK      = "1"
 	SecurityConnectOK = "2"
 	SendKycOK         = "3"
 	RecKycOK          = "4"
+	Over              = "5"
+	checkAddressFail  = "A"
+	exchangeCaFail    = "B"
+	SendKycFail       = "D"
 )
 
 func flushTxn(r *http.Request, req *createTxnReq, key string) {
@@ -1080,7 +1083,7 @@ func flushTxn(r *http.Request, req *createTxnReq, key string) {
 	txn := new(sqlliteModel.TblTxnList)
 	err := checkAddress(req.Currency, req.ToAddress)
 	if err != nil {
-		txn.Status = txnFail
+		txn.Status = checkAddressFail
 		sqllite.TxnListCollectionCol.UpdateByKeyRet(key, txn)
 		return
 	}
@@ -1091,7 +1094,7 @@ func flushTxn(r *http.Request, req *createTxnReq, key string) {
 	time.Sleep(time.Second * gap)
 	destUrl, err := getDestVasp(req.Currency, req.ToAddress)
 	if err != nil {
-		txn.Status = txnFail
+		txn.Status = exchangeCaFail
 		sqllite.TxnListCollectionCol.UpdateByKeyRet(key, txn)
 		return
 	}
@@ -1107,7 +1110,7 @@ func flushTxn(r *http.Request, req *createTxnReq, key string) {
 	time.Sleep(time.Second * gap)
 	txnr, err := exchangeKyc(r, req, destUrl)
 	if err != nil {
-		txn.Status = txnFail
+		txn.Status = SendKycFail
 		sqllite.TxnListCollectionCol.UpdateByKeyRet(key, txn)
 	}
 	txn.Status = SendKycOK
