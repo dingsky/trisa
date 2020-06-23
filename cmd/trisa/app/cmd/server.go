@@ -605,9 +605,9 @@ func runServerCmd(cmd *cobra.Command, args []string) {
 			kycInfo.Date = req.Date
 			kycInfo.CreateTime = time.Now()
 			kycInfo.UpdateTime = time.Now()
-			err = sqllite.KycListCollectionCol.Delete(kycInfo.Currency, kycInfo.Net, kycInfo.WalletAddress)
+			err = sqllite.KycListCollectionCol.Delete(kycInfo.Currency, kycInfo.WalletAddress)
 			if err != nil {
-				fmt.Printf("double bind KYC delete the old\n")
+				fmt.Printf("double create KYC delete the old\n")
 			}
 			err = sqllite.KycListCollectionCol.Insert(kycInfo)
 			if err != nil {

@@ -13,9 +13,9 @@ func (a *kycListCollection) Insert(serv *sqlliteModel.TblKycList) error {
 	return Database.Create(serv).Error
 }
 
-func (a *kycListCollection) Delete(currency, net, address string) error {
+func (a *kycListCollection) Delete(currency, address string) error {
 	serv := new(sqlliteModel.TblKycList)
-	return Database.Where("currency = ? and net = ? and wallet_address = ?", currency, net, address).Delete(serv).Error
+	return Database.Where("currency = ? and and wallet_address = ?", currency, address).Delete(serv).Error
 }
 
 func (a *kycListCollection) Update(serv *sqlliteModel.TblKycList) error {
