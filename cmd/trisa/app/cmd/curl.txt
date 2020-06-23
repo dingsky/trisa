@@ -18,3 +18,7 @@ curl -ks "https://127.0.0.1:9997/check_address" -d'{"currency":"btc", "address":
 //新接口
 //创建kyc
 curl "http://127.0.0.1:9996/create_kyc" -d'{"id": "89757",	"name": "dingchun",	"type": "ins",	"wallet_address": "666666",	"date": "20200612",	"address": "shanghai",	"currency": "btc",	"wallet_address": "ffffffffffffffffffff"}'
+curl "http://127.0.0.1:9996/create_kyc" -d'{"id": "89758",	"name": "sky",	"type": "cus",	"wallet_address": "666667",	"date": "20200623",	"address": "china",	"currency": "btc",	"wallet_address": "fffffffffffffffffff1"}'
+
+//查询KYC
+curl "http://127.0.0.1:9996/query_kyc_list" -d'{"id": "89757"}'
