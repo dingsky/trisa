@@ -13,3 +13,8 @@ curl -ks "https://127.0.0.1:9997/bind_kyc" -d'{"currency":"btc", "net":"bitcoin"
 
 // 检查地址
 curl -ks "https://127.0.0.1:9997/check_address" -d'{"currency":"btc", "address":"777777", "net":"bitcoin"}'
+
+
+//新接口
+//创建kyc
+curl "http://127.0.0.1:9996/create_kyc" -d'{"id": "89757",	"name": "dingchun",	"type": "ins",	"wallet_address": "666666",	"date": "20200612",	"address": "shanghai",	"currency": "btc",	"wallet_address": "ffffffffffffffffffff"}'

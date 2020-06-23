@@ -547,7 +547,7 @@ func runServerCmd(cmd *cobra.Command, args []string) {
 
 		})
 
-		r.HandleFunc("/add_kyc", func(w http.ResponseWriter, r *http.Request) {
+		r.HandleFunc("/create_kyc", func(w http.ResponseWriter, r *http.Request) {
 
 			w.Header().Set("Access-Control-Allow-Origin", "*")
 
