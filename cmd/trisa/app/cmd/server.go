@@ -583,6 +583,7 @@ func runServerCmd(cmd *cobra.Command, args []string) {
 			rsp.TxnInfo.ToAddress = txnInfo.RecieverWalletAddress
 			rsp.TxnInfo.Currency = txnInfo.Currency
 			rsp.TxnInfo.Count = txnInfo.Count
+			rsp.TxnInfo.Amount = txnInfo.Amount
 			rsp.TxnInfo.TotalAmount = txnInfo.TotalAmount
 
 			rspMsg, _ := json.Marshal(rsp)
