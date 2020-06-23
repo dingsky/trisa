@@ -102,9 +102,9 @@ type queryTxnDetailReq struct {
 }
 
 type queryTxnDetailRsp struct {
-	RespCode string `json:"resp_code,omitempty"`
-	RespDesc string `json:"resp_desc,omitempty"`
-	Tx
+	RespCode      string     `json:"resp_code,omitempty"`
+	RespDesc      string     `json:"resp_desc,omitempty"`
+	TxnStatus     string     `json:"txn_status,omitempty"`
 	ExamineStatus string     `json:"examine_status,omitempty"`
 	SenderKyc     KycInfo    `json:"sender_kyc,omitempty"`
 	RecieverKyc   KycInfo    `json:"reciever_kyc,omitempty"`
@@ -554,6 +554,7 @@ func runServerCmd(cmd *cobra.Command, args []string) {
 			rsp := new(queryTxnDetailRsp)
 			rsp.RespDesc = "success"
 			rsp.RespCode = "0000"
+			rsp.TxnStatus = txnInfo.Status
 			rsp.ExamineStatus = txnInfo.ExamineStatus
 			rsp.RecieverKyc.Name = txnInfo.RecieverName
 			rsp.RecieverKyc.WalletAddress = txnInfo.RecieverWalletAddress
