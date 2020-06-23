@@ -22,3 +22,6 @@ curl "http://127.0.0.1:9996/create_kyc" -d'{"id": "89758",	"name": "sky",	"type"
 
 //查询KYC
 curl "http://127.0.0.1:9996/query_kyc_list" -d'{"id": "89757"}'
+
+//查询kyc详情
+curl "http://127.0.0.1:9996/query_kyc_detail" -d'{"id": "89757"}'
