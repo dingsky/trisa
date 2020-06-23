@@ -102,8 +102,9 @@ type queryTxnDetailReq struct {
 }
 
 type queryTxnDetailRsp struct {
-	RespCode      string     `json:"resp_code,omitempty"`
-	RespDesc      string     `json:"resp_desc,omitempty"`
+	RespCode string `json:"resp_code,omitempty"`
+	RespDesc string `json:"resp_desc,omitempty"`
+	Tx
 	ExamineStatus string     `json:"examine_status,omitempty"`
 	SenderKyc     KycInfo    `json:"sender_kyc,omitempty"`
 	RecieverKyc   KycInfo    `json:"reciever_kyc,omitempty"`
