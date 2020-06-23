@@ -170,11 +170,6 @@ type actionRsp struct {
 	RespDesc string `json:"resp_desc,omitempty"`
 }
 
-type actionRsp struct {
-	RespCode string `json:"resp_code,omitempty"`
-	RespDesc string `json:"resp_desc,omitempty"`
-}
-
 type TxnInfoDef struct {
 	Id       string  `json:"id,omitempty"`
 	Hash     string  `json:"hash,omitempty"`
