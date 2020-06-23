@@ -603,8 +603,8 @@ func runServerCmd(cmd *cobra.Command, args []string) {
 			kycInfo.IdentifyInfo = req.IdentifyInfo
 			kycInfo.KycId = req.Id
 			kycInfo.Date = req.Date
-			kycInfo.CreateTime = time.Now()
-			kycInfo.UpdateTime = time.Now()
+			kycInfo.CreateTime = time.Now().Format("2006-01-02 15:03:04")
+			kycInfo.UpdateTime = time.Now().Format("2006-01-02 15:03:04")
 			err = sqllite.KycListCollectionCol.Delete(kycInfo.Currency, kycInfo.WalletAddress)
 			if err == nil {
 				fmt.Printf("double create KYC delete the old\n")
@@ -672,7 +672,7 @@ func runServerCmd(cmd *cobra.Command, args []string) {
 				kyc.Type = record.Type
 				kyc.Currency = record.Currency
 				kyc.WalletAddress = record.WalletAddress
-				kyc.CreateTime = record.CreateTime.Format("2006-01-02 15:03:04")
+				kyc.CreateTime = record.CreateTime
 				rsp.KycList = append(rsp.KycList, kyc)
 			}
 			rspMsg, _ := json.Marshal(rsp)
@@ -724,7 +724,7 @@ func runServerCmd(cmd *cobra.Command, args []string) {
 			rsp.Date = kycInfo.Date
 			rsp.Type = kycInfo.Type
 			rsp.CertificateID = kycInfo.CertificateID
-			rsp.CreateTime = kycInfo.CreateTime.Format("2006-01-02 15:03:04")
+			rsp.CreateTime = kycInfo.CreateTime
 
 			rspMsg, _ := json.Marshal(rsp)
 			fmt.Printf("query kyc detail resp:%s", rspMsg)
