@@ -131,10 +131,23 @@ type queryTxnListReq struct {
 	EndTime        string  `json:"end_time,omitempty"`
 }
 
-type queryTxnList struct {
-	RespCode string                     `json:"resp_code,omitempty"`
-	RespDesc string                     `json:"resp_desc,omitempty"`
-	TxnList  []*sqlliteModel.TblTxnList `json:"txn_list,omitempty"`
+type txnListDef struct {
+	Id          string  `json:"id,omitempty"`
+	Name        string  `json:"name,omitempty"`
+	TxnTime     string  `json:"txn_time,omitempty"`
+	Type        string  `json:"type,omitempty"`
+	FromAddress string  `json:"from_address,omitempty"`
+	ToAddress   string  `json:"to_address,omitempty"`
+	Currency    string  `json:"currency,omitempty"`
+	Amount      float64 `json:"amount,omitempty"`
+	Count       float64 `json:"count,omitempty"`
+	TotalAmount string  `json:"total_amount,omitempty"`
+}
+
+type queryTxnListRsp struct {
+	RespCode string        `json:"resp_code,omitempty"`
+	RespDesc string        `json:"resp_desc,omitempty"`
+	TxnList  []*txnListDef `json:"txn_list,omitempty"`
 }
 
 type syncTxnReq struct {
@@ -438,9 +451,22 @@ func runServerCmd(cmd *cobra.Command, args []string) {
 				return
 			}
 
-			rsp := new(queryTxnList)
+			rsp := new(queryTxnListRsp)
 			rsp.RespDesc = "success"
 			rsp.RespCode = "0000"
+			for _, v := range txnList {
+				txn := new(txnListDef)
+				txn.Id = v.CusId
+				txn.Name = v.Name
+				txn.TxnTime
+				txn.Type
+				txn.FromAddress
+				txn.ToAddress
+				txn.Currency
+				txn.Amount
+				txn.Count
+				txn.TotalAmount
+			}
 			rsp.TxnList = txnList
 			rspMsg, _ := json.Marshal(rsp)
 			fmt.Printf("query txn list resp:%s", rspMsg)

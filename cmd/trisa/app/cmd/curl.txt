@@ -24,4 +24,10 @@ curl "http://127.0.0.1:9996/create_kyc" -d'{"id": "89758",	"name": "sky",	"type"
 curl "http://127.0.0.1:9996/query_kyc_list" -d'{"id": "89757"}'
 
 //查询kyc详情
-curl "http://127.0.0.1:9996/query_kyc_detail" -d'{"id": "89757"}'
+curl "http://127.0.0.1:9996/query_kyc_detail" -d'{"currency": "btc", "wallet_address": "666667"}'
+
+//创建提现
+curl "http://127.0.0.1:9996/create_txn" -d'{"txn_time": "2020-06-23 14:58:30", "id": "A0001", "name":"张三", "type":"cash", "from_address":"123456", "to_address":"78901234", "currency":"btc", "count":2.0, "amount":12000.80}'
+
+//查询交易
+curl "http://127.0.0.1:9996/query_txn_list" -d'{"to_address":"78901234"}'
