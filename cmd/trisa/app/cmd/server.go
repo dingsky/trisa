@@ -108,7 +108,7 @@ type queryTxnDetailRsp struct {
 	ExamineStatus string     `json:"examine_status,omitempty"`
 	SenderKyc     KycInfo    `json:"sender_kyc,omitempty"`
 	RecieverKyc   KycInfo    `json:"reciever_kyc,omitempty"`
-	TxnInfo       TxnInfoDef `json:"txn_info,omitempty"`
+	TxnInfo       txnListDef `json:"txn_info,omitempty"`
 }
 
 type baseRsp struct {
@@ -184,12 +184,14 @@ type TxnInfoDef struct {
 }
 
 type KycInfo struct {
-	Name          string `json:"name,omitempty"`
-	WalletAddress string `json:"wallet_address,omitempty"`
 	Id            string `json:"id,omitempty"`
+	Name          string `json:"name,omitempty"`
+	Type          string `json:"type,omitempty"`
 	Date          string `json:"date,omitempty"`
-	IdentifyInfo  string `json:"identify_info,omitempty"`
+	CertificateID string `json:"certificate_id,omitempty"`
 	Address       string `json:"address,omitempty"`
+	Currency      string `json:"currency,omitempty"`
+	WalletAddress string `json:"wallet_address,omitempty"`
 }
 
 type queryVaspReq struct {
@@ -556,22 +558,32 @@ func runServerCmd(cmd *cobra.Command, args []string) {
 			rsp.RespCode = "0000"
 			rsp.TxnStatus = txnInfo.Status
 			rsp.ExamineStatus = txnInfo.ExamineStatus
+			rsp.RecieverKyc.Id = txnInfo.RecieverId
 			rsp.RecieverKyc.Name = txnInfo.RecieverName
+			rsp.RecieverKyc.Type = txnInfo.RecieverType
 			rsp.RecieverKyc.WalletAddress = txnInfo.RecieverWalletAddress
 			rsp.RecieverKyc.Date = txnInfo.RecieverDate
-			rsp.RecieverKyc.Id = txnInfo.RecieverId
-			rsp.RecieverKyc.IdentifyInfo = txnInfo.RecieverIdentifyInfo
+			rsp.RecieverKyc.Address = txnInfo.SenderAddress
+			rsp.RecieverKyc.CertificateID = txnInfo.RecieverCertificateID
+			rsp.RecieverKyc.Currency = txnInfo.Currency
+			rsp.SenderKyc.Id = txnInfo.SenderId
 			rsp.SenderKyc.Name = txnInfo.SenderName
+			rsp.SenderKyc.Type = txnInfo.SenderType
 			rsp.SenderKyc.WalletAddress = txnInfo.SenderWalletAddress
 			rsp.SenderKyc.Date = txnInfo.SenderDate
-			rsp.SenderKyc.Id = txnInfo.SenderId
-			rsp.SenderKyc.IdentifyInfo = txnInfo.SenderIdentifyInfo
-			rsp.TxnInfo.Id = txnInfo.TxnID
-			rsp.TxnInfo.Date = txnInfo.Date
+			rsp.SenderKyc.Currency = txnInfo.Currency
+			rsp.SenderKyc.Address = txnInfo.RecieverAddress
+			rsp.SenderKyc.CertificateID = txnInfo.SenderCertificateID
+
+			rsp.TxnInfo.Id = txnInfo.CusId
+			rsp.TxnInfo.Name = txnInfo.Name
+			rsp.TxnInfo.TxnTime = txnInfo.TxnTime
+			rsp.TxnInfo.Type = txnInfo.Type
+			rsp.TxnInfo.FromAddress = txnInfo.SenderWalletAddress
+			rsp.TxnInfo.ToAddress = txnInfo.RecieverWalletAddress
 			rsp.TxnInfo.Currency = txnInfo.Currency
-			rsp.TxnInfo.Hash = txnInfo.Hash
 			rsp.TxnInfo.Count = txnInfo.Count
-			rsp.TxnInfo.Amount = txnInfo.Amount
+			rsp.TxnInfo.TotalAmount = txnInfo.TotalAmount
 
 			rspMsg, _ := json.Marshal(rsp)
 			fmt.Printf("query txn detail resp Msg:%s\n", rspMsg)
