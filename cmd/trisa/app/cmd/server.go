@@ -400,7 +400,7 @@ func runServerCmd(cmd *cobra.Command, args []string) {
 				}()
 			default:
 				go func() {
-					recharge(r, req, txn.KeyRet)
+					recharge(req)
 				}()
 			}
 
