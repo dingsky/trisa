@@ -35,7 +35,7 @@ curl "http://127.0.0.1:9996/create_txn" -d'{"txn_time": "2020-06-23 14:58:30", "
 curl "http://127.0.0.1:9996/query_txn_list" -d'{"to_address":"fffffffffffffffffff1"}'
 
 //查询交易明细
-curl "http://127.0.0.1:9996/query_txn_detail" -d'{"key":"c5c9b4db-e6df-481f-bd9a-6285c5f6716d}'
+curl "http://127.0.0.1:9996/query_txn_detail" -d'{"key":"507af6a3-6238-450a-afb0-b0212129fef2"}'
 
 //审核
 curl "http://127.0.0.1:9996/action" -d'{"key":"301aac16-10da-49f9-bd7f-22cadfdc48d7", "operation":"refuse"}'
