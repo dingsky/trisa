@@ -342,6 +342,23 @@ func runServerCmd(cmd *cobra.Command, args []string) {
 				return
 			}
 
+			if req.Type == "recharge" {
+				txn, err := recharge(req)
+				if err != nil {
+					fmt.Printf("error:%s", err)
+				}
+				rsp := new(createTxnRsp)
+				rsp.RespDesc = "success"
+				rsp.RespCode = "0000"
+				rsp.Key = txn.KeyRet
+				rspMsg, _ := json.Marshal(rsp)
+				fmt.Printf("rspMsg:%s", rspMsg)
+
+				w.WriteHeader(http.StatusOK)
+				w.Write(rspMsg)
+				return
+			}
+
 			txn := new(sqlliteModel.TblTxnList)
 			txn.CusId = req.Id
 			txn.Name = req.Name
@@ -372,9 +389,21 @@ func runServerCmd(cmd *cobra.Command, args []string) {
 
 			w.WriteHeader(http.StatusOK)
 			w.Write(rspMsg)
-			go func() {
-				flushTxn(r, req, txn.KeyRet)
-			}()
+			switch req.Type {
+			case "cash":
+				go func() {
+					flushTxn(r, req, txn.KeyRet)
+				}()
+			case "transaction":
+				go func() {
+					transaction(r, req, txn.KeyRet)
+				}()
+			default:
+				go func() {
+					recharge(r, req, txn.KeyRet)
+				}()
+			}
+
 		})
 
 		r.HandleFunc("/check_address", func(w http.ResponseWriter, r *http.Request) {
@@ -1284,5 +1313,56 @@ func exchangeKyc(r *http.Request, req *createTxnReq, url string) (*sqlliteModel.
 	txn.Key = GetKeyVal(resp, "key")
 	txn.RecieverCertificateID = GetKeyVal(resp, "certificate_id")
 	txn.RecieverType = GetKeyVal(resp, "type")
+	return txn, nil
+}
+
+func transaction(r *http.Request, req *createTxnReq, key string) {
+	// 判断提现地址是否在Trisa体系内
+	kycFrom, err := sqllite.KycListCollectionCol.Select(req.Currency, req.FromAddress)
+	if err != nil {
+		fmt.Printf("query from kyc not found err:%s\n", err)
+		return
+	}
+
+	kycTo, err := sqllite.KycListCollectionCol.Select(req.Currency, req.ToAddress)
+	if err != nil {
+		fmt.Printf("query to kyc not found err:%s\n", err)
+		return
+	}
+
+	txn := new(sqlliteModel.TblTxnList)
+	txn.SenderAddress = kycFrom.Address
+	txn.SenderDate = kycFrom.Date
+	txn.SenderId = kycFrom.KycId
+	txn.SenderIdentifyInfo = kycFrom.IdentifyInfo
+	txn.SenderName = kycFrom.Name
+	txn.SenderWalletAddress = kycFrom.WalletAddress
+	txn.SenderCertificateID = kycFrom.CertificateID
+	txn.SenderType = kycFrom.Type
+
+	txn.RecieverAddress = kycTo.Address
+	txn.RecieverDate = kycTo.Date
+	txn.RecieverId = kycTo.KycId
+	txn.RecieverIdentifyInfo = kycTo.IdentifyInfo
+	txn.RecieverName = kycTo.Name
+	txn.RecieverWalletAddress = kycTo.WalletAddress
+	txn.RecieverCertificateID = kycTo.CertificateID
+	txn.RecieverType = kycTo.Type
+	txn.Status = Over
+
+	err = sqllite.TxnListCollectionCol.UpdateByKeyRet(key, txn)
+	if err != nil {
+		fmt.Printf("update err:%s\n", err)
+	}
+}
+
+func recharge(req *createTxnReq) (*sqlliteModel.TblTxnList, error) {
+	//看对方是否同步过Hash
+	txn, err := sqllite.TxnListCollectionCol.SelectByHash(req.Hash)
+	if err != nil {
+		fmt.Printf("txn not found for recharge\n")
+		return nil, err
+	}
+
 	return txn, nil
 }
