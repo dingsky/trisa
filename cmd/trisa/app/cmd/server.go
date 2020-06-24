@@ -849,12 +849,12 @@ func runServerCmd(cmd *cobra.Command, args []string) {
 			}
 
 			identity, _ := ptypes.MarshalAny(&synctxn.ReqMsg{
-				Key:  req.Key,
+				Key:  txnInfo.Key,
 				Hash: req.Hash,
 			})
 
 			data, _ := ptypes.MarshalAny(&synctxn.ReqMsg{
-				Key:  req.Key,
+				Key:  txnInfo.Key,
 				Hash: req.Hash,
 			})
 

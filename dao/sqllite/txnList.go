@@ -84,7 +84,7 @@ func (s *txnListCollection) SelectByHash(hash string) (*sqlliteModel.TblTxnList,
 
 func (s *txnListCollection) SelectByKey(key string) (*sqlliteModel.TblTxnList, error) {
 	txn := new(sqlliteModel.TblTxnList)
-	result := Database.Where("key = ?", key).First(txn)
+	result := Database.Where("key_ret = ?", key).First(txn)
 	return txn, result.Error
 }
 
