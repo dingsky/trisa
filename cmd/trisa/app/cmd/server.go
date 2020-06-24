@@ -1169,7 +1169,7 @@ func flushTxn(r *http.Request, req *createTxnReq, key string) {
 	query := new(sqlliteModel.TblTxnList)
 	query.Currency = req.Currency
 	query.SenderWalletAddress = req.FromAddress
-	txnList, err := sqllite.TxnListCollectionCol.SelectAll(query, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, "", "")
+	txnList, err := sqllite.TxnListCollectionCol.SelectAll(query, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, "", "", "")
 	var totalAmount float64
 	for _, txn := range txnList {
 		totalAmount += txn.Amount
