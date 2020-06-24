@@ -126,6 +126,7 @@ func (d *Demo) HandleRequest(ctx context.Context, id string, req *pb.Transaction
 		txn.RecieverType = kycInfo.Type
 		txn.RecieverCertificateID = kycInfo.CertificateID
 		txn.Key = uuid.New().String()
+		txn.KeyRet = uuid.New().String()
 
 		err = sqllite.TxnListCollectionCol.Insert(txn)
 		if err != nil {
