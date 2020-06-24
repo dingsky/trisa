@@ -55,12 +55,13 @@ type createTxnRsp struct {
 }
 
 type queryKycListReq struct {
-	Id        string `json:"id,omitempty"`
-	Name      string `json:"name,omitempty"`
-	Type      string `json:"type,omitempty"`
-	Currency  string `json:"currency,omitempty"`
-	TimeStart string `json:"time_start,omitempty"`
-	TimeEnd   string `json:"time_end,omitempty"`
+	Id            string `json:"id,omitempty"`
+	Name          string `json:"name,omitempty"`
+	Type          string `json:"type,omitempty"`
+	Currency      string `json:"currency,omitempty"`
+	WalletAddress string `json:"wallet_address,omitempty"`
+	TimeStart     string `json:"time_start,omitempty"`
+	TimeEnd       string `json:"time_end,omitempty"`
 }
 
 type queryKycListRsp struct {
@@ -730,7 +731,7 @@ func runServerCmd(cmd *cobra.Command, args []string) {
 				return
 			}
 
-			kycList, err := sqllite.KycListCollectionCol.SelectAll(req.Id, req.Name, req.Type, req.Currency, req.TimeStart, req.TimeEnd)
+			kycList, err := sqllite.KycListCollectionCol.SelectAll(req.Id, req.Name, req.Type, req.Currency, req.TimeStart, req.TimeEnd, req.WalletAddress)
 			if err != nil {
 				fmt.Printf("kyc not found error:%s", err)
 				w.WriteHeader(http.StatusBadGateway)

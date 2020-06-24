@@ -28,7 +28,7 @@ func (a *kycListCollection) Select(currency, address string) (*sqlliteModel.TblK
 	return serv, result.Error
 }
 
-func (a *kycListCollection) SelectAll(id, name, kycType, currency, timeStart, timeEnd string) ([]*sqlliteModel.TblKycList, error) {
+func (a *kycListCollection) SelectAll(id, name, kycType, currency, timeStart, timeEnd, walletAddress string) ([]*sqlliteModel.TblKycList, error) {
 	serv := make([]*sqlliteModel.TblKycList, 0)
 
 	query := new(sqlliteModel.TblKycList)
@@ -36,6 +36,7 @@ func (a *kycListCollection) SelectAll(id, name, kycType, currency, timeStart, ti
 	query.Name = name
 	query.Type = kycType
 	query.Currency = currency
+	query.WalletAddress = walletAddress
 	db := Database.Model(&sqlliteModel.TblKycList{}).Where(query)
 	if timeStart != "" {
 		db = db.Where("create_time >= ?", timeStart)
