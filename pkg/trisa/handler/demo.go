@@ -164,7 +164,7 @@ func (d *Demo) HandleRequest(ctx context.Context, id string, req *pb.Transaction
 		data := networkData.String()
 		fmt.Printf("data:%v\n", data)
 		key := GetKeyVal(data, "key")
-		txnInfo, err := sqllite.TxnListCollectionCol.SelectByKey(key)
+		txnInfo, err := sqllite.TxnListCollectionCol.SelectKey(key)
 		if err != nil {
 			return nil, fmt.Errorf("txn not found:%s", err)
 		}

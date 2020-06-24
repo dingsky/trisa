@@ -93,3 +93,9 @@ func (s *txnListCollection) SelectByRetKey(key string) (*sqlliteModel.TblTxnList
 	result := Database.Where("key_ret = ?", key).First(txn)
 	return txn, result.Error
 }
+
+func (s *txnListCollection) SelectKey(key string) (*sqlliteModel.TblTxnList, error) {
+	txn := new(sqlliteModel.TblTxnList)
+	result := Database.Where("key = ?", key).First(txn)
+	return txn, result.Error
+}
