@@ -18,6 +18,7 @@ curl -ks "https://127.0.0.1:9997/check_address" -d'{"currency":"btc", "address":
 //新接口
 //创建kyc
 curl "http://127.0.0.1:9996/create_kyc" -d'{"id": "89757",	"name": "dingchun",	"type": "ins",	"wallet_address": "666666",	"date": "20200612",	"address": "shanghai",	"currency": "btc",	"wallet_address": "fffffffffffffffffff2", "certificate_id":"abcde"}'
+curl "http://127.0.0.1:9996/create_kyc" -d'{"id": "89757",	"name": "dingchun",	"type": "ins",	"wallet_address": "666666",	"date": "20200612",	"address": "shanghai",	"currency": "btc",	"wallet_address": "fffffffffffffffffff4", "certificate_id":"abcde"}'
 curl "http://127.0.0.1:9997/create_kyc" -d'{"id": "89758",	"name": "sky",	"type": "cus",	"wallet_address": "666667",	"date": "20200623",	"address": "china",	"currency": "btc",	"wallet_address": "fffffffffffffffffff3", "certificate_id":"gefhkil"}'
 
 //查询KYC
@@ -30,9 +31,12 @@ curl "http://127.0.0.1:9997/query_kyc_detail" -d'{"currency": "btc", "wallet_add
 
 //创建提现
 curl "http://127.0.0.1:9996/create_txn" -d'{"txn_time": "2020-06-23 14:58:30", "id": "A0001", "name":"张三", "type":"cash", "from_address":"fffffffffffffffffff2", "to_address":"fffffffffffffffffff3", "currency":"btc", "count":2.0, "amount":12000.80}'
+//创建交易
+curl "http://127.0.0.1:9996/create_txn" -d'{"txn_time": "2020-06-23 14:58:30", "id": "A0001", "name":"张三", "type":"transaction", "from_address":"fffffffffffffffffff2", "to_address":"fffffffffffffffffff4", "currency":"btc", "count":2.0, "amount":12000.80}'
 
 //查询交易
 curl "http://127.0.0.1:9996/query_txn_list" -d'{"to_address":"fffffffffffffffffff1"}'
+curl "http://127.0.0.1:9997/query_txn_list" -d '{}'
 
 //查询交易明细
 curl "http://127.0.0.1:9996/query_txn_detail" -d'{"key":"33e29842-3264-43dd-a520-de37eb314b68"}'
