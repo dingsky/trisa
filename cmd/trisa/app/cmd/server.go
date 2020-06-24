@@ -1127,7 +1127,7 @@ func flushTxn(r *http.Request, req *createTxnReq, key string) {
 		sqllite.TxnListCollectionCol.UpdateByKeyRet(key, txn)
 	}
 	txn.Status = SendKycOK
-	sqllite.TxnListCollectionCol.UpdateByKeyRet(key, txn)
+	sqllite.TxnListCollectionCol.UpdateByKeyRet(key, txnr)
 
 	//接收kyc
 	time.Sleep(time.Second * gap)
@@ -1262,7 +1262,7 @@ func exchangeKyc(r *http.Request, req *createTxnReq, url string) (*sqlliteModel.
 	txn.Amount = req.Amount
 	txn.Count = req.Count
 	txn.Hash = req.Hash
-	txn.KeyRet = uuid.New().String()
+	//	txn.KeyRet = uuid.New().String()
 
 	txn.SenderAddress = kyc.Address
 	txn.SenderDate = kyc.Date

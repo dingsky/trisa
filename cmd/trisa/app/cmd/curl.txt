@@ -18,22 +18,24 @@ curl -ks "https://127.0.0.1:9997/check_address" -d'{"currency":"btc", "address":
 //新接口
 //创建kyc
 curl "http://127.0.0.1:9996/create_kyc" -d'{"id": "89757",	"name": "dingchun",	"type": "ins",	"wallet_address": "666666",	"date": "20200612",	"address": "shanghai",	"currency": "btc",	"wallet_address": "ffffffffffffffffffff"}'
-curl "http://127.0.0.1:9996/create_kyc" -d'{"id": "89758",	"name": "sky",	"type": "cus",	"wallet_address": "666667",	"date": "20200623",	"address": "china",	"currency": "btc",	"wallet_address": "fffffffffffffffffff1"}'
+curl "http://127.0.0.1:9997/create_kyc" -d'{"id": "89758",	"name": "sky",	"type": "cus",	"wallet_address": "666667",	"date": "20200623",	"address": "china",	"currency": "btc",	"wallet_address": "fffffffffffffffffff1"}'
 
 //查询KYC
 curl "http://127.0.0.1:9996/query_kyc_list" -d'{"id": "89757"}'
+curl "http://127.0.0.1:9997/query_kyc_list" -d'{"id": "89758"}'
 
 //查询kyc详情
-curl "http://127.0.0.1:9996/query_kyc_detail" -d'{"currency": "btc", "wallet_address": "666667"}'
+curl "http://127.0.0.1:9996/query_kyc_detail" -d'{"currency": "btc", "wallet_address": "ffffffffffffffffffff"}'
+curl "http://127.0.0.1:9997/query_kyc_detail" -d'{"currency": "btc", "wallet_address": "fffffffffffffffffff1"}'
 
 //创建提现
-curl "http://127.0.0.1:9996/create_txn" -d'{"txn_time": "2020-06-23 14:58:30", "id": "A0001", "name":"张三", "type":"cash", "from_address":"123456", "to_address":"78901234", "currency":"btc", "count":2.0, "amount":12000.80}'
+curl "http://127.0.0.1:9996/create_txn" -d'{"txn_time": "2020-06-23 14:58:30", "id": "A0001", "name":"张三", "type":"cash", "from_address":"ffffffffffffffffffff", "to_address":"fffffffffffffffffff1", "currency":"btc", "count":2.0, "amount":12000.80}'
 
 //查询交易
-curl "http://127.0.0.1:9996/query_txn_list" -d'{"to_address":"78901234"}'
+curl "http://127.0.0.1:9996/query_txn_list" -d'{"to_address":"fffffffffffffffffff1"}'
 
 //查询交易明细
-curl "http://127.0.0.1:9996/query_txn_detail" -d'{"key":"af697885-bfff-4e71-9878-b703466bdc31"}'
+curl "http://127.0.0.1:9996/query_txn_detail" -d'{"key":"108c5f3e-ef28-47e8-a54b-194495e2ea5c"}'
 
 //审核
 curl "http://127.0.0.1:9996/action" -d'{"key":"301aac16-10da-49f9-bd7f-22cadfdc48d7", "operation":"refuse"}'
