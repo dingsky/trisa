@@ -480,8 +480,7 @@ func runServerCmd(cmd *cobra.Command, args []string) {
 			query.SenderWalletAddress = req.FromAddress
 			query.RecieverWalletAddress = req.ToAddress
 			query.Currency = req.Currency
-			query.ExamineStatus = req.ExamineStatus
-			txnList, err := sqllite.TxnListCollectionCol.SelectAll(query, req.MinAmount, req.MaxAmount, req.MinCount, req.MaxCount, req.MinTotalAmount, req.MaxTotalAmount, req.StartTime, req.EndTime)
+			txnList, err := sqllite.TxnListCollectionCol.SelectAll(query, req.MinAmount, req.MaxAmount, req.MinCount, req.MaxCount, req.MinTotalAmount, req.MaxTotalAmount, req.StartTime, req.EndTime, req.ExamineStatus)
 			if err != nil {
 				fmt.Printf("txn not found error:%s", err)
 				w.WriteHeader(http.StatusBadGateway)

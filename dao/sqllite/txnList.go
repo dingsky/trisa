@@ -36,7 +36,7 @@ func (s *txnListCollection) Select(id string) (*sqlliteModel.TblTxnList, error) 
 	return txn, result.Error
 }
 
-func (s *txnListCollection) SelectAll(query *sqlliteModel.TblTxnList, minAmount, maxAmount, minCount, maxCount, minTotalAmount, maxTotalAmount float64, startTime, endTime string) ([]*sqlliteModel.TblTxnList, error) {
+func (s *txnListCollection) SelectAll(query *sqlliteModel.TblTxnList, minAmount, maxAmount, minCount, maxCount, minTotalAmount, maxTotalAmount float64, startTime, endTime, estatus string) ([]*sqlliteModel.TblTxnList, error) {
 
 	txnlist := make([]*sqlliteModel.TblTxnList, 0)
 	db := Database.Model(&sqlliteModel.TblTxnList{}).Where(query)
@@ -62,6 +62,14 @@ func (s *txnListCollection) SelectAll(query *sqlliteModel.TblTxnList, minAmount,
 
 	if maxTotalAmount > 0.00000000 {
 		db = db.Where("total_amount <= ?", maxTotalAmount)
+	}
+
+	if estatus == "0" {
+		db = db.Where("examine_status = ?", "todo")
+	}
+
+	if estatus == "1" {
+		db = db.Where("examine_status = ? or examine_status = ?", "pass", "refuse")
 	}
 
 	if startTime != "" {
