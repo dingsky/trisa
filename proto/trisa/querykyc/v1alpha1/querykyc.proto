@@ -18,4 +18,6 @@ message Data {
     string txn_id = 11;
     double count = 12;
     string txn_date = 13;
+    string type = 14;
+    string certificate_id = 15;
 }

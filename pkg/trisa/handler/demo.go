@@ -89,6 +89,8 @@ func (d *Demo) HandleRequest(ctx context.Context, id string, req *pb.Transaction
 		count := GetKeyVal(data, "count")
 		txnId := GetKeyVal(data, "txn_id")
 		txnDate := GetKeyVal(data, "txn_date")
+		kycType := GetKeyVal(data, "type")
+		certificateId := GetKeyVal(data, "certificate_id")
 
 		kycInfo, err := sqllite.KycListCollectionCol.Select(curr, address)
 		if err != nil {
@@ -110,6 +112,8 @@ func (d *Demo) HandleRequest(ctx context.Context, id string, req *pb.Transaction
 		txn.SenderIdentifyInfo = identifyInfo
 		txn.SenderName = name
 		txn.SenderWalletAddress = walletAddress
+		txn.SenderType = kycType
+		txn.SenderCertificateID = certificateId
 
 		txn.RecieverAddress = kycInfo.Address
 		txn.RecieverDate = kycInfo.Date
@@ -117,6 +121,8 @@ func (d *Demo) HandleRequest(ctx context.Context, id string, req *pb.Transaction
 		txn.RecieverIdentifyInfo = kycInfo.IdentifyInfo
 		txn.RecieverName = kycInfo.Name
 		txn.RecieverWalletAddress = kycInfo.WalletAddress
+		txn.RecieverType = kycInfo.Type
+		txn.RecieverCertificateID = kycInfo.CertificateID
 		txn.Key = uuid.New().String()
 
 		err = sqllite.TxnListCollectionCol.Insert(txn)
@@ -136,6 +142,8 @@ func (d *Demo) HandleRequest(ctx context.Context, id string, req *pb.Transaction
 			Date:          kycInfo.Date,
 			IdentifyInfo:  kycInfo.IdentifyInfo,
 			Key:           txn.Key,
+			Type:          kycInfo.Type,
+			CertificateId: kycInfo.CertificateID,
 		}
 		identityRespSer, _ := ptypes.MarshalAny(identityResp)
 

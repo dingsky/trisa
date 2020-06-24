@@ -1236,6 +1236,8 @@ func exchangeKyc(r *http.Request, req *createTxnReq, url string) (*sqlliteModel.
 		TxnId:         req.Id,
 		Count:         req.Count,
 		TxnDate:       req.TxnTime,
+		Type:          kyc.Type,
+		CertificateId: kyc.CertificateID,
 	})
 
 	tData := &pb.TransactionData{
@@ -1278,6 +1280,7 @@ func exchangeKyc(r *http.Request, req *createTxnReq, url string) (*sqlliteModel.
 	txn.RecieverName = GetKeyVal(resp, "name")
 	txn.RecieverWalletAddress = GetKeyVal(resp, "wallet_address")
 	txn.Key = GetKeyVal(resp, "key")
-
+	txn.RecieverCertificateID = GetKeyVal(resp, "certificate_id")
+	txn.RecieverType = GetKeyVal(resp, "type")
 	return txn, nil
 }
