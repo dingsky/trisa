@@ -1368,5 +1368,9 @@ func recharge(req *createTxnReq) (*sqlliteModel.TblTxnList, error) {
 	txn.Name = req.Name
 	txn.TxnTime = req.TxnTime
 	sqllite.TxnListCollectionCol.UpdateByKeyRet(txn.KeyRet, txn)
+	if err != nil {
+		fmt.Printf("update err:%s\n", err)
+		return nil, err
+	}
 	return txn, nil
 }
