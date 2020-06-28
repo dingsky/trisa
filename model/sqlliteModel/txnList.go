@@ -35,4 +35,5 @@ type TblTxnList struct {
 	SenderType            string `"gorm":"column:sender_type" json:"sender_type,omitempty"`
 	SenderCertificateID   string `"gorm":"column:sender_certificate_id" json:"sender_certificate_id,omitempty"`
 	ExamineStatus         string `"gorm":"column:examine_status" json:"examine_status,omitempty"`
+	SeriNum               string `"gorm":"column:seri_number" json:"seri_number,omitempty"`
 }

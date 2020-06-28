@@ -46,6 +46,7 @@ type createTxnReq struct {
 	Amount      float64 `json:"amount,omitempty"`
 	Count       float64 `json:"count,omitempty"`
 	Hash        string  `json:"hash,omitempty"`
+	SeriNum     string  `json:"serial_number,omitempty"`
 }
 
 type createTxnRsp struct {
@@ -205,6 +206,7 @@ type KycInfo struct {
 	Address       string `json:"address,omitempty"`
 	Currency      string `json:"currency,omitempty"`
 	WalletAddress string `json:"wallet_address,omitempty"`
+	IsInTrisa     string `json:"is_in_trisa,omitempty"`
 }
 
 type queryVaspReq struct {
@@ -332,7 +334,7 @@ func runServerCmd(cmd *cobra.Command, args []string) {
 			w.Write(out)
 		})
 
-		r.HandleFunc("/create_txn", func(w http.ResponseWriter, r *http.Request) {
+		r.HandleFunc("/trisa/create_txn", func(w http.ResponseWriter, r *http.Request) {
 			w.Header().Set("Access-Control-Allow-Origin", "*")
 
 			// 读请求报文
@@ -385,6 +387,7 @@ func runServerCmd(cmd *cobra.Command, args []string) {
 			txn.Hash = req.Hash
 			txn.KeyRet = uuid.New().String()
 			txn.ExamineStatus = "todo"
+			txn.SeriNum = req.SeriNum
 			err = sqllite.TxnListCollectionCol.Insert(txn)
 			if err != nil {
 				fmt.Printf("insert db error:%s", err)
@@ -419,7 +422,7 @@ func runServerCmd(cmd *cobra.Command, args []string) {
 
 		})
 
-		r.HandleFunc("/check_address", func(w http.ResponseWriter, r *http.Request) {
+		r.HandleFunc("/trisa/check_address", func(w http.ResponseWriter, r *http.Request) {
 			w.Header().Set("Access-Control-Allow-Origin", "*")
 
 			// 读请求报文
@@ -461,7 +464,7 @@ func runServerCmd(cmd *cobra.Command, args []string) {
 			w.Write(body)
 		})
 
-		r.HandleFunc("/query_txn_list", func(w http.ResponseWriter, r *http.Request) {
+		r.HandleFunc("/trisa/query_txn_list", func(w http.ResponseWriter, r *http.Request) {
 
 			w.Header().Set("Access-Control-Allow-Origin", "*")
 			// 读请求报文
@@ -529,7 +532,7 @@ func runServerCmd(cmd *cobra.Command, args []string) {
 			w.Write(rspMsg)
 		})
 
-		r.HandleFunc("/action", func(w http.ResponseWriter, r *http.Request) {
+		r.HandleFunc("/trisa/action", func(w http.ResponseWriter, r *http.Request) {
 
 			w.Header().Set("Access-Control-Allow-Origin", "*")
 			reqMsg, err := ioutil.ReadAll(r.Body)
@@ -569,7 +572,7 @@ func runServerCmd(cmd *cobra.Command, args []string) {
 			w.Write(rspMsg)
 		})
 
-		r.HandleFunc("/query_txn_detail", func(w http.ResponseWriter, r *http.Request) {
+		r.HandleFunc("/trisa/query_txn_detail", func(w http.ResponseWriter, r *http.Request) {
 
 			w.Header().Set("Access-Control-Allow-Origin", "*")
 			// 读请求报文
@@ -612,6 +615,11 @@ func runServerCmd(cmd *cobra.Command, args []string) {
 			rsp.RecieverKyc.Address = txnInfo.SenderAddress
 			rsp.RecieverKyc.CertificateID = txnInfo.RecieverCertificateID
 			rsp.RecieverKyc.Currency = txnInfo.Currency
+			if rsp.RecieverKyc.Name != "" {
+				rsp.RecieverKyc.IsInTrisa = "Y"
+			} else {
+				rsp.RecieverKyc.IsInTrisa = "N"
+			}
 			rsp.SenderKyc.Id = txnInfo.SenderId
 			rsp.SenderKyc.Name = txnInfo.SenderName
 			rsp.SenderKyc.Type = txnInfo.SenderType
@@ -676,7 +684,7 @@ func runServerCmd(cmd *cobra.Command, args []string) {
 
 		})
 
-		r.HandleFunc("/create_kyc", func(w http.ResponseWriter, r *http.Request) {
+		r.HandleFunc("/trisa/create_kyc", func(w http.ResponseWriter, r *http.Request) {
 
 			w.Header().Set("Access-Control-Allow-Origin", "*")
 
@@ -758,7 +766,7 @@ func runServerCmd(cmd *cobra.Command, args []string) {
 
 		})
 
-		r.HandleFunc("/query_kyc_list", func(w http.ResponseWriter, r *http.Request) {
+		r.HandleFunc("/trisa/query_kyc_list", func(w http.ResponseWriter, r *http.Request) {
 
 			w.Header().Set("Access-Control-Allow-Origin", "*")
 			// 读请求报文
@@ -810,7 +818,7 @@ func runServerCmd(cmd *cobra.Command, args []string) {
 			w.Write(rspMsg)
 		})
 
-		r.HandleFunc("/query_kyc_detail", func(w http.ResponseWriter, r *http.Request) {
+		r.HandleFunc("/trisa/query_kyc_detail", func(w http.ResponseWriter, r *http.Request) {
 
 			w.Header().Set("Access-Control-Allow-Origin", "*")
 			// 读请求报文
@@ -861,7 +869,7 @@ func runServerCmd(cmd *cobra.Command, args []string) {
 			w.Write(rspMsg)
 		})
 
-		r.HandleFunc("/sync_txn", func(w http.ResponseWriter, r *http.Request) {
+		r.HandleFunc("/trisa/sync_txn", func(w http.ResponseWriter, r *http.Request) {
 			w.Header().Set("Access-Control-Allow-Origin", "*")
 
 			// 读请求报文
@@ -1423,6 +1431,7 @@ func recharge(req *createTxnReq) (*sqlliteModel.TblTxnList, error) {
 	txn.Name = req.Name
 	txn.TxnTime = req.TxnTime
 	txn.Status = IsSaveHash
+	txn.SeriNum = req.SeriNum
 	sqllite.TxnListCollectionCol.UpdateByKeyRet(txn.KeyRet, txn)
 	if err != nil {
 		fmt.Printf("update err:%s\n", err)
