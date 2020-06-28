@@ -105,7 +105,7 @@ type queryTxnDetailReq struct {
 type queryTxnDetailRsp struct {
 	RespCode      string       `json:"resp_code,omitempty"`
 	RespDesc      string       `json:"resp_desc,omitempty"`
-	TxnStatus     TxnStatusDef `json:"txn_status,omitempty"`
+	TxnStatus     TxnStatusDef `json:"txn_status_list,omitempty"`
 	ExamineStatus string       `json:"examine_status,omitempty"`
 	SenderKyc     KycInfo      `json:"sender_kyc,omitempty"`
 	RecieverKyc   KycInfo      `json:"reciever_kyc,omitempty"`
@@ -1167,6 +1167,8 @@ const (
 	checkAddressFail  = "A"
 	exchangeCaFail    = "B"
 	SendKycFail       = "D"
+	IsSyncHash        = "6"
+	IsSaveHash        = "7"
 )
 
 func flushTxn(r *http.Request, req *createTxnReq, key string) {
@@ -1417,6 +1419,7 @@ func recharge(req *createTxnReq) (*sqlliteModel.TblTxnList, error) {
 	txn.CusId = req.Id
 	txn.Name = req.Name
 	txn.TxnTime = req.TxnTime
+	txn.Status = IsSaveHash
 	sqllite.TxnListCollectionCol.UpdateByKeyRet(txn.KeyRet, txn)
 	if err != nil {
 		fmt.Printf("update err:%s\n", err)

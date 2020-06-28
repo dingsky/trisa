@@ -39,7 +39,7 @@ curl "http://127.0.0.1:9996/query_txn_list" -d'{"to_address":"ffffffffffffffffff
 curl "http://127.0.0.1:9997/query_txn_list" -d '{}'
 
 //查询交易明细
-curl "http://127.0.0.1:9996/query_txn_detail" -d'{"key":"33e29842-3264-43dd-a520-de37eb314b68"}'
+curl "http://127.0.0.1:9996/query_txn_detail" -d'{"key":"f539457d-615c-44f2-80b0-b0d3c30c7f03"}'
 
 //审核
 curl "http://127.0.0.1:9996/action" -d'{"key":"33e29842-3264-43dd-a520-de37eb314b68", "operation":"pass"}'
