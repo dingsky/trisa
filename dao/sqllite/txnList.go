@@ -66,6 +66,7 @@ func (s *txnListCollection) SelectAll(query *sqlliteModel.TblTxnList, minAmount,
 
 	if estatus == "0" {
 		db = db.Where("examine_status = ?", "todo")
+		db = db.Where("type <> ?", "transaction")
 	}
 
 	if estatus == "1" {
