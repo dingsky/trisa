@@ -116,6 +116,7 @@ func (d *Demo) HandleRequest(ctx context.Context, id string, req *pb.Transaction
 		txn.SenderCertificateID = certificateId
 		txn.Type = "recharge"
 		txn.ExamineStatus = "todo"
+		txn.Status = "notshow"
 
 		txn.RecieverAddress = kycInfo.Address
 		txn.RecieverDate = kycInfo.Date

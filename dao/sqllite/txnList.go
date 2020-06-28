@@ -80,6 +80,8 @@ func (s *txnListCollection) SelectAll(query *sqlliteModel.TblTxnList, minAmount,
 		db = db.Where("txn_time <= ?", endTime)
 	}
 
+	db = db.Where("status <> ?", "notshow")
+
 	result := db.Order("txn_time desc").Find(&txnlist)
 	return txnlist, result.Error
 }
