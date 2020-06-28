@@ -30,11 +30,11 @@ curl "http://127.0.0.1:9996/trisa/query_kyc_detail" -d'{"currency": "btc", "wall
 curl "http://127.0.0.1:9997/trisa/query_kyc_detail" -d'{"currency": "btc", "wallet_address": "fffffffffffffffffff1"}'
 
 //创建提现
-curl "http://127.0.0.1:9997/trisa/create_txn" -d'{"serial_number":"123", "txn_time": "2020-06-28 13:59:30", "id": "A0010", "name":"李四", "type":"cash", "from_address":"fffffffffffffffffff2", "to_address":"fffffffffffffffffff3", "currency":"eth", "count":10.0, "amount":500.80}'
+curl "http://127.0.0.1:9996/trisa/create_txn" -d'{"serial_number":"3", "txn_time": "2020-06-28 13:59:30", "id": "A0010", "name":"李四", "type":"cash", "from_address":"fffffffffffffffffff2", "to_address":"fffffffffffffffffff3", "currency":"eth", "count":10.0, "amount":500.80}'
 //创建交易
 curl "http://127.0.0.1:9996/trisa/create_txn" -d'{"serial_number":"456", "txn_time": "2020-06-23 14:58:30", "id": "A0001", "name":"张三", "type":"transaction", "from_address":"fffffffffffffffffff2", "to_address":"fffffffffffffffffff4", "currency":"btc", "count":2.0, "amount":12000.80}'
 //创建充值
-curl "http://127.0.0.1:9997/trisa/create_txn" -d'{"serial_number":"789","txn_time": "2020-06-28 14:58:30", "id": "A0002", "name":"张1", "type":"recharge", "from_address":"fffffffffffffffffff2", "to_address":"fffffffffffffffffff4", "currency":"btc", "count":2.0, "amount":12000.80, "hash":"hkjkljlfdljfldf"}'
+curl "http://127.0.0.1:9997/trisa/create_txn" -d'{"serial_number":"1","txn_time": "2020-06-28 14:58:30", "id": "A0002", "name":"张1", "type":"recharge", "from_address":"fffffffffffffffffff2", "to_address":"fffffffffffffffffff4", "currency":"btc", "count":2.0, "amount":12000.80, "hash":"111111"}'
 
 //查询交易
 curl "http://127.0.0.1:9996/trisa/query_txn_list" -d'{"to_address":"fffffffffffffffffff1"}'
@@ -47,4 +47,4 @@ curl "http://127.0.0.1:9996/trisa/query_txn_detail" -d'{"key":"4d3eb804-9335-41e
 curl "http://127.0.0.1:9996/trisa/action" -d'{"key":"33e29842-3264-43dd-a520-de37eb314b68", "operation":"pass"}'
 
 //同步交易
-curl "http://127.0.0.1:9996/trisa/sync_txn" -d'{"key":"4d3eb804-9335-41ec-b577-f6d65e2e2bd4", "hash":"hkjkljlfdljfldf"}'
+curl "http://127.0.0.1:9996/trisa/sync_txn" -d'{"key":"2", "hash":"123khfdks"}'

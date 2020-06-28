@@ -105,7 +105,7 @@ func (s *txnListCollection) SelectByKey(key string) (*sqlliteModel.TblTxnList, e
 
 func (s *txnListCollection) SelectBySeriNum(seriNum string) (*sqlliteModel.TblTxnList, error) {
 	txn := new(sqlliteModel.TblTxnList)
-	result := Database.Where("seri_number = ?", seriNum).First(txn)
+	result := Database.Where("serial_number = ?", seriNum).First(txn)
 	return txn, result.Error
 }
 

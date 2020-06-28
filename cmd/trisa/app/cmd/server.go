@@ -1439,6 +1439,7 @@ func recharge(req *createTxnReq) (*sqlliteModel.TblTxnList, error) {
 		txn.Name = req.Name
 		txn.Hash = req.Hash
 		txn.Status = NotSyncHash
+		txn.SeriNum = req.SeriNum
 		err := sqllite.TxnListCollectionCol.Insert(txn)
 		return txn, err
 	}
