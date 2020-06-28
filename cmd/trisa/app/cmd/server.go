@@ -940,6 +940,7 @@ func runServerCmd(cmd *cobra.Command, args []string) {
 				w.Write([]byte("json unmarshal error"))
 				return
 			}
+			fmt.Printf("txnKey:%s\n", txnInfo.Key)
 
 			identity, _ := ptypes.MarshalAny(&synctxn.ReqMsg{
 				Key:  txnInfo.Key,
@@ -1380,6 +1381,8 @@ func exchangeKyc(r *http.Request, req *createTxnReq, url string) (*sqlliteModel.
 	txn.Key = GetKeyVal(resp, "key")
 	txn.RecieverCertificateID = GetKeyVal(resp, "certificate_id")
 	txn.RecieverType = GetKeyVal(resp, "type")
+	fmt.Printf("txnKey:%s\n", txn.Key)
+
 	return txn, nil
 }
 
