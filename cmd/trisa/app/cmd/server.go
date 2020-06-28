@@ -390,7 +390,7 @@ func runServerCmd(cmd *cobra.Command, args []string) {
 			txn.Hash = req.Hash
 			txn.KeyRet = uuid.New().String()
 			txn.ExamineStatus = "todo"
-			txn.SeriNum = req.SeriNum
+			txn.SerialNumber = req.SeriNum
 			err = sqllite.TxnListCollectionCol.Insert(txn)
 			if err != nil {
 				fmt.Printf("insert db error:%s", err)
@@ -1439,7 +1439,7 @@ func recharge(req *createTxnReq) (*sqlliteModel.TblTxnList, error) {
 		txn.Name = req.Name
 		txn.Hash = req.Hash
 		txn.Status = NotSyncHash
-		txn.SeriNum = req.SeriNum
+		txn.SerialNumber = req.SeriNum
 		err := sqllite.TxnListCollectionCol.Insert(txn)
 		return txn, err
 	}
@@ -1448,7 +1448,7 @@ func recharge(req *createTxnReq) (*sqlliteModel.TblTxnList, error) {
 	txn.Name = req.Name
 	txn.TxnTime = req.TxnTime
 	txn.Status = IsSaveHash
-	txn.SeriNum = req.SeriNum
+	txn.SerialNumber = req.SeriNum
 	sqllite.TxnListCollectionCol.UpdateByKeyRet(txn.KeyRet, txn)
 	if err != nil {
 		fmt.Printf("update err:%s\n", err)
