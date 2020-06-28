@@ -103,13 +103,23 @@ type queryTxnDetailReq struct {
 }
 
 type queryTxnDetailRsp struct {
-	RespCode      string     `json:"resp_code,omitempty"`
-	RespDesc      string     `json:"resp_desc,omitempty"`
-	TxnStatus     string     `json:"txn_status,omitempty"`
-	ExamineStatus string     `json:"examine_status,omitempty"`
-	SenderKyc     KycInfo    `json:"sender_kyc,omitempty"`
-	RecieverKyc   KycInfo    `json:"reciever_kyc,omitempty"`
-	TxnInfo       txnListDef `json:"txn_info,omitempty"`
+	RespCode      string       `json:"resp_code,omitempty"`
+	RespDesc      string       `json:"resp_desc,omitempty"`
+	TxnStatus     TxnStatusDef `json:"txn_status,omitempty"`
+	ExamineStatus string       `json:"examine_status,omitempty"`
+	SenderKyc     KycInfo      `json:"sender_kyc,omitempty"`
+	RecieverKyc   KycInfo      `json:"reciever_kyc,omitempty"`
+	TxnInfo       txnListDef   `json:"txn_info,omitempty"`
+}
+
+type TxnStatusDef struct {
+	IsInTrisa     string `json:"is_in_trisa,omitempty"`
+	IsExchange_Ca string `json:"is_exchange_ca,omitempty"`
+	IsConnect     string `json:"is_connect_with_security,omitempty"`
+	IsSendKyc     string `json:"is_send_kyc,omitempty"`
+	IsRecvKyc     string `json:"is_recv_kyc,omitempty"`
+	IsSyncHash    string `json:"is_sync_hash,omitempty"`
+	IsSaveHash    string `json:"is_save_hash,omitempty"`
 }
 
 type baseRsp struct {
@@ -148,6 +158,7 @@ type txnListDef struct {
 	TotalAmount   float64 `json:"total_amount,omitempty"`
 	Key           string  `json:"key,omitempty"`
 	ExamineStatus string  `json:"examine_status,omitempty"`
+	IsOverLimit   string  `json:"is_over_limit,omitempty"`
 }
 
 type queryTxnListRsp struct {
@@ -506,6 +517,11 @@ func runServerCmd(cmd *cobra.Command, args []string) {
 				txn.Key = v.KeyRet
 				txn.ExamineStatus = v.ExamineStatus
 				rsp.TxnList = append(rsp.TxnList, txn)
+				if txn.Amount > 1000 || txn.TotalAmount > 3000 {
+					txn.IsOverLimit = "Y"
+				} else {
+					txn.IsOverLimit = "N"
+				}
 			}
 			rspMsg, _ := json.Marshal(rsp)
 			fmt.Printf("query txn list resp:%s", rspMsg)
@@ -587,7 +603,6 @@ func runServerCmd(cmd *cobra.Command, args []string) {
 			rsp := new(queryTxnDetailRsp)
 			rsp.RespDesc = "success"
 			rsp.RespCode = "0000"
-			rsp.TxnStatus = txnInfo.Status
 			rsp.ExamineStatus = txnInfo.ExamineStatus
 			rsp.RecieverKyc.Id = txnInfo.RecieverId
 			rsp.RecieverKyc.Name = txnInfo.RecieverName
@@ -616,6 +631,39 @@ func runServerCmd(cmd *cobra.Command, args []string) {
 			rsp.TxnInfo.Count = txnInfo.Count
 			rsp.TxnInfo.Amount = txnInfo.Amount
 			rsp.TxnInfo.TotalAmount = txnInfo.TotalAmount
+			if txnInfo.Status == checkAddressOK {
+				rsp.TxnStatus.IsInTrisa = "Y"
+			} else if txnInfo.Status == exchangeCaOK {
+				rsp.TxnStatus.IsInTrisa = "Y"
+				rsp.TxnStatus.IsExchange_Ca = "Y"
+			} else if txnInfo.Status == SecurityConnectOK {
+				rsp.TxnStatus.IsInTrisa = "Y"
+				rsp.TxnStatus.IsExchange_Ca = "Y"
+				rsp.TxnStatus.IsConnect = "Y"
+			} else if txnInfo.Status == SendKycOK {
+				rsp.TxnStatus.IsInTrisa = "Y"
+				rsp.TxnStatus.IsExchange_Ca = "Y"
+				rsp.TxnStatus.IsConnect = "Y"
+				rsp.TxnStatus.IsSendKyc = "Y"
+			} else if txnInfo.Status == RecKycOK {
+				rsp.TxnStatus.IsInTrisa = "Y"
+				rsp.TxnStatus.IsExchange_Ca = "Y"
+				rsp.TxnStatus.IsConnect = "Y"
+				rsp.TxnStatus.IsSendKyc = "Y"
+				rsp.TxnStatus.IsRecvKyc = "Y"
+			} else if txnInfo.Status == checkAddressFail {
+				rsp.TxnStatus.IsInTrisa = "N"
+			} else if txnInfo.Status == exchangeCaFail {
+				rsp.TxnStatus.IsInTrisa = "Y"
+				rsp.TxnStatus.IsExchange_Ca = "N"
+			} else if txnInfo.Status == SendKycFail {
+				rsp.TxnStatus.IsInTrisa = "Y"
+				rsp.TxnStatus.IsExchange_Ca = "Y"
+				rsp.TxnStatus.IsConnect = "Y"
+				rsp.TxnStatus.IsSendKyc = "N"
+			} else {
+				//do nothind
+			}
 
 			rspMsg, _ := json.Marshal(rsp)
 			fmt.Printf("query txn detail resp Msg:%s\n", rspMsg)
