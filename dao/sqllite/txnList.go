@@ -1,6 +1,8 @@
 package sqllite
 
 import (
+	"fmt"
+
 	"github.com/trisacrypto/trisa/model/sqlliteModel"
 )
 
@@ -105,6 +107,7 @@ func (s *txnListCollection) SelectByKey(key string) (*sqlliteModel.TblTxnList, e
 
 func (s *txnListCollection) SelectBySeriNum(seriNum string) (*sqlliteModel.TblTxnList, error) {
 	txn := new(sqlliteModel.TblTxnList)
+	fmt.Printf("serial_number:%s", seriNum)
 	result := Database.Where("serial_number = ?", seriNum).First(txn)
 	return txn, result.Error
 }
