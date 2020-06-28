@@ -187,10 +187,20 @@ func (d *Demo) HandleRequest(ctx context.Context, id string, req *pb.Transaction
 		//txnInfo.Count = countInt
 		//txnInfo.TxnID = id
 		//txnInfo.Currency = currency
-		txnInfo.Hash = hash
-		err = sqllite.TxnListCollectionCol.Update(key, txnInfo)
-		if err != nil {
-			return nil, fmt.Errorf("update txn error:%s", err)
+
+		_, err = sqllite.TxnListCollectionCol.SelectByHash(hash)
+		if err == nil {
+			txnInfo.Hash = hash
+			err = sqllite.TxnListCollectionCol.UpdateByHash(hash, txnInfo)
+			if err != nil {
+				return nil, fmt.Errorf("update txn error:%s", err)
+			}
+		} else {
+			txnInfo.Hash = hash
+			err = sqllite.TxnListCollectionCol.Update(key, txnInfo)
+			if err != nil {
+				return nil, fmt.Errorf("update txn error:%s", err)
+			}
 		}
 
 		// Generate demo response

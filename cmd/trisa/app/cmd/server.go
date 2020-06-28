@@ -361,6 +361,9 @@ func runServerCmd(cmd *cobra.Command, args []string) {
 				txn, err := recharge(req)
 				if err != nil {
 					fmt.Printf("error:%s", err)
+					w.WriteHeader(http.StatusBadGateway)
+					w.Write([]byte("json Unmarshal error"))
+					return
 				}
 				rsp := new(createTxnRsp)
 				rsp.RespDesc = "success"
@@ -892,7 +895,7 @@ func runServerCmd(cmd *cobra.Command, args []string) {
 				return
 			}
 
-			txnInfo, err := sqllite.TxnListCollectionCol.SelectByKey(req.Key)
+			txnInfo, err := sqllite.TxnListCollectionCol.SelectBySeriNum(req.Key)
 			if err != nil {
 				fmt.Printf("txn not found error:%s", err)
 				w.WriteHeader(http.StatusBadGateway)
@@ -1180,6 +1183,7 @@ const (
 	SendKycFail       = "D"
 	IsSyncHash        = "6"
 	IsSaveHash        = "7"
+	NotSyncHash       = "8"
 )
 
 func flushTxn(r *http.Request, req *createTxnReq, key string) {
@@ -1423,8 +1427,20 @@ func recharge(req *createTxnReq) (*sqlliteModel.TblTxnList, error) {
 	//看对方是否同步过Hash
 	txn, err := sqllite.TxnListCollectionCol.SelectByHash(req.Hash)
 	if err != nil {
-		fmt.Printf("txn not found for recharge\n")
-		return nil, err
+		txn := new(sqlliteModel.TblTxnList)
+		txn.Amount = req.Amount
+		txn.Currency = req.Currency
+		txn.Count = req.Count
+		txn.TxnID = req.Id
+		txn.SenderAddress = req.FromAddress
+		txn.Type = "recharge"
+		txn.ExamineStatus = "todo"
+		txn.Status = "notshow"
+		txn.Name = req.Name
+		txn.Hash = req.Hash
+		txn.Status = NotSyncHash
+		err := sqllite.TxnListCollectionCol.Insert(txn)
+		return txn, err
 	}
 
 	txn.CusId = req.Id

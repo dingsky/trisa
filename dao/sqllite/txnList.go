@@ -22,6 +22,10 @@ func (s *txnListCollection) Update(key string, txn *sqlliteModel.TblTxnList) err
 	return Database.Model(&sqlliteModel.TblTxnList{}).Where("key = ?", key).Updates(txn).Error
 }
 
+func (s *txnListCollection) UpdateByHash(hash string, txn *sqlliteModel.TblTxnList) error {
+	return Database.Model(&sqlliteModel.TblTxnList{}).Where("hash = ?", hash).Updates(txn).Error
+}
+
 func (s *txnListCollection) UpdateTotalAmount(query *sqlliteModel.TblTxnList, totalAmount float64) error {
 	return Database.Model(&sqlliteModel.TblTxnList{}).Where(query).Update("total_amount", totalAmount).Error
 }
@@ -99,6 +103,12 @@ func (s *txnListCollection) SelectByKey(key string) (*sqlliteModel.TblTxnList, e
 	return txn, result.Error
 }
 
+func (s *txnListCollection) SelectBySeriNum(seriNum string) (*sqlliteModel.TblTxnList, error) {
+	txn := new(sqlliteModel.TblTxnList)
+	result := Database.Where("seri_number = ?", seriNum).First(txn)
+	return txn, result.Error
+}
+
 func (s *txnListCollection) SelectByRetKey(key string) (*sqlliteModel.TblTxnList, error) {
 	txn := new(sqlliteModel.TblTxnList)
 	result := Database.Where("key_ret = ?", key).First(txn)
@@ -109,4 +119,8 @@ func (s *txnListCollection) SelectKey(key string) (*sqlliteModel.TblTxnList, err
 	txn := new(sqlliteModel.TblTxnList)
 	result := Database.Where("key = ?", key).First(txn)
 	return txn, result.Error
+}
+
+func (s *txnListCollection) UpdateByKeyHash(hash string, txn *sqlliteModel.TblTxnList) error {
+	return Database.Model(&sqlliteModel.TblTxnList{}).Where("hash = ?", hash).Updates(txn).Error
 }
