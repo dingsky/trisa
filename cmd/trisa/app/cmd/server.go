@@ -1443,7 +1443,22 @@ func recharge(req *createTxnReq) (*sqlliteModel.TblTxnList, error) {
 		txn.Hash = req.Hash
 		txn.Status = NotSyncHash
 		txn.SerialNumber = req.SeriNum
-		err := sqllite.TxnListCollectionCol.Insert(txn)
+		txn.KeyRet = uuid.New().String()
+		txn.SenderWalletAddress = req.FromAddress
+		txn.RecieverWalletAddress = req.ToAddress
+		kycFrom, err := sqllite.KycListCollectionCol.Select(req.Currency, req.FromAddress)
+		if err == nil {
+			txn.SenderAddress = kycFrom.Address
+			txn.SenderDate = kycFrom.Date
+			txn.SenderId = kycFrom.KycId
+			txn.SenderIdentifyInfo = kycFrom.IdentifyInfo
+			txn.SenderName = kycFrom.Name
+			txn.SenderWalletAddress = kycFrom.WalletAddress
+			txn.SenderCertificateID = kycFrom.CertificateID
+			txn.SenderType = kycFrom.Type
+		}
+
+		err = sqllite.TxnListCollectionCol.Insert(txn)
 		return txn, err
 	}
 
