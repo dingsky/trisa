@@ -1222,6 +1222,7 @@ func flushTxn(r *http.Request, req *createTxnReq, key string) {
 	if err != nil {
 		txn.Status = SendKycFail
 		sqllite.TxnListCollectionCol.UpdateByKeyRet(key, txn)
+		return
 	}
 	txn.Status = SendKycOK
 	sqllite.TxnListCollectionCol.UpdateByKeyRet(key, txnr)
@@ -1308,6 +1309,7 @@ func getDestVasp(currency, address string) (string, error) {
 }
 
 func exchangeKyc(r *http.Request, req *createTxnReq, url string) (*sqlliteModel.TblTxnList, error) {
+	txn := new(sqlliteModel.TblTxnList)
 	identity, _ := ptypes.MarshalAny(&querykyc.Data{
 		Currency: req.Currency,
 		Net:      "",
@@ -1317,7 +1319,7 @@ func exchangeKyc(r *http.Request, req *createTxnReq, url string) (*sqlliteModel.
 	kyc, err := sqllite.KycListCollectionCol.Select(req.Currency, req.FromAddress)
 	if err != nil {
 		fmt.Printf("query kyc not found err:%s\n", err)
-		return nil, err
+		return txn, err
 	}
 
 	data, _ := ptypes.MarshalAny(&querykyc.Data{
@@ -1346,11 +1348,10 @@ func exchangeKyc(r *http.Request, req *createTxnReq, url string) (*sqlliteModel.
 	resp, err := gPSever.SendRequest(r.Context(), url, uuid.New().String(), tData)
 	if err != nil {
 		fmt.Printf("send request error:%s", err)
-		return nil, err
+		return txn, err
 	}
 	fmt.Printf("last resp:%s", resp)
 
-	txn := new(sqlliteModel.TblTxnList)
 	txn.CusId = req.Id
 	txn.Name = req.Name
 	txn.TxnTime = req.TxnTime
@@ -1419,6 +1420,7 @@ func transaction(r *http.Request, req *createTxnReq, key string) {
 	txn.RecieverCertificateID = kycTo.CertificateID
 	txn.RecieverType = kycTo.Type
 	txn.Status = Over
+	txn.ExamineStatus = "pass"
 
 	err = sqllite.TxnListCollectionCol.UpdateByKeyRet(key, txn)
 	if err != nil {

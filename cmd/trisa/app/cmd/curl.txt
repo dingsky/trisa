@@ -32,7 +32,7 @@ curl "http://127.0.0.1:9997/trisa/query_kyc_detail" -d'{"currency": "btc", "wall
 //创建提现
 curl "http://127.0.0.1:9996/trisa/create_txn" -d'{"serial_number":"4", "txn_time": "2020-06-28 13:59:30", "id": "A0010", "name":"李四", "type":"cash", "from_address":"fffffffffffffffffff2", "to_address":"fffffffffffffffffff3", "currency":"btc", "count":10.0, "amount":500.80}'
 //创建交易
-curl "http://127.0.0.1:9996/trisa/create_txn" -d'{"serial_number":"456", "txn_time": "2020-06-23 14:58:30", "id": "A0001", "name":"张三", "type":"transaction", "from_address":"fffffffffffffffffff2", "to_address":"fffffffffffffffffff4", "currency":"btc", "count":2.0, "amount":12000.80}'
+curl "http://127.0.0.1:9996/trisa/create_txn" -d'{"serial_number":"112", "txn_time": "2020-06-29 14:58:30", "id": "A0001", "name":"张三", "type":"transaction", "from_address":"fffffffffffffffffff2", "to_address":"fffffffffffffffffff4", "currency":"btc", "count":2.0, "amount":12000.80}'
 //创建充值
 curl "http://127.0.0.1:9997/trisa/create_txn" -d'{"serial_number":"10","txn_time": "2020-06-28 14:58:30", "id": "A0002", "name":"张1", "type":"recharge", "from_address":"fffffffffffffffffff2", "to_address":"fffffffffffffffffff4", "currency":"btc", "count":2.0, "amount":12000.80, "hash":"123khfdks112"}'
 
