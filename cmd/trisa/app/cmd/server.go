@@ -160,6 +160,7 @@ type txnListDef struct {
 	Key           string  `json:"key,omitempty"`
 	ExamineStatus string  `json:"examine_status,omitempty"`
 	IsOverLimit   string  `json:"is_over_limit,omitempty"`
+	Hash          string  `json:"hash,omitempty"`
 }
 
 type queryTxnListRsp struct {
@@ -522,12 +523,13 @@ func runServerCmd(cmd *cobra.Command, args []string) {
 				txn.TotalAmount = v.TotalAmount
 				txn.Key = v.KeyRet
 				txn.ExamineStatus = v.ExamineStatus
-				rsp.TxnList = append(rsp.TxnList, txn)
+				txn.Hash = v.Hash
 				if txn.Amount > 1000 || txn.TotalAmount > 3000 {
 					txn.IsOverLimit = "Y"
 				} else {
 					txn.IsOverLimit = "N"
 				}
+				rsp.TxnList = append(rsp.TxnList, txn)
 			}
 			rspMsg, _ := json.Marshal(rsp)
 			fmt.Printf("query txn list resp:%s", rspMsg)
@@ -646,6 +648,7 @@ func runServerCmd(cmd *cobra.Command, args []string) {
 			rsp.TxnInfo.Count = txnInfo.Count
 			rsp.TxnInfo.Amount = txnInfo.Amount
 			rsp.TxnInfo.TotalAmount = txnInfo.TotalAmount
+			rsp.TxnInfo.Hash = txnInfo.Hash
 			if txnInfo.Status == checkAddressOK {
 				rsp.TxnStatus.IsInTrisa = "Y"
 			} else if txnInfo.Status == exchangeCaOK {
@@ -971,7 +974,7 @@ func runServerCmd(cmd *cobra.Command, args []string) {
 			fmt.Printf("last resp:%s", resp)
 
 			txnInfo.Hash = req.Hash
-			err = sqllite.TxnListCollectionCol.Update(req.Key, txnInfo)
+			err = sqllite.TxnListCollectionCol.UpdateByKeyRet(txnInfo.KeyRet, txnInfo)
 			if err != nil {
 				fmt.Printf("update db error:%s", err)
 				w.WriteHeader(http.StatusBadGateway)
