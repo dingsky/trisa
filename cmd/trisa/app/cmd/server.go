@@ -631,7 +631,11 @@ func runServerCmd(cmd *cobra.Command, args []string) {
 			rsp.SenderKyc.Currency = txnInfo.Currency
 			rsp.SenderKyc.Address = txnInfo.RecieverAddress
 			rsp.SenderKyc.CertificateID = txnInfo.SenderCertificateID
-
+			if rsp.SenderKyc.Name != "" {
+				rsp.SenderKyc.IsInTrisa = "Y"
+			} else {
+				rsp.SenderKyc.IsInTrisa = "N"
+			}
 			rsp.TxnInfo.Id = txnInfo.CusId
 			rsp.TxnInfo.Name = txnInfo.Name
 			rsp.TxnInfo.TxnTime = txnInfo.TxnTime
@@ -1448,16 +1452,16 @@ func recharge(req *createTxnReq) (*sqlliteModel.TblTxnList, error) {
 		txn.KeyRet = uuid.New().String()
 		txn.SenderWalletAddress = req.FromAddress
 		txn.RecieverWalletAddress = req.ToAddress
-		kycFrom, err := sqllite.KycListCollectionCol.Select(req.Currency, req.FromAddress)
+		kycTo, err := sqllite.KycListCollectionCol.Select(req.Currency, req.ToAddress)
 		if err == nil {
-			txn.SenderAddress = kycFrom.Address
-			txn.SenderDate = kycFrom.Date
-			txn.SenderId = kycFrom.KycId
-			txn.SenderIdentifyInfo = kycFrom.IdentifyInfo
-			txn.SenderName = kycFrom.Name
-			txn.SenderWalletAddress = kycFrom.WalletAddress
-			txn.SenderCertificateID = kycFrom.CertificateID
-			txn.SenderType = kycFrom.Type
+			txn.RecieverAddress = kycTo.Address
+			txn.RecieverDate = kycTo.Date
+			txn.RecieverId = kycTo.KycId
+			txn.RecieverIdentifyInfo = kycTo.IdentifyInfo
+			txn.RecieverName = kycTo.Name
+			txn.RecieverWalletAddress = kycTo.WalletAddress
+			txn.RecieverCertificateID = kycTo.CertificateID
+			txn.RecieverType = kycTo.Type
 		}
 
 		err = sqllite.TxnListCollectionCol.Insert(txn)
