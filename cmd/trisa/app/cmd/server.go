@@ -337,6 +337,9 @@ func runServerCmd(cmd *cobra.Command, args []string) {
 
 		r.HandleFunc("/trisa/create_txn", func(w http.ResponseWriter, r *http.Request) {
 			w.Header().Set("Access-Control-Allow-Origin", "*")
+			w.Header().Set("Content-Type", "application/json;charset:utf-8;")
+			w.Header().Set("Access-Control-Allow-Methods", "POST, GET, OPTIONS, DELETE")
+
 			if r.Method == "OPTIONS" {
 				w.WriteHeader(http.StatusOK)
 				w.Write([]byte("OK"))
@@ -433,6 +436,9 @@ func runServerCmd(cmd *cobra.Command, args []string) {
 
 		r.HandleFunc("/trisa/check_address", func(w http.ResponseWriter, r *http.Request) {
 			w.Header().Set("Access-Control-Allow-Origin", "*")
+			w.Header().Set("Content-Type", "application/json;charset:utf-8;")
+			w.Header().Set("Access-Control-Allow-Methods", "POST, GET, OPTIONS, DELETE")
+
 			if r.Method == "OPTIONS" {
 				w.WriteHeader(http.StatusOK)
 				w.Write([]byte("OK"))
@@ -481,6 +487,9 @@ func runServerCmd(cmd *cobra.Command, args []string) {
 		r.HandleFunc("/trisa/query_txn_list", func(w http.ResponseWriter, r *http.Request) {
 
 			w.Header().Set("Access-Control-Allow-Origin", "*")
+			w.Header().Set("Content-Type", "application/json;charset:utf-8;")
+			w.Header().Set("Access-Control-Allow-Methods", "POST, GET, OPTIONS, DELETE")
+
 			if r.Method == "OPTIONS" {
 				w.WriteHeader(http.StatusOK)
 				w.Write([]byte("OK"))
@@ -556,6 +565,9 @@ func runServerCmd(cmd *cobra.Command, args []string) {
 		r.HandleFunc("/trisa/action", func(w http.ResponseWriter, r *http.Request) {
 
 			w.Header().Set("Access-Control-Allow-Origin", "*")
+			w.Header().Set("Content-Type", "application/json;charset:utf-8;")
+			w.Header().Set("Access-Control-Allow-Methods", "POST, GET, OPTIONS, DELETE")
+
 			if r.Method == "OPTIONS" {
 				w.WriteHeader(http.StatusOK)
 				w.Write([]byte("OK"))
@@ -601,6 +613,9 @@ func runServerCmd(cmd *cobra.Command, args []string) {
 		r.HandleFunc("/trisa/query_txn_detail", func(w http.ResponseWriter, r *http.Request) {
 
 			w.Header().Set("Access-Control-Allow-Origin", "*")
+			w.Header().Set("Content-Type", "application/json;charset:utf-8;")
+			w.Header().Set("Access-Control-Allow-Methods", "POST, GET, OPTIONS, DELETE")
+
 			if r.Method == "OPTIONS" {
 				w.WriteHeader(http.StatusOK)
 				w.Write([]byte("OK"))
@@ -724,6 +739,9 @@ func runServerCmd(cmd *cobra.Command, args []string) {
 		r.HandleFunc("/trisa/create_kyc", func(w http.ResponseWriter, r *http.Request) {
 
 			w.Header().Set("Access-Control-Allow-Origin", "*")
+			w.Header().Set("Content-Type", "application/json;charset:utf-8;")
+			w.Header().Set("Access-Control-Allow-Methods", "POST, GET, OPTIONS, DELETE")
+
 			if r.Method == "OPTIONS" {
 				w.WriteHeader(http.StatusOK)
 				w.Write([]byte("OK"))
@@ -811,6 +829,9 @@ func runServerCmd(cmd *cobra.Command, args []string) {
 		r.HandleFunc("/trisa/query_kyc_list", func(w http.ResponseWriter, r *http.Request) {
 
 			w.Header().Set("Access-Control-Allow-Origin", "*")
+			w.Header().Set("Content-Type", "application/json;charset:utf-8;")
+			w.Header().Set("Access-Control-Allow-Methods", "POST, GET, OPTIONS, DELETE")
+
 			if r.Method == "OPTIONS" {
 				w.WriteHeader(http.StatusOK)
 				w.Write([]byte("OK"))
@@ -869,6 +890,9 @@ func runServerCmd(cmd *cobra.Command, args []string) {
 		r.HandleFunc("/trisa/query_kyc_detail", func(w http.ResponseWriter, r *http.Request) {
 
 			w.Header().Set("Access-Control-Allow-Origin", "*")
+			w.Header().Set("Content-Type", "application/json;charset:utf-8;")
+			w.Header().Set("Access-Control-Allow-Methods", "POST, GET, OPTIONS, DELETE")
+
 			if r.Method == "OPTIONS" {
 				w.WriteHeader(http.StatusOK)
 				w.Write([]byte("OK"))
@@ -925,6 +949,9 @@ func runServerCmd(cmd *cobra.Command, args []string) {
 
 		r.HandleFunc("/trisa/sync_txn", func(w http.ResponseWriter, r *http.Request) {
 			w.Header().Set("Access-Control-Allow-Origin", "*")
+			w.Header().Set("Content-Type", "application/json;charset:utf-8;")
+			w.Header().Set("Access-Control-Allow-Methods", "POST, GET, OPTIONS, DELETE")
+
 			if r.Method == "OPTIONS" {
 				w.WriteHeader(http.StatusOK)
 				w.Write([]byte("OK"))
