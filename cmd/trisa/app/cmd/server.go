@@ -342,6 +342,7 @@ func runServerCmd(cmd *cobra.Command, args []string) {
 
 			if r.Method == "OPTIONS" {
 				w.WriteHeader(http.StatusOK)
+				w.Header().Set("Access-Control-Allow-Headers", "Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With")
 				w.Write([]byte("OK"))
 				return
 			}
@@ -440,7 +441,8 @@ func runServerCmd(cmd *cobra.Command, args []string) {
 			w.Header().Set("Access-Control-Allow-Methods", "POST, GET, OPTIONS, DELETE")
 
 			if r.Method == "OPTIONS" {
-				w.WriteHeader(http.StatusOK)
+				w.WriteHeader(http.StatusOK
+				w.Header().Set("Access-Control-Allow-Headers", "Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With")
 				w.Write([]byte("OK"))
 				return
 			}
@@ -492,6 +494,7 @@ func runServerCmd(cmd *cobra.Command, args []string) {
 
 			if r.Method == "OPTIONS" {
 				w.WriteHeader(http.StatusOK)
+				w.Header().Set("Access-Control-Allow-Headers", "Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With")
 				w.Write([]byte("OK"))
 				return
 			}
@@ -570,6 +573,7 @@ func runServerCmd(cmd *cobra.Command, args []string) {
 
 			if r.Method == "OPTIONS" {
 				w.WriteHeader(http.StatusOK)
+				w.Header().Set("Access-Control-Allow-Headers", "Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With")
 				w.Write([]byte("OK"))
 				return
 			}
@@ -618,6 +622,7 @@ func runServerCmd(cmd *cobra.Command, args []string) {
 
 			if r.Method == "OPTIONS" {
 				w.WriteHeader(http.StatusOK)
+				w.Header().Set("Access-Control-Allow-Headers", "Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With")
 				w.Write([]byte("OK"))
 				return
 			}
@@ -744,6 +749,7 @@ func runServerCmd(cmd *cobra.Command, args []string) {
 
 			if r.Method == "OPTIONS" {
 				w.WriteHeader(http.StatusOK)
+				w.Header().Set("Access-Control-Allow-Headers", "Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With")
 				w.Write([]byte("OK"))
 				return
 			}
@@ -834,6 +840,7 @@ func runServerCmd(cmd *cobra.Command, args []string) {
 
 			if r.Method == "OPTIONS" {
 				w.WriteHeader(http.StatusOK)
+				w.Header().Set("Access-Control-Allow-Headers", "Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With")
 				w.Write([]byte("OK"))
 				return
 			}
@@ -895,6 +902,8 @@ func runServerCmd(cmd *cobra.Command, args []string) {
 
 			if r.Method == "OPTIONS" {
 				w.WriteHeader(http.StatusOK)
+				w.Header().Set("Access-Control-Allow-Headers", "Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With")
+
 				w.Write([]byte("OK"))
 				return
 			}
@@ -954,6 +963,7 @@ func runServerCmd(cmd *cobra.Command, args []string) {
 
 			if r.Method == "OPTIONS" {
 				w.WriteHeader(http.StatusOK)
+				w.Header().Set("Access-Control-Allow-Headers", "Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With")
 				w.Write([]byte("OK"))
 				return
 			}
