@@ -24,14 +24,14 @@ curl "http://127.0.0.1:9997/trisa/create_kyc" -d'{"id": "89758",	"name": "sky",	
 curl "http://127.0.0.1:9996/trisa/create_kyc" -d'{"id": "89757",	"name": "dingchun",	"type": "ins",	"wallet_address": "666666",	"date": "20200612",	"address": "shanghai",	"currency": "btc",	"wallet_address": "test0x123", "certificate_id":"abcde"}'
 curl "http://127.0.0.1:9996/trisa/create_kyc" -d'{"id": "89757",	"name": "dingchun",	"type": "ins",	"wallet_address": "666666",	"date": "20200612",	"address": "shanghai",	"currency": "btc",	"wallet_address": "test0x234", "certificate_id":"abcde"}'
 curl "http://127.0.0.1:9997/trisa/create_kyc" -d'{"id": "89758",	"name": "sky",	"type": "cus",	"wallet_address": "666667",	"date": "20200623",	"address": "china",	"currency": "btc",	"wallet_address": "test0x345", "certificate_id":"gefhkil"}'
-curl "http://127.0.0.1:9997/trisa/create_kyc" -d'{"id": "89758",	"name": "sky",	"type": "cus",	"wallet_address": "666667",	"date": "20200623",	"address": "china",	"currency": "btc",	"wallet_address": "test0x456", "certificate_id":"gefhkil"}'
+curl "http://vasp.sandbox-pro.hashkey.com/trisa/create_kyc" -d'{"id": "89758",	"name": "sky",	"type": "cus",	"wallet_address": "666667",	"date": "20200623",	"address": "china",	"currency": "btc",	"wallet_address": "test0x456", "certificate_id":"gefhkil"}'
 
 //查询KYC
-curl "http://127.0.0.1:9996/trisa/query_kyc_list" -d'{"id": "89757"}'
+curl "http://vasp.sandbox-pro.hashkey.com/trisa/query_kyc_list" -d'{}'
 curl "http://127.0.0.1:9997/trisa/query_kyc_list" -d'{"id": "89758"}'
 
 //查询kyc详情
-curl "http://127.0.0.1:9996/trisa/query_kyc_detail" -d'{"currency": "btc", "wallet_address": "ffffffffffffffffffff"}'
+curl "http://vasp.sandbox-pro.hashkey.com/trisa/query_kyc_detail" -d'{"currency": "btc", "wallet_address": "ffffffffffffffffffff"}'
 curl "http://127.0.0.1:9997/trisa/query_kyc_detail" -d'{"currency": "btc", "wallet_address": "fffffffffffffffffff1"}'
 
 //创建提现
@@ -46,7 +46,7 @@ curl "http://127.0.0.1:9997/trisa/create_txn" -d'{"serial_number":"1", "txn_time
 
 //查询交易
 curl "http://127.0.0.1:9996/trisa/query_txn_list" -d'{"to_address":"fffffffffffffffffff1"}'
-curl "http://127.0.0.1:9997/trisa/query_txn_list" -d '{}'
+curl "http://vasp.sandbox-pro.hashkey.com/trisa/query_txn_list" -d '{}'
 
 //查询交易明细de
 curl "http://127.0.0.1:9996/trisa/query_txn_detail" -d'{"key":"4d3eb804-9335-41ec-b577-f6d65e2e2bd4"}'
@@ -57,3 +57,5 @@ curl "http://127.0.0.1:9996/trisa/action" -d'{"key":"33e29842-3264-43dd-a520-de3
 //同步交易
 curl "http://127.0.0.1:9996/trisa/sync_txn" -d'{"key":"6", "hash":"123khfdks112"}'
 curl "http://127.0.0.1:9997/trisa/sync_txn" -d'{"key":"1", "hash":"456jkfdjalfl"}'
+
+http://trisa.sandbox-pro.hashkey.com/trisa

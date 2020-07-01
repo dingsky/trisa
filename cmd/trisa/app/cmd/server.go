@@ -337,6 +337,11 @@ func runServerCmd(cmd *cobra.Command, args []string) {
 
 		r.HandleFunc("/trisa/create_txn", func(w http.ResponseWriter, r *http.Request) {
 			w.Header().Set("Access-Control-Allow-Origin", "*")
+			if r.Method == "OPTIONS" {
+				w.WriteHeader(http.StatusOK)
+				w.Write([]byte("OK"))
+				return
+			}
 
 			// 读请求报文
 			reqMsg, err := ioutil.ReadAll(r.Body)
@@ -428,6 +433,11 @@ func runServerCmd(cmd *cobra.Command, args []string) {
 
 		r.HandleFunc("/trisa/check_address", func(w http.ResponseWriter, r *http.Request) {
 			w.Header().Set("Access-Control-Allow-Origin", "*")
+			if r.Method == "OPTIONS" {
+				w.WriteHeader(http.StatusOK)
+				w.Write([]byte("OK"))
+				return
+			}
 
 			// 读请求报文
 			reqMsg, err := ioutil.ReadAll(r.Body)
@@ -471,6 +481,12 @@ func runServerCmd(cmd *cobra.Command, args []string) {
 		r.HandleFunc("/trisa/query_txn_list", func(w http.ResponseWriter, r *http.Request) {
 
 			w.Header().Set("Access-Control-Allow-Origin", "*")
+			if r.Method == "OPTIONS" {
+				w.WriteHeader(http.StatusOK)
+				w.Write([]byte("OK"))
+				return
+			}
+
 			// 读请求报文
 			reqMsg, err := ioutil.ReadAll(r.Body)
 			if err != nil {
@@ -540,6 +556,11 @@ func runServerCmd(cmd *cobra.Command, args []string) {
 		r.HandleFunc("/trisa/action", func(w http.ResponseWriter, r *http.Request) {
 
 			w.Header().Set("Access-Control-Allow-Origin", "*")
+			if r.Method == "OPTIONS" {
+				w.WriteHeader(http.StatusOK)
+				w.Write([]byte("OK"))
+				return
+			}
 			reqMsg, err := ioutil.ReadAll(r.Body)
 			if err != nil {
 				fmt.Printf("read request error:%s\n", err)
@@ -580,6 +601,12 @@ func runServerCmd(cmd *cobra.Command, args []string) {
 		r.HandleFunc("/trisa/query_txn_detail", func(w http.ResponseWriter, r *http.Request) {
 
 			w.Header().Set("Access-Control-Allow-Origin", "*")
+			if r.Method == "OPTIONS" {
+				w.WriteHeader(http.StatusOK)
+				w.Write([]byte("OK"))
+				return
+			}
+
 			// 读请求报文
 			reqMsg, err := ioutil.ReadAll(r.Body)
 			if err != nil {
@@ -697,6 +724,11 @@ func runServerCmd(cmd *cobra.Command, args []string) {
 		r.HandleFunc("/trisa/create_kyc", func(w http.ResponseWriter, r *http.Request) {
 
 			w.Header().Set("Access-Control-Allow-Origin", "*")
+			if r.Method == "OPTIONS" {
+				w.WriteHeader(http.StatusOK)
+				w.Write([]byte("OK"))
+				return
+			}
 
 			// 读请求报文
 			reqMsg, err := ioutil.ReadAll(r.Body)
@@ -779,6 +811,12 @@ func runServerCmd(cmd *cobra.Command, args []string) {
 		r.HandleFunc("/trisa/query_kyc_list", func(w http.ResponseWriter, r *http.Request) {
 
 			w.Header().Set("Access-Control-Allow-Origin", "*")
+			if r.Method == "OPTIONS" {
+				w.WriteHeader(http.StatusOK)
+				w.Write([]byte("OK"))
+				return
+			}
+
 			// 读请求报文
 			reqMsg, err := ioutil.ReadAll(r.Body)
 			if err != nil {
@@ -831,6 +869,12 @@ func runServerCmd(cmd *cobra.Command, args []string) {
 		r.HandleFunc("/trisa/query_kyc_detail", func(w http.ResponseWriter, r *http.Request) {
 
 			w.Header().Set("Access-Control-Allow-Origin", "*")
+			if r.Method == "OPTIONS" {
+				w.WriteHeader(http.StatusOK)
+				w.Write([]byte("OK"))
+				return
+			}
+
 			// 读请求报文
 			reqMsg, err := ioutil.ReadAll(r.Body)
 			if err != nil {
@@ -881,6 +925,11 @@ func runServerCmd(cmd *cobra.Command, args []string) {
 
 		r.HandleFunc("/trisa/sync_txn", func(w http.ResponseWriter, r *http.Request) {
 			w.Header().Set("Access-Control-Allow-Origin", "*")
+			if r.Method == "OPTIONS" {
+				w.WriteHeader(http.StatusOK)
+				w.Write([]byte("OK"))
+				return
+			}
 
 			// 读请求报文
 			reqMsg, err := ioutil.ReadAll(r.Body)
