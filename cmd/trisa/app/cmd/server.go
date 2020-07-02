@@ -725,7 +725,7 @@ func runServerCmd(cmd *cobra.Command, args []string) {
 				rsp.TxnStatus.IsInTrisa = "Y"
 				rsp.TxnStatus.IsExchange_Ca = "Y"
 				rsp.TxnStatus.IsConnect = "Y"
-				rsp.TxnStatus.IsSendKyc = "N"f
+				rsp.TxnStatus.IsSendKyc = "N"
 			} else if txnInfo.Status == IsSaveHash {
 				rsp.TxnStatus.IsSyncHash = "Y"
 				rsp.TxnStatus.IsSaveHash = "Y"
