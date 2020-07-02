@@ -1630,6 +1630,7 @@ func recharge(req *createTxnReq, keyRet string) error {
 	//看对方是否同步过Hash
 	txn, err := sqllite.TxnListCollectionCol.SelectByHash(req.Hash)
 	if err != nil {
+		fmt.Printf("find txn by hash:%s\n", req.Hash)
 		txn := new(sqlliteModel.TblTxnList)
 		txn.Amount = req.Amount
 		txn.Currency = req.Currency
@@ -1678,6 +1679,7 @@ func recharge(req *createTxnReq, keyRet string) error {
 	txn.Status = IsSaveHash
 	txn.SerialNumber = req.SeriNum
 	txn.KeyRet = keyRet
+	txn.Type = "recharge"
 	currTotalAmount, err := sqllite.TxnListCollectionCol.SelectByIdCurType(req.Id, req.Currency, req.Type)
 	if req.Amount < 1000 && currTotalAmount < 3000 {
 		txn.ExamineStatus = "pass"
