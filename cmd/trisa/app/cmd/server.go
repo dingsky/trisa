@@ -731,6 +731,7 @@ func runServerCmd(cmd *cobra.Command, args []string) {
 				rsp.TxnStatus.IsSaveHash = "Y"
 			} else {
 				//do nothind
+				fmt.Printf("txnStatus:%s", txnInfo.Status)
 			}
 
 			rspMsg, _ := json.Marshal(rsp)
