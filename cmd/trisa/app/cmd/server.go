@@ -725,7 +725,7 @@ func runServerCmd(cmd *cobra.Command, args []string) {
 				rsp.TxnStatus.IsInTrisa = "Y"
 				rsp.TxnStatus.IsExchange_Ca = "Y"
 				rsp.TxnStatus.IsConnect = "Y"
-				rsp.TxnStatus.IsSendKyc = "N"
+				rsp.TxnStatus.IsSendKyc = "N"f
 			} else if txnInfo.Status == IsSaveHash {
 				rsp.TxnStatus.IsSyncHash = "Y"
 				rsp.TxnStatus.IsSaveHash = "Y"
@@ -996,6 +996,7 @@ func runServerCmd(cmd *cobra.Command, args []string) {
 				w.Write([]byte("txn not found"))
 				return
 			}
+			fmt.Printf("query txn_key:%s\n txn:%v\n", txnInfo.Key, txnInfo)
 
 			url := c.Server.TrisaCenterUrl + "/v0/api/trisacenter/get_vasp"
 			queryVaspReq := new(queryVaspReq)
@@ -1386,6 +1387,7 @@ func flushTxn(r *http.Request, req *createTxnReq, key string) {
 		return
 	}
 	txn.Status = SendKycOK
+	fmt.Printf("txnKey:%s\n", txnr.Key)
 	sqllite.TxnListCollectionCol.UpdateByKeyRet(key, txnr)
 
 	//接收kyc
