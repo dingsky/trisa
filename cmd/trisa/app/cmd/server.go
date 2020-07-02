@@ -998,6 +998,25 @@ func runServerCmd(cmd *cobra.Command, args []string) {
 			}
 			fmt.Printf("query txn_key:%s\n txn:%v\n", txnInfo.Key, txnInfo)
 
+			if txnInfo.ExamineStatus == "pass" {
+				txnInfo.Hash = req.Hash
+				err = sqllite.TxnListCollectionCol.UpdateByKeyRet(txnInfo.KeyRet, txnInfo)
+				if err != nil {
+					fmt.Printf("update db error:%s", err)
+					w.WriteHeader(http.StatusBadGateway)
+					w.Write([]byte("update db error"))
+					return
+				}
+				rsp := new(syncTxnRsp)
+				rsp.RespDesc = "success"
+				rsp.RespCode = "0000"
+				rspMsg, _ := json.Marshal(rsp)
+				fmt.Printf("resp Msg:%s", rspMsg)
+
+				w.WriteHeader(http.StatusOK)
+				w.Write(rspMsg)
+			}
+
 			url := c.Server.TrisaCenterUrl + "/v0/api/trisacenter/get_vasp"
 			queryVaspReq := new(queryVaspReq)
 			queryVaspReq.Currency = txnInfo.Currency
