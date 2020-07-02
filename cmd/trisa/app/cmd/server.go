@@ -1341,6 +1341,7 @@ func cash(r *http.Request, req *createTxnReq, key string) error {
 	go func() {
 		flushTxn(r, req, txn.KeyRet)
 	}()
+	return nil
 }
 
 func flushTxn(r *http.Request, req *createTxnReq, key string) {
