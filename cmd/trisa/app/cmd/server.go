@@ -539,7 +539,7 @@ func runServerCmd(cmd *cobra.Command, args []string) {
 			rsp.RespCode = "0000"
 			for _, v := range txnList {
 				txn := new(txnListDef)
-				txn.Id = v.CusId
+				txn.Id = v.TxnID
 				txn.Name = v.Name
 				txn.TxnTime = v.TxnTime
 				txn.Type = v.Type
@@ -1530,6 +1530,7 @@ func recharge(req *createTxnReq) (*sqlliteModel.TblTxnList, error) {
 		txn.Currency = req.Currency
 		txn.Count = req.Count
 		txn.TxnID = req.Id
+		txn.TxnTime = req.TxnTime
 		txn.SenderAddress = req.FromAddress
 		txn.Type = "recharge"
 		txn.ExamineStatus = "todo"
