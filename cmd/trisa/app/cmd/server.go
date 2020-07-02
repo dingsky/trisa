@@ -1687,7 +1687,7 @@ func recharge(req *createTxnReq, keyRet string) error {
 	} else {
 		txn.ExamineStatus = "todo"
 	}
-	fmt.Printf("rechage txn:%v\n", txn)
+	fmt.Printf("rechage txn:%v\n keyRet:%s\n", txn, txn.KeyRet)
 	txn.TotalAmount = currTotalAmount
 	sqllite.TxnListCollectionCol.UpdateByKeyRet(txn.KeyRet, txn)
 	if err != nil {
