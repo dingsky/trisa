@@ -1299,7 +1299,7 @@ func cash(r *http.Request, req *createTxnReq, key string) error {
 	txn.ExamineStatus = "todo"
 	txn.Name = req.Name
 	txn.Hash = req.Hash
-	txn.Status = NotSyncHash
+	txn.Status = ""
 	txn.SerialNumber = req.SeriNum
 	txn.KeyRet = key
 	txn.SenderWalletAddress = req.FromAddress
@@ -1340,9 +1340,9 @@ func cash(r *http.Request, req *createTxnReq, key string) error {
 		}
 	}
 
-	//go func() {
-	//	flushTxn(r, req, txn.KeyRet)
-	//}()
+	go func() {
+		flushTxn(r, req, txn.KeyRet)
+	}()
 	return nil
 }
 
