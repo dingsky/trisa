@@ -1295,7 +1295,7 @@ func cash(r *http.Request, req *createTxnReq, key string) error {
 	txn.CusId = req.Id
 	txn.TxnTime = req.TxnTime
 	txn.SenderAddress = req.FromAddress
-	txn.Type = "cash"
+	txn.Type = req.Type
 	txn.ExamineStatus = "todo"
 	txn.Name = req.Name
 	txn.Hash = req.Hash
@@ -1321,6 +1321,7 @@ func cash(r *http.Request, req *createTxnReq, key string) error {
 		txn.ExamineStatus = "pass"
 		txn.Status = Over
 		txn.TotalAmount = currTotalAmount + req.Amount
+		fmt.Printf("cus_id:%s, currency:%s type:%s\n", txn.CusId, txn.Currency, txn.Type)
 		err := sqllite.TxnListCollectionCol.Insert(txn)
 		if err != nil {
 			fmt.Printf("txn insert err:%s", err)
@@ -1331,6 +1332,7 @@ func cash(r *http.Request, req *createTxnReq, key string) error {
 		txn.ExamineStatus = "todo"
 		txn.Status = ""
 		txn.TotalAmount = currTotalAmount + req.Amount
+		fmt.Printf("cus_id:%s, currency:%s type:%s\n", txn.CusId, txn.Currency, txn.Type)
 		err := sqllite.TxnListCollectionCol.Insert(txn)
 		if err != nil {
 			fmt.Printf("txn insert err:%s", err)
@@ -1338,9 +1340,9 @@ func cash(r *http.Request, req *createTxnReq, key string) error {
 		}
 	}
 
-	go func() {
-		flushTxn(r, req, txn.KeyRet)
-	}()
+	//go func() {
+	//	flushTxn(r, req, txn.KeyRet)
+	//}()
 	return nil
 }
 
