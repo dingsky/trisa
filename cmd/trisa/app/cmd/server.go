@@ -1684,7 +1684,10 @@ func recharge(req *createTxnReq, keyRet string) error {
 	currTotalAmount, err := sqllite.TxnListCollectionCol.SelectByIdCurType(req.Id, req.Currency, req.Type)
 	if req.Amount < 1000 && currTotalAmount < 3000 {
 		txn.ExamineStatus = "pass"
+	} else {
+		txn.ExamineStatus = "todo"
 	}
+	fmt.Printf("rechage txn:%v\n", txn)
 	txn.TotalAmount = currTotalAmount
 	sqllite.TxnListCollectionCol.UpdateByKeyRet(txn.KeyRet, txn)
 	if err != nil {
