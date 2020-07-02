@@ -367,72 +367,72 @@ func runServerCmd(cmd *cobra.Command, args []string) {
 				return
 			}
 
-			if req.Type == "recharge" {
-				txn, err := recharge(req)
-				if err != nil {
-					fmt.Printf("error:%s", err)
-					w.WriteHeader(http.StatusBadGateway)
-					w.Write([]byte("json Unmarshal error"))
-					return
-				}
-				rsp := new(createTxnRsp)
-				rsp.RespDesc = "success"
-				rsp.RespCode = "0000"
-				rsp.Key = txn.KeyRet
-				rspMsg, _ := json.Marshal(rsp)
-				fmt.Printf("rspMsg:%s", rspMsg)
+			//if req.Type == "recharge" {
+			//	txn, err := recharge(req)
+			//	if err != nil {
+			//		fmt.Printf("error:%s", err)
+			//		w.WriteHeader(http.StatusBadGateway)
+			//		w.Write([]byte("json Unmarshal error"))
+			//		return
+			//	}
+			//	rsp := new(createTxnRsp)
+			//	rsp.RespDesc = "success"
+			//	rsp.RespCode = "0000"
+			//	rsp.Key = txn.KeyRet
+			//	rspMsg, _ := json.Marshal(rsp)
+			//	fmt.Printf("rspMsg:%s", rspMsg)
+			//
+			//	w.WriteHeader(http.StatusOK)
+			//	w.Write(rspMsg)
+			//	return
+			//}
 
-				w.WriteHeader(http.StatusOK)
-				w.Write(rspMsg)
-				return
-			}
+			//txn := new(sqlliteModel.TblTxnList)
+			//txn.CusId = req.Id
+			//txn.Name = req.Name
+			//txn.TxnTime = req.TxnTime
+			//txn.Type = req.Type
+			//txn.SenderWalletAddress = req.FromAddress
+			//txn.RecieverWalletAddress = req.ToAddress
+			//txn.Currency = req.Currency
+			//txn.Amount = req.Amount
+			//txn.Count = req.Count
+			//txn.Hash = req.Hash
+			//txn.KeyRet = uuid.New().String()
+			//txn.ExamineStatus = "todo"
+			//txn.SerialNumber = req.SeriNum
+			//err = sqllite.TxnListCollectionCol.Insert(txn)
+			//if err != nil {
+			//	fmt.Printf("insert db error:%s", err)
+			//	w.WriteHeader(http.StatusBadGateway)
+			//	w.Write([]byte("insert db error"))
+			//	return
+			//}
 
-			txn := new(sqlliteModel.TblTxnList)
-			txn.CusId = req.Id
-			txn.Name = req.Name
-			txn.TxnTime = req.TxnTime
-			txn.Type = req.Type
-			txn.SenderWalletAddress = req.FromAddress
-			txn.RecieverWalletAddress = req.ToAddress
-			txn.Currency = req.Currency
-			txn.Amount = req.Amount
-			txn.Count = req.Count
-			txn.Hash = req.Hash
-			txn.KeyRet = uuid.New().String()
-			txn.ExamineStatus = "todo"
-			txn.SerialNumber = req.SeriNum
-			err = sqllite.TxnListCollectionCol.Insert(txn)
-			if err != nil {
-				fmt.Printf("insert db error:%s", err)
-				w.WriteHeader(http.StatusBadGateway)
-				w.Write([]byte("insert db error"))
-				return
+			keyRet := uuid.New().String()
+			switch req.Type {
+			case "cash":
+				err = cash(r, req, keyRet)
+			case "transaction":
+				err = transaction(r, req, keyRet)
+			default:
+				err = recharge(req, keyRet)
 			}
 
 			rsp := new(createTxnRsp)
-			rsp.RespDesc = "success"
-			rsp.RespCode = "0000"
-			rsp.Key = txn.KeyRet
+			if err != nil {
+				fmt.Printf("error:%s", err)
+				rsp.RespCode = "0001"
+				rsp.RespDesc = fmt.Sprintf("%s failed err:%s", req.Type, err)
+			} else {
+				rsp.RespDesc = "success"
+				rsp.RespCode = "0000"
+				rsp.Key = keyRet
+			}
 			rspMsg, _ := json.Marshal(rsp)
 			fmt.Printf("rspMsg:%s", rspMsg)
-
 			w.WriteHeader(http.StatusOK)
 			w.Write(rspMsg)
-			switch req.Type {
-			case "cash":
-				go func() {
-					flushTxn(r, req, txn.KeyRet)
-				}()
-			case "transaction":
-				go func() {
-					transaction(r, req, txn.KeyRet)
-				}()
-			default:
-				go func() {
-					recharge(req)
-				}()
-			}
-
 		})
 
 		r.HandleFunc("/trisa/check_address", func(w http.ResponseWriter, r *http.Request) {
@@ -539,7 +539,7 @@ func runServerCmd(cmd *cobra.Command, args []string) {
 			rsp.RespCode = "0000"
 			for _, v := range txnList {
 				txn := new(txnListDef)
-				txn.Id = v.TxnID
+				txn.Id = v.CusId
 				txn.Name = v.Name
 				txn.TxnTime = v.TxnTime
 				txn.Type = v.Type
@@ -1280,7 +1280,71 @@ const (
 	NotSyncHash       = "8"
 )
 
+func cash(r *http.Request, req *createTxnReq, key string) error {
+	//判断是否需要走Trisa流程
+	currTotalAmount, err := sqllite.TxnListCollectionCol.SelectByIdCurType(req.Id, req.Currency, req.Type)
+	if err != nil {
+		fmt.Printf("SelectByIdCurType err:%s", err)
+		return err
+	}
+	txn := new(sqlliteModel.TblTxnList)
+	txn.Amount = req.Amount
+	txn.Currency = req.Currency
+	txn.Count = req.Count
+	txn.CusId = req.Id
+	txn.TxnTime = req.TxnTime
+	txn.SenderAddress = req.FromAddress
+	txn.Type = "recharge"
+	txn.ExamineStatus = "todo"
+	//	txn.Status = "notshow"
+	txn.Name = req.Name
+	txn.Hash = req.Hash
+	txn.Status = NotSyncHash
+	txn.SerialNumber = req.SeriNum
+	txn.KeyRet = key
+	txn.SenderWalletAddress = req.FromAddress
+	txn.RecieverWalletAddress = req.ToAddress
+	txn.SerialNumber = req.SeriNum
+	kycTo, err := sqllite.KycListCollectionCol.Select(req.Currency, req.ToAddress)
+	if err == nil {
+		txn.RecieverAddress = kycTo.Address
+		txn.RecieverDate = kycTo.Date
+		txn.RecieverId = kycTo.KycId
+		txn.RecieverIdentifyInfo = kycTo.IdentifyInfo
+		txn.RecieverName = kycTo.Name
+		txn.RecieverWalletAddress = kycTo.WalletAddress
+		txn.RecieverCertificateID = kycTo.CertificateID
+		txn.RecieverType = kycTo.Type
+	}
+
+	if currTotalAmount < 3000 && req.Amount < 1000 { //不用走trisa
+		txn.ExamineStatus = "pass"
+		txn.Status = Over
+		txn.TotalAmount = currTotalAmount + req.Amount
+		err := sqllite.TxnListCollectionCol.Insert(txn)
+		if err != nil {
+			fmt.Printf("txn insert err:%s", err)
+			return err
+		}
+		return nil
+	} else {
+		txn.ExamineStatus = "todo"
+		txn.Status = ""
+		txn.TotalAmount = currTotalAmount + req.Amount
+		err := sqllite.TxnListCollectionCol.Insert(txn)
+		if err != nil {
+			fmt.Printf("txn insert err:%s", err)
+			return err
+		}
+	}
+
+	go func() {
+		flushTxn(r, req, txn.KeyRet)
+	}()
+}
+
 func flushTxn(r *http.Request, req *createTxnReq, key string) {
+
 	// 判断提现地址是否在Trisa体系内
 	time.Sleep(time.Second * gap)
 	txn := new(sqlliteModel.TblTxnList)
@@ -1325,20 +1389,20 @@ func flushTxn(r *http.Request, req *createTxnReq, key string) {
 	txnr.Status = RecKycOK
 	sqllite.TxnListCollectionCol.UpdateByKeyRet(key, txnr)
 
-	//更新累计金额
-	query := new(sqlliteModel.TblTxnList)
-	query.Currency = req.Currency
-	query.SenderWalletAddress = req.FromAddress
-	txnList, err := sqllite.TxnListCollectionCol.SelectAll(query, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, "", "", "")
-	var totalAmount float64
-	for _, txn := range txnList {
-		totalAmount += txn.Amount
-	}
-
-	err = sqllite.TxnListCollectionCol.UpdateTotalAmount(query, totalAmount)
-	if err != nil {
-		fmt.Printf("update total amount err:%s\n", err)
-	}
+	////更新累计金额
+	//query := new(sqlliteModel.TblTxnList)
+	//query.Currency = req.Currency
+	//query.SenderWalletAddress = req.FromAddress
+	//txnList, err := sqllite.TxnListCollectionCol.SelectAll(query, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, "", "", "")
+	//var totalAmount float64
+	//for _, txn := range txnList {
+	//	totalAmount += txn.Amount
+	//}
+	//
+	//err = sqllite.TxnListCollectionCol.UpdateTotalAmount(query, totalAmount)
+	//if err != nil {
+	//	fmt.Printf("update total amount err:%s\n", err)
+	//}
 }
 
 type checkAddressReq struct {
@@ -1480,21 +1544,35 @@ func exchangeKyc(r *http.Request, req *createTxnReq, url string) (*sqlliteModel.
 	return txn, nil
 }
 
-func transaction(r *http.Request, req *createTxnReq, key string) {
+func transaction(r *http.Request, req *createTxnReq, key string) error {
 	// 判断提现地址是否在Trisa体系内
 	kycFrom, err := sqllite.KycListCollectionCol.Select(req.Currency, req.FromAddress)
 	if err != nil {
 		fmt.Printf("query from kyc not found err:%s\n", err)
-		return
+		return err
 	}
 
 	kycTo, err := sqllite.KycListCollectionCol.Select(req.Currency, req.ToAddress)
 	if err != nil {
 		fmt.Printf("query to kyc not found err:%s\n", err)
-		return
+		return err
 	}
 
 	txn := new(sqlliteModel.TblTxnList)
+	txn.Amount = req.Amount
+	txn.Currency = req.Currency
+	txn.Count = req.Count
+	txn.CusId = req.Id
+	txn.TxnTime = req.TxnTime
+	txn.SenderAddress = req.FromAddress
+	txn.Type = "transaction"
+	txn.Name = req.Name
+	txn.Hash = req.Hash
+	txn.SerialNumber = req.SeriNum
+	txn.KeyRet = key
+	txn.SenderWalletAddress = req.FromAddress
+	txn.RecieverWalletAddress = req.ToAddress
+	txn.SerialNumber = req.SeriNum
 	txn.SenderAddress = kycFrom.Address
 	txn.SenderDate = kycFrom.Date
 	txn.SenderId = kycFrom.KycId
@@ -1518,10 +1596,12 @@ func transaction(r *http.Request, req *createTxnReq, key string) {
 	err = sqllite.TxnListCollectionCol.UpdateByKeyRet(key, txn)
 	if err != nil {
 		fmt.Printf("update err:%s\n", err)
+		return err
 	}
+	return nil
 }
 
-func recharge(req *createTxnReq) (*sqlliteModel.TblTxnList, error) {
+func recharge(req *createTxnReq, keyRet string) error {
 	//看对方是否同步过Hash
 	txn, err := sqllite.TxnListCollectionCol.SelectByHash(req.Hash)
 	if err != nil {
@@ -1529,17 +1609,17 @@ func recharge(req *createTxnReq) (*sqlliteModel.TblTxnList, error) {
 		txn.Amount = req.Amount
 		txn.Currency = req.Currency
 		txn.Count = req.Count
-		txn.TxnID = req.Id
+		txn.CusId = req.Id
 		txn.TxnTime = req.TxnTime
 		txn.SenderAddress = req.FromAddress
 		txn.Type = "recharge"
 		txn.ExamineStatus = "todo"
-		txn.Status = "notshow"
+		//	txn.Status = "notshow"
 		txn.Name = req.Name
 		txn.Hash = req.Hash
 		txn.Status = NotSyncHash
 		txn.SerialNumber = req.SeriNum
-		txn.KeyRet = uuid.New().String()
+		txn.KeyRet = keyRet
 		txn.SenderWalletAddress = req.FromAddress
 		txn.RecieverWalletAddress = req.ToAddress
 		kycTo, err := sqllite.KycListCollectionCol.Select(req.Currency, req.ToAddress)
@@ -1554,8 +1634,17 @@ func recharge(req *createTxnReq) (*sqlliteModel.TblTxnList, error) {
 			txn.RecieverType = kycTo.Type
 		}
 
+		currTotalAmount, err := sqllite.TxnListCollectionCol.SelectByIdCurType(req.Id, req.Currency, req.Type)
+		if err != nil {
+			fmt.Printf("SelectByIdCurType err:%s", err)
+			return err
+		}
+		if req.Amount < 1000 && currTotalAmount < 3000 {
+			txn.ExamineStatus = "pass"
+		}
+		txn.TotalAmount = currTotalAmount
 		err = sqllite.TxnListCollectionCol.Insert(txn)
-		return txn, err
+		return err
 	}
 
 	txn.CusId = req.Id
@@ -1563,10 +1652,16 @@ func recharge(req *createTxnReq) (*sqlliteModel.TblTxnList, error) {
 	txn.TxnTime = req.TxnTime
 	txn.Status = IsSaveHash
 	txn.SerialNumber = req.SeriNum
+	txn.KeyRet = keyRet
+	currTotalAmount, err := sqllite.TxnListCollectionCol.SelectByIdCurType(req.Id, req.Currency, req.Type)
+	if req.Amount < 1000 && currTotalAmount < 3000 {
+		txn.ExamineStatus = "pass"
+	}
+	txn.TotalAmount = currTotalAmount
 	sqllite.TxnListCollectionCol.UpdateByKeyRet(txn.KeyRet, txn)
 	if err != nil {
 		fmt.Printf("update err:%s\n", err)
-		return nil, err
+		return err
 	}
-	return txn, nil
+	return nil
 }
