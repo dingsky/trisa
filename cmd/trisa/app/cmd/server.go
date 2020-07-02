@@ -361,7 +361,7 @@ func runServerCmd(cmd *cobra.Command, args []string) {
 			req := new(createTxnReq)
 			err = json.Unmarshal(reqMsg, req)
 			if err != nil {
-				w.WriteHeader(http.StatusBadGateway)
+				w.WriteHeader(http.StatusBadRequest)
 				w.Write([]byte("json Unmarshal error"))
 				fmt.Printf("json Unmarshal error:%s", err)
 				return
