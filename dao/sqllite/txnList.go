@@ -43,12 +43,12 @@ func (s *txnListCollection) Select(id string) (*sqlliteModel.TblTxnList, error) 
 }
 
 func (s *txnListCollection) SelectByIdCurType(id, currency, txnType string) (float64, error) {
-	var totalAmount []float64
-	result := Database.Model(&sqlliteModel.TblTxnList{}).Where("cus_id = ? and currency = ? and type = ?", id, currency, txnType).Pluck("sum(amount)", &totalAmount)
+	var total_amount []float64
+	result := Database.Model(&sqlliteModel.TblTxnList{}).Where("cus_id = ? and currency = ? and type = ?", id, currency, txnType).Pluck("SUM(amount) as total_amount", &total_amount)
 	if result.Error != nil {
 		return 0, result.Error
 	}
-	return totalAmount[0], nil
+	return total_amount[0], nil
 }
 
 func (s *txnListCollection) SelectAll(query *sqlliteModel.TblTxnList, minAmount, maxAmount, minCount, maxCount, minTotalAmount, maxTotalAmount float64, startTime, endTime, estatus string) ([]*sqlliteModel.TblTxnList, error) {
