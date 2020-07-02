@@ -1295,9 +1295,8 @@ func cash(r *http.Request, req *createTxnReq, key string) error {
 	txn.CusId = req.Id
 	txn.TxnTime = req.TxnTime
 	txn.SenderAddress = req.FromAddress
-	txn.Type = "recharge"
+	txn.Type = "cash"
 	txn.ExamineStatus = "todo"
-	//	txn.Status = "notshow"
 	txn.Name = req.Name
 	txn.Hash = req.Hash
 	txn.Status = NotSyncHash
