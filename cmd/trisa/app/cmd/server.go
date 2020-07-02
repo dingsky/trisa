@@ -1672,6 +1672,7 @@ func recharge(req *createTxnReq, keyRet string) error {
 		err = sqllite.TxnListCollectionCol.Insert(txn)
 		return err
 	}
+	fmt.Printf("does not find txn by hash:%s\n", req.Hash)
 
 	txn.CusId = req.Id
 	txn.Name = req.Name
