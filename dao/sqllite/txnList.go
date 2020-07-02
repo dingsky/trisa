@@ -1,6 +1,7 @@
 package sqllite
 
 import (
+	"database/sql"
 	"fmt"
 
 	"github.com/trisacrypto/trisa/model/sqlliteModel"
@@ -43,12 +44,13 @@ func (s *txnListCollection) Select(id string) (*sqlliteModel.TblTxnList, error) 
 }
 
 func (s *txnListCollection) SelectByIdCurType(id, currency, txnType string) (float64, error) {
-	var total_amount []float64
+	var total_amount []sql.NullString
 	result := Database.Model(&sqlliteModel.TblTxnList{}).Where("cus_id = ? and currency = ? and type = ?", id, currency, txnType).Pluck("SUM(amount) as total_amount", &total_amount)
 	if result.Error != nil {
 		return 0, result.Error
 	}
-	return total_amount[0], nil
+	fmt.Printf("total:%v", total_amount)
+	return 10, nil
 }
 
 func (s *txnListCollection) SelectAll(query *sqlliteModel.TblTxnList, minAmount, maxAmount, minCount, maxCount, minTotalAmount, maxTotalAmount float64, startTime, endTime, estatus string) ([]*sqlliteModel.TblTxnList, error) {
