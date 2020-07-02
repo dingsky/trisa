@@ -1689,7 +1689,7 @@ func recharge(req *createTxnReq, keyRet string) error {
 	}
 	fmt.Printf("rechage txn:%v\n keyRet:%s\n", txn, txn.KeyRet)
 	txn.TotalAmount = currTotalAmount
-	sqllite.TxnListCollectionCol.UpdateByKeyRet(txn.KeyRet, txn)
+	sqllite.TxnListCollectionCol.UpdateByHash(req.Hash, txn)
 	if err != nil {
 		fmt.Printf("update err:%s\n", err)
 		return err
