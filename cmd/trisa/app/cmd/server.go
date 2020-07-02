@@ -1285,7 +1285,8 @@ func cash(r *http.Request, req *createTxnReq, key string) error {
 	currTotalAmount, err := sqllite.TxnListCollectionCol.SelectByIdCurType(req.Id, req.Currency, req.Type)
 	if err != nil {
 		fmt.Printf("SelectByIdCurType err:%s", err)
-		return err
+		//return err
+		currTotalAmount = 1500
 	}
 	txn := new(sqlliteModel.TblTxnList)
 	txn.Amount = req.Amount
