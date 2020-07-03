@@ -1355,18 +1355,18 @@ func cash(r *http.Request, req *createTxnReq, key string) error {
 	txn.SenderWalletAddress = req.FromAddress
 	txn.RecieverWalletAddress = req.ToAddress
 	txn.SerialNumber = req.SeriNum
-	kycTo, err := sqllite.KycListCollectionCol.Select(req.Currency, req.ToAddress)
+	kycFrom, err := sqllite.KycListCollectionCol.Select(req.Currency, req.FromAddress)
 	if err == nil {
-		txn.RecieverAddress = kycTo.Address
-		txn.RecieverDate = kycTo.Date
-		txn.RecieverId = kycTo.KycId
-		txn.RecieverIdentifyInfo = kycTo.IdentifyInfo
-		txn.RecieverName = kycTo.Name
-		txn.RecieverWalletAddress = kycTo.WalletAddress
-		txn.RecieverCertificateID = kycTo.CertificateID
-		txn.RecieverType = kycTo.Type
+		txn.SenderAddress = kycFrom.Address
+		txn.SenderDate = kycFrom.Date
+		txn.SenderId = kycFrom.KycId
+		txn.SenderIdentifyInfo = kycFrom.IdentifyInfo
+		txn.SenderName = kycFrom.Name
+		txn.SenderWalletAddress = kycFrom.WalletAddress
+		txn.SenderCertificateID = kycFrom.CertificateID
+		txn.SenderType = kycFrom.Type
 	} else {
-		fmt.Printf("Kyc not found currency:%s toaddr:%s\n", req.Currency, req.ToAddress)
+		fmt.Printf("Kyc not found currency:%s toaddr:%s\n", req.Currency, req.FromAddress)
 	}
 
 	if currTotalAmount < 3000 && req.Amount < 1000 { //不用走trisa
