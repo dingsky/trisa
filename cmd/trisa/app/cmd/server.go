@@ -1715,6 +1715,7 @@ func recharge(req *createTxnReq, keyRet string) error {
 	txn.SerialNumber = req.SeriNum
 	txn.KeyRet = keyRet
 	txn.Type = "recharge"
+	txn.Amount = req.Amount
 	currTotalAmount, err := sqllite.TxnListCollectionCol.SelectByIdCurType(req.Id, req.Currency, req.Type)
 	txn.ExamineStatus = "todo"
 	txn.TotalAmount = currTotalAmount + req.Amount
