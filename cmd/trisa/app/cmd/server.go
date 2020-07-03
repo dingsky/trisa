@@ -1330,8 +1330,7 @@ func cash(r *http.Request, req *createTxnReq, key string) error {
 	currTotalAmount, err := sqllite.TxnListCollectionCol.SelectByIdCurType(req.Id, req.Currency, req.Type)
 	if err != nil {
 		fmt.Printf("SelectByIdCurType err:%s", err)
-		//return err
-		currTotalAmount = 1500
+		return err
 	}
 	txn := new(sqlliteModel.TblTxnList)
 	txn.Amount = req.Amount
@@ -1360,6 +1359,8 @@ func cash(r *http.Request, req *createTxnReq, key string) error {
 		txn.RecieverWalletAddress = kycTo.WalletAddress
 		txn.RecieverCertificateID = kycTo.CertificateID
 		txn.RecieverType = kycTo.Type
+	} else {
+		fmt.Printf("Kyc not found currency:%s toaddr:%s\n", req.Currency, req.ToAddress)
 	}
 
 	if currTotalAmount < 3000 && req.Amount < 1000 { //不用走trisa
