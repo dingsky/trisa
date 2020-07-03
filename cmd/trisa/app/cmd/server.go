@@ -1357,7 +1357,8 @@ func cash(r *http.Request, req *createTxnReq, key string) error {
 	txn.RecieverWalletAddress = req.ToAddress
 	txn.SerialNumber = req.SeriNum
 	kycFrom, err := sqllite.KycListCollectionCol.Select(req.Currency, req.FromAddress)
-	if err == nil {d
+	if err == nil {
+		d
 		txn.SenderAddress = kycFrom.Address
 		txn.SenderDate = kycFrom.Date
 		txn.SenderId = kycFrom.KycId
@@ -1561,7 +1562,7 @@ func exchangeKyc(r *http.Request, req *createTxnReq, url string) (*sqlliteModel.
 	fmt.Printf("url:%s\n", url)
 	resp, err := gPSever.SendRequest(r.Context(), url, uuid.New().String(), tData)
 	if err != nil {
-		fmt.Printf(s\"end request error:%s", err)
+		fmt.Printf("end request error:%s", err)
 		return txn, err
 	}
 	fmt.Printf("last resp:%s", resp)
