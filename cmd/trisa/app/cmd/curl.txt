@@ -27,7 +27,7 @@ curl "http://127.0.0.1:9997/trisa/create_kyc" -d'{"id": "89758",	"name": "sky",	
 curl "http://vasp.sandbox-pro.hashkey.com/trisa/create_kyc" -d'{"id": "89758",	"name": "sky",	"type": "cus",	"wallet_address": "666667",	"date": "20200623",	"address": "china",	"currency": "btc",	"wallet_address": "test0x456", "certificate_id":"gefhkil"}'
 
 //查询KYC
-curl "http://vasp.sandbox-pro.hashkey.com/trisa/query_kyc_list" -d'{}'
+curl "http://127.0.0.1:9996/trisa/query_kyc_list" -d'{}'
 curl "http://vasp.trisademo.com/trisa/query_kyc_list" -d'{"id": "89758"}'
 
 //查询kyc详情
@@ -39,7 +39,7 @@ curl "http://127.0.0.1:9996/trisa/create_txn" -d'{"serial_number":"1", "txn_time
 //创建交易
 curl "vasp.sandbox-pro.hashkey.com/trisa/create_txn" -d'{"serial_number":"2", "txn_time": "2020-06-30 12:08:30", "id": "A0001", "name":"张三", "type":"transaction", "from_address":"fffffffffffffffffff4", "to_address":"fffffffffffffffffff2", "currency":"btc", "count":2.0, "amount":12000.80, "hash":"FEFEFFEFEFEEKJKF"}'
 //创建充值
-curl "http://127.0.0.1:9997/trisa/create_txn" -d'{"serial_number":"xx01","txn_time": "2020-06-30 14:58:30", "id": "A0002", "name":"张1", "type":"recharge", "from_address":"fffffffffffffffffff8", "to_address":"fffffffffffffffffff9", "currency":"btc", "count":2.0, "amount":100.80, "hash":"456jkfdjalfl"}'
+curl "http://127.0.0.1:9996/trisa/create_txn" -d'{"serial_number":"xx01","txn_time": "2020-06-30 14:58:30", "id": "A0002", "name":"张1", "type":"recharge", "from_address":"fffffffffffffffffff8", "to_address":"fffffffffffffffffff9", "currency":"btc", "count":2.0, "amount":100.80, "hash":"456jkfdjalfl"}'
 
 //对方提现
 curl "http://127.0.0.1:9997/trisa/create_txn" -d'{"serial_number":"1", "txn_time": "2020-06-30 12:10:30", "id": "A0003", "name":"王五", "type":"cash", "from_address":"fffffffffffffffffff3", "to_address":"fffffffffffffffffff2", "currency":"btc", "count":2.0, "amount":100.80}'

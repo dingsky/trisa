@@ -1689,9 +1689,9 @@ func recharge(req *createTxnReq, keyRet string) error {
 			fmt.Printf("SelectByIdCurType err:%s", err)
 			return err
 		}
-		if req.Amount < 1000 && currTotalAmount < 3000 {
-			txn.ExamineStatus = "pass"
-		}
+		//if req.Amount < 1000 && currTotalAmount < 3000 {
+		//	txn.ExamineStatus = "pass"
+		//}
 		txn.TotalAmount = currTotalAmount
 		err = sqllite.TxnListCollectionCol.Insert(txn)
 		return err
@@ -1706,11 +1706,7 @@ func recharge(req *createTxnReq, keyRet string) error {
 	txn.KeyRet = keyRet
 	txn.Type = "recharge"
 	currTotalAmount, err := sqllite.TxnListCollectionCol.SelectByIdCurType(req.Id, req.Currency, req.Type)
-	if req.Amount < 1000 && currTotalAmount < 3000 {
-		txn.ExamineStatus = "pass"
-	} else {
-		txn.ExamineStatus = "todo"
-	}
+	txn.ExamineStatus = "todo"
 	fmt.Printf("rechage txn:%v\n keyRet:%s\n", txn, txn.KeyRet)
 	txn.TotalAmount = currTotalAmount
 	sqllite.TxnListCollectionCol.UpdateByHash(req.Hash, txn)
