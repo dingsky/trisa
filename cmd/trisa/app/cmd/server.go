@@ -111,6 +111,7 @@ type queryTxnDetailRsp struct {
 	SenderKyc     KycInfo      `json:"sender_kyc,omitempty"`
 	RecieverKyc   KycInfo      `json:"reciever_kyc,omitempty"`
 	TxnInfo       txnListDef   `json:"txn_info,omitempty"`
+	IsOverLimit   string       `json:"is_over_limit,omitempty"`
 }
 
 type TxnStatusDef struct {
@@ -756,6 +757,11 @@ func runServerCmd(cmd *cobra.Command, args []string) {
 			} else {
 				//do nothind
 				fmt.Printf("txnStatus:%s", txnInfo.Status)
+			}
+			if txnInfo.Amount > 1000 || txnInfo.TotalAmount > 3000 {
+				rsp.IsOverLimit = "Y"
+			} else {
+				rsp.IsOverLimit = "N"
 			}
 
 			rspMsg, _ := json.Marshal(rsp)

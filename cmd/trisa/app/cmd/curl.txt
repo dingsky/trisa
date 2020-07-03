@@ -17,9 +17,9 @@ curl -ks "https://127.0.0.1:9997/check_address" -d'{"currency":"btc", "address":
 
 //新接口
 //创建kyc
-curl "http://127.0.0.1:9996/trisa/create_kyc" -d'{"id": "89757",	"name": "dingchun",	"type": "ins",	"wallet_address": "666666",	"date": "20200612",	"address": "shanghai",	"currency": "btc",	"wallet_address": "fffffffffffffffffff2", "certificate_id":"abcde"}'
-curl "http://127.0.0.1:9996/trisa/create_kyc" -d'{"id": "89757",	"name": "dingchun",	"type": "ins",	"wallet_address": "666666",	"date": "20200612",	"address": "shanghai",	"currency": "btc",	"wallet_address": "fffffffffffffffffff4", "certificate_id":"abcde"}'
-curl "http://127.0.0.1:9997/trisa/create_kyc" -d'{"id": "89758",	"name": "sky",	"type": "cus",	"wallet_address": "666667",	"date": "20200623",	"address": "china",	"currency": "btc",	"wallet_address": "fffffffffffffffffff3", "certificate_id":"gefhkil"}'
+curl "http://vasp.sandbox-pro.hashkey.com/trisa/create_kyc" -d'{"id": "89757",	"name": "dingchun",	"type": "ins",	"wallet_address": "666666",	"date": "20200612",	"address": "shanghai",	"currency": "btc",	"wallet_address": "fffffffffffffffffff2", "certificate_id":"abcde"}'
+curl "http://vasp.sandbox-pro.hashkey.com/trisa/create_kyc" -d'{"id": "89757",	"name": "dingchun",	"type": "ins",	"wallet_address": "666666",	"date": "20200612",	"address": "shanghai",	"currency": "btc",	"wallet_address": "fffffffffffffffffff4", "certificate_id":"abcde"}'
+curl "http://vasp.trisademo.com/trisa/create_kyc" -d'{"id": "89758",	"name": "sky",	"type": "cus",	"wallet_address": "666667",	"date": "20200623",	"address": "china",	"currency": "btc",	"wallet_address": "fffffffffffffffffff3", "certificate_id":"gefhkil"}'
 
 curl "http://127.0.0.1:9996/trisa/create_kyc" -d'{"id": "89757",	"name": "dingchun",	"type": "ins",	"wallet_address": "666666",	"date": "20200612",	"address": "shanghai",	"currency": "btc",	"wallet_address": "test0x123", "certificate_id":"abcde"}'
 curl "http://127.0.0.1:9996/trisa/create_kyc" -d'{"id": "89757",	"name": "dingchun",	"type": "ins",	"wallet_address": "666666",	"date": "20200612",	"address": "shanghai",	"currency": "btc",	"wallet_address": "test0x234", "certificate_id":"abcde"}'
@@ -35,11 +35,11 @@ curl "http://vasp.sandbox-pro.hashkey.com/trisa/query_kyc_detail" -d'{"currency"
 curl "http://127.0.0.1:9997/trisa/query_kyc_detail" -d'{"currency": "btc", "wallet_address": "fffffffffffffffffff1"}'
 
 //创建提现
-curl "http://127.0.0.1:9996/trisa/create_txn" -d'{"serial_number":"D001", "txn_time": "2020-06-30 11:40:30", "id": "A0010", "name":"李四", "type":"cash", "from_address":"fffffffffffffffffff2", "to_address":"fffffffffffffffffff3", "currency":"btc", "count":10.0, "amount":500.80}'
+curl "http://vasp.sandbox-pro.hashkey.com/trisa/create_txn" -d'{"serial_number":"D002", "txn_time": "2020-07-03 11:42:30", "id": "A0011", "name":"sky", "type":"cash", "from_address":"fffffffffffffffffff2", "to_address":"fffffffffffffffffff3", "currency":"btc", "count":10.0, "amount":1500.80}'
 //创建交易
 curl "vasp.sandbox-pro.hashkey.com/trisa/create_txn" -d'{"serial_number":"2", "txn_time": "2020-06-30 12:08:30", "id": "A0001", "name":"张三", "type":"transaction", "from_address":"fffffffffffffffffff4", "to_address":"fffffffffffffffffff2", "currency":"btc", "count":2.0, "amount":12000.80, "hash":"FEFEFFEFEFEEKJKF"}'
 //创建充值
-curl "http://127.0.0.1:9996/trisa/create_txn" -d'{"serial_number":"xx01","txn_time": "2020-06-30 14:58:30", "id": "A0002", "name":"张1", "type":"recharge", "from_address":"fffffffffffffffffff8", "to_address":"fffffffffffffffffff9", "currency":"btc", "count":2.0, "amount":100.80, "hash":"456jkfdjalfl"}'
+curl "http://vasp.trisademo.com/trisa/create_txn" -d'{"serial_number":"E001","txn_time": "2020-07-03 10:58:30", "id": "A0002", "name":"张1", "type":"recharge", "from_address":"fffffffffffffffffff2", "to_address":"fffffffffffffffffff3", "currency":"btc", "count":2.0, "amount":100.80, "hash":"456jkfdjalfl"}'
 
 //对方提现
 curl "http://127.0.0.1:9997/trisa/create_txn" -d'{"serial_number":"1", "txn_time": "2020-06-30 12:10:30", "id": "A0003", "name":"王五", "type":"cash", "from_address":"fffffffffffffffffff3", "to_address":"fffffffffffffffffff2", "currency":"btc", "count":2.0, "amount":100.80}'
@@ -55,7 +55,7 @@ curl "http://127.0.0.1:9996/trisa/query_txn_detail" -d'{"key":"4d3eb804-9335-41e
 curl "http://127.0.0.1:9996/trisa/action" -d'{"key":"33e29842-3264-43dd-a520-de37eb314b68", "operation":"pass"}'
 
 //同步交易
-curl "http://127.0.0.1:9996/trisa/sync_txn" -d'{"key":"6", "hash":"123khfdks112"}'
+curl "http://vasp.sandbox-pro.hashkey.com/trisa/sync_txn" -d'{"key":"D001", "hash":"456jkfdjalfl"}'
 curl "http://127.0.0.1:9997/trisa/sync_txn" -d'{"key":"1", "hash":"456jkfdjalfl"}'
 
 http://trisa.sandbox-pro.hashkey.com/trisa
