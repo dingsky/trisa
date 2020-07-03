@@ -1370,10 +1370,11 @@ func cash(r *http.Request, req *createTxnReq, key string) error {
 		fmt.Printf("Kyc not found currency:%s toaddr:%s\n", req.Currency, req.FromAddress)
 	}
 
+	currTotalAmount += req.Amount
 	if currTotalAmount < 3000 && req.Amount < 1000 { //不用走trisa
 		txn.ExamineStatus = "pass"
 		txn.Status = Over
-		txn.TotalAmount = currTotalAmount + req.Amount
+		txn.TotalAmount = currTotalAmount
 		fmt.Printf("cus_id:%s, currency:%s type:%s\n", txn.CusId, txn.Currency, txn.Type)
 		err := sqllite.TxnListCollectionCol.Insert(txn)
 		if err != nil {
@@ -1384,7 +1385,7 @@ func cash(r *http.Request, req *createTxnReq, key string) error {
 	} else {
 		txn.ExamineStatus = "todo"
 		txn.Status = ""
-		txn.TotalAmount = currTotalAmount + req.Amount
+		txn.TotalAmount = currTotalAmount
 		fmt.Printf("cus_id:%s, currency:%s type:%s\n", txn.CusId, txn.Currency, txn.Type)
 		err := sqllite.TxnListCollectionCol.Insert(txn)
 		if err != nil {
