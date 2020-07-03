@@ -51,7 +51,7 @@ func (s *txnListCollection) Select(id string) (*sqlliteModel.TblTxnList, error) 
 func (s *txnListCollection) SelectByIdCurType(id, currency, txnType string) (float64, error) {
 	var total_amount []sql.NullFloat64
 	fmt.Printf("cust_id:%s, currency:%s, txn_type:%s", id, currency, txnType)
-	result := Database.Model(&sqlliteModel.TblTxnList{}).Where("cus_id = ? and currency = ? and type = ?", id, currency, txnType).Pluck("MAX(total_amount) as total_amount", &total_amount)
+	result := Database.Model(&sqlliteModel.TblTxnList{}).Where("cus_id = ? and currency = ? and type = ? and status <> ?", id, currency, txnType, "notshow").Pluck("MAX(total_amount) as total_amount", &total_amount)
 	if result.Error != nil {
 		return 0, result.Error
 	}

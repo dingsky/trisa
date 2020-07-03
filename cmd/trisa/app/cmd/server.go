@@ -1376,7 +1376,7 @@ func cash(r *http.Request, req *createTxnReq, key string) error {
 		txn.Status = Over
 		txn.TotalAmount = currTotalAmount
 		fmt.Printf("cus_id:%s, currency:%s type:%s\n", txn.CusId, txn.Currency, txn.Type)
-		err := sqllite.TxnListCollectionCol.Insert(txn)
+		err := sqllite.TxnListCollectionCol.Insert(tn)x
 		if err != nil {
 			fmt.Printf("txn insert err:%s", err)
 			return err
