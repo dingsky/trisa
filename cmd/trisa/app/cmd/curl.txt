@@ -39,7 +39,8 @@ curl "http://vasp.sandbox-pro.hashkey.com/trisa/create_txn" -d'{"serial_number":
 //创建交易
 curl "vasp.sandbox-pro.hashkey.com/trisa/create_txn" -d'{"serial_number":"2", "txn_time": "2020-06-30 12:08:30", "id": "A0001", "name":"张三", "type":"transaction", "from_address":"fffffffffffffffffff4", "to_address":"fffffffffffffffffff2", "currency":"btc", "count":2.0, "amount":12000.80, "hash":"FEFEFFEFEFEEKJKF"}'
 //创建充值
-curl "http://vasp.trisademo.com/trisa/create_txn" -d'{"serial_number":"E001","txn_time": "2020-07-03 10:58:30", "id": "A0002", "name":"张1", "type":"recharge", "from_address":"fffffffffffffffffff2", "to_address":"fffffffffffffffffff3", "currency":"btc", "count":2.0, "amount":100.80, "hash":"456jkfdjalfl"}'
+curl "http://vasp.sandbox-pro.hashkey.com/trisa/create_txn" -d'{"serial_number":"E001","txn_time": "2020-07-03 10:58:30", "id": "A0002", "name":"张1", "type":"recharge", "from_address":"fffffffffffffffffff3", "to_address":"fffffffffffffffffff2", "currency":"btc", "count":2.0, "amount":100.80, "hash":"456jkfdjalfl"}'
+curl "http://vasp.trisademo.com/trisa/create_txn" -d'{"serial_number":"D003", "txn_time": "2020-07-03 11:42:30", "id": "A0023", "name":"sky", "type":"cash", "from_address":"fffffffffffffffffff3", "to_address":"fffffffffffffffffff2", "currency":"btc", "count":10.0, "amount":500.80}'
 
 //对方提现
 curl "http://127.0.0.1:9997/trisa/create_txn" -d'{"serial_number":"1", "txn_time": "2020-06-30 12:10:30", "id": "A0003", "name":"王五", "type":"cash", "from_address":"fffffffffffffffffff3", "to_address":"fffffffffffffffffff2", "currency":"btc", "count":2.0, "amount":100.80}'
@@ -56,6 +57,6 @@ curl "http://127.0.0.1:9996/trisa/action" -d'{"key":"33e29842-3264-43dd-a520-de3
 
 //同步交易
 curl "http://vasp.sandbox-pro.hashkey.com/trisa/sync_txn" -d'{"key":"D001", "hash":"456jkfdjalfl"}'
-curl "http://127.0.0.1:9997/trisa/sync_txn" -d'{"key":"1", "hash":"456jkfdjalfl"}'
+curl "http://vasp.trisademo.com/trisa/sync_txn" -d'{"key":"D003", "hash":"456jkfdjalfl"}'
 
 http://trisa.sandbox-pro.hashkey.com/trisa
