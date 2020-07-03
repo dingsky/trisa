@@ -689,7 +689,7 @@ func runServerCmd(cmd *cobra.Command, args []string) {
 			rsp.RecieverKyc.Type = txnInfo.RecieverType
 			rsp.RecieverKyc.WalletAddress = txnInfo.RecieverWalletAddress
 			rsp.RecieverKyc.Date = txnInfo.RecieverDate
-			rsp.RecieverKyc.Address = txnInfo.SenderAddress
+			rsp.RecieverKyc.Address = txnInfo.RecieverAddress
 			rsp.RecieverKyc.CertificateID = txnInfo.RecieverCertificateID
 			rsp.RecieverKyc.Currency = txnInfo.Currency
 			if rsp.RecieverKyc.Name != "" {
@@ -703,7 +703,7 @@ func runServerCmd(cmd *cobra.Command, args []string) {
 			rsp.SenderKyc.WalletAddress = txnInfo.SenderWalletAddress
 			rsp.SenderKyc.Date = txnInfo.SenderDate
 			rsp.SenderKyc.Currency = txnInfo.Currency
-			rsp.SenderKyc.Address = txnInfo.RecieverAddress
+			rsp.SenderKyc.Address = txnInfo.SenderAddress
 			rsp.SenderKyc.CertificateID = txnInfo.SenderCertificateID
 			if rsp.SenderKyc.Name != "" {
 				rsp.SenderKyc.IsInTrisa = "Y"

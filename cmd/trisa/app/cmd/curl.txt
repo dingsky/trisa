@@ -35,7 +35,7 @@ curl "http://vasp.sandbox-pro.hashkey.com/trisa/query_kyc_detail" -d'{"currency"
 curl "http://127.0.0.1:9997/trisa/query_kyc_detail" -d'{"currency": "btc", "wallet_address": "fffffffffffffffffff1"}'
 
 //创建提现
-curl "http://vasp.sandbox-pro.hashkey.com/trisa/create_txn" -d'{"serial_number":"D003", "txn_time": "2020-07-03 11:42:30", "id": "A0023", "name":"sky", "type":"cash", "from_address":"fffffffffffffffffff3", "to_address":"fffffffffffffffffff2", "currency":"btc", "count":10.0, "amount":500.80}'
+curl "http://vasp.sandbox-pro.hashkey.com/trisa/create_txn" -d'{"serial_number":"D003", "txn_time": "2020-07-03 11:42:30", "id": "A0023", "name":"sky", "type":"cash", "from_address":"fffffffffffffffffff2", "to_address":"fffffffffffffffffff3", "currency":"btc", "count":10.0, "amount":500.80}'
 //创建交易
 curl "vasp.sandbox-pro.hashkey.com/trisa/create_txn" -d'{"serial_number":"2", "txn_time": "2020-06-30 12:08:30", "id": "A0001", "name":"张三", "type":"transaction", "from_address":"fffffffffffffffffff4", "to_address":"fffffffffffffffffff2", "currency":"btc", "count":2.0, "amount":12000.80, "hash":"FEFEFFEFEFEEKJKF"}'
 //创建充值
