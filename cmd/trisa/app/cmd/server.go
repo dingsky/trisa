@@ -1358,7 +1358,6 @@ func cash(r *http.Request, req *createTxnReq, key string) error {
 	txn.SerialNumber = req.SeriNum
 	kycFrom, err := sqllite.KycListCollectionCol.Select(req.Currency, req.FromAddress)
 	if err == nil {
-		d
 		txn.SenderAddress = kycFrom.Address
 		txn.SenderDate = kycFrom.Date
 		txn.SenderId = kycFrom.KycId
