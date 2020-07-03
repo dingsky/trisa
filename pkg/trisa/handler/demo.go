@@ -129,6 +129,8 @@ func (d *Demo) HandleRequest(ctx context.Context, id string, req *pb.Transaction
 		txn.Key = uuid.New().String()
 		txn.KeyRet = uuid.New().String()
 
+		fmt.Printf("insert txn:%v\n", txn)
+
 		err = sqllite.TxnListCollectionCol.Insert(txn)
 		if err != nil {
 			fmt.Printf("insert err:%s\n", err)
@@ -188,19 +190,26 @@ func (d *Demo) HandleRequest(ctx context.Context, id string, req *pb.Transaction
 		//txnInfo.TxnID = id
 		//txnInfo.Currency = currency
 
-		_, err = sqllite.TxnListCollectionCol.SelectByHash(hash)
-		if err == nil {
-			txnInfo.Hash = hash
-			err = sqllite.TxnListCollectionCol.UpdateByHash(hash, txnInfo)
-			if err != nil {
-				return nil, fmt.Errorf("update txn error:%s", err)
-			}
-		} else {
-			txnInfo.Hash = hash
-			err = sqllite.TxnListCollectionCol.Update(key, txnInfo)
-			if err != nil {
-				return nil, fmt.Errorf("update txn error:%s", err)
-			}
+		//_, err = sqllite.TxnListCollectionCol.SelectByHash(hash)
+		//if err == nil {
+		//	txnInfo.Hash = hash
+		//	err = sqllite.TxnListCollectionCol.UpdateByHash(hash, txnInfo)
+		//	if err != nil {
+		//		return nil, fmt.Errorf("update txn error:%s", err)
+		//	}
+		//} else {
+		//	txnInfo.Hash = hash
+		//	err = sqllite.TxnListCollectionCol.Update(key, txnInfo)
+		//	if err != nil {
+		//		return nil, fmt.Errorf("update txn error:%s", err)
+		//	}
+		//}
+
+		txnInfo.Hash = hash
+		fmt.Printf("update txn:%v\n", txnInfo)
+		err = sqllite.TxnListCollectionCol.Update(key, txnInfo)
+		if err != nil {
+			return nil, fmt.Errorf("update txn error:%s", err)
 		}
 
 		// Generate demo response

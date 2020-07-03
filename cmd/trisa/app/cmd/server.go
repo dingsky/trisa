@@ -436,6 +436,7 @@ func runServerCmd(cmd *cobra.Command, args []string) {
 
 			keyRet := uuid.New().String()
 			switch req.Type {
+
 			case "cash":
 				err = cash(r, req, keyRet)
 			case "transaction":
@@ -1356,7 +1357,7 @@ func cash(r *http.Request, req *createTxnReq, key string) error {
 	txn.RecieverWalletAddress = req.ToAddress
 	txn.SerialNumber = req.SeriNum
 	kycFrom, err := sqllite.KycListCollectionCol.Select(req.Currency, req.FromAddress)
-	if err == nil {
+	if err == nil {d
 		txn.SenderAddress = kycFrom.Address
 		txn.SenderDate = kycFrom.Date
 		txn.SenderId = kycFrom.KycId
@@ -1560,7 +1561,7 @@ func exchangeKyc(r *http.Request, req *createTxnReq, url string) (*sqlliteModel.
 	fmt.Printf("url:%s\n", url)
 	resp, err := gPSever.SendRequest(r.Context(), url, uuid.New().String(), tData)
 	if err != nil {
-		fmt.Printf("send request error:%s", err)
+		fmt.Printf(s\"end request error:%s", err)
 		return txn, err
 	}
 	fmt.Printf("last resp:%s", resp)
@@ -1714,8 +1715,8 @@ func recharge(req *createTxnReq, keyRet string) error {
 	txn.Type = "recharge"
 	currTotalAmount, err := sqllite.TxnListCollectionCol.SelectByIdCurType(req.Id, req.Currency, req.Type)
 	txn.ExamineStatus = "todo"
-	fmt.Printf("rechage txn:%v\n keyRet:%s\n", txn, txn.KeyRet)
 	txn.TotalAmount = currTotalAmount + req.Amount
+	fmt.Printf("rechage txn:%v\n keyRet:%s\n", txn, txn.KeyRet)
 	err = sqllite.TxnListCollectionCol.UpdateByHash(req.Hash, txn)
 	if err != nil {
 		fmt.Printf("update err:%s\n", err)
