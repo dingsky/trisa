@@ -18,6 +18,11 @@ func (a *kycListCollection) Delete(currency, address string) error {
 	return Database.Where("currency = ? and wallet_address = ?", currency, address).Delete(serv).Error
 }
 
+func (a *kycListCollection) DeleteAll() error {
+	serv := new(sqlliteModel.TblKycList)
+	return Database.Model(&sqlliteModel.TblKycList{}).Delete(serv).Error
+}
+
 func (a *kycListCollection) Update(serv *sqlliteModel.TblKycList) error {
 	return Database.Save(serv).Error
 }

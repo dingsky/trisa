@@ -21,6 +21,11 @@ func (s *txnListCollection) Delete(id string) error {
 	return Database.Where("id = ?", id).Delete(txn).Error
 }
 
+func (s *txnListCollection) DeleteAll() error {
+	serv := new(sqlliteModel.TblTxnList)
+	return Database.Model(&sqlliteModel.TblTxnList{}).Delete(serv).Error
+}
+
 func (s *txnListCollection) Update(key string, txn *sqlliteModel.TblTxnList) error {
 	return Database.Model(&sqlliteModel.TblTxnList{}).Where("key = ?", key).Updates(txn).Error
 }

@@ -324,6 +324,30 @@ func runServerCmd(cmd *cobra.Command, args []string) {
 			w.Write(out)
 		})
 
+		r.HandleFunc("/trisa/clear_kyc", func(w http.ResponseWriter, r *http.Request) {
+			err := sqllite.KycListCollectionCol.DeleteAll()
+			if err != nil {
+				w.WriteHeader(http.StatusOK)
+				w.Write([]byte("clear kyc err"))
+				fmt.Printf("clear kyc err:%s\n", err)
+				return
+			}
+			w.WriteHeader(http.StatusOK)
+			w.Write([]byte("clear kyc ok"))
+		})
+
+		r.HandleFunc("/trisa/clear_txn", func(w http.ResponseWriter, r *http.Request) {
+			err := sqllite.TxnListCollectionCol.DeleteAll()
+			if err != nil {
+				w.WriteHeader(http.StatusOK)
+				w.Write([]byte("clear txn err"))
+				fmt.Printf("clear txn err:%s\n", err)
+				return
+			}
+			w.WriteHeader(http.StatusOK)
+			w.Write([]byte("clear txn ok"))
+		})
+
 		r.HandleFunc("/connect", func(w http.ResponseWriter, r *http.Request) {
 			ctx, _ := context.WithTimeout(context.Background(), 2*time.Second)
 			out, _ := json.Marshal(mTLSConnectionTest(
